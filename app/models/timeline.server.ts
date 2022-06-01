@@ -18,7 +18,7 @@ export function getTimeline({
 export function getTimelineListItems({ userId }: { userId: User["id"] }) {
   return prisma.timeline.findMany({
     where: { userId },
-    select: { id: true, title: true },
+    select: { id: true, title: true,  },
     orderBy: { updatedAt: "desc" },
   });
 }
