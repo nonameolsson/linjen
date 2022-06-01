@@ -18,7 +18,6 @@ type ActionData = {
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  console.log(request);
 
   const formData = await request.formData();
   const title = formData.get("title");
@@ -26,7 +25,7 @@ export const action: ActionFunction = async ({ request }) => {
   const startDate = formData.get("startDate");
   const endDate = formData.get("endDate");
   const timelineId = formData.get("timelineId");
-  console.log(timelineId);
+  
 
   if (typeof title !== "string" || title.length === 0) {
     return json<ActionData>(
@@ -90,6 +89,12 @@ export default function NewTimelinePage() {
       titleRef.current?.focus();
     } else if (actionData?.errors?.content) {
       contentRef.current?.focus();
+    
+    } else if (actionData?.errors?.startDate) {
+      startDateRef.current?.focus();
+    
+    } else if (actionData?.errors?.endDate) {
+      endDateRef.current?.focus();
     }
   }, [actionData]);
 
