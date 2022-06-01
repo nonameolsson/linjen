@@ -40,6 +40,22 @@ async function seed() {
     },
   });
 
+  await prisma.timeline.create({
+    data: {
+      title: "My first timeline",
+      description: "The biggest timeline ever",
+      userId: user.id,
+    },
+  });
+
+  await prisma.timeline.create({
+    data: {
+      title: "My second timeline",
+      description: "The smallest timeline ever",
+      userId: user.id,
+    },
+  });
+
   console.log(`Database has been seeded. 🌱`);
 }
 
