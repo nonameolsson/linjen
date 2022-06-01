@@ -18,16 +18,15 @@ type ActionData = {
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request);
-  console.log(request)
-  
+  console.log(request);
+
   const formData = await request.formData();
   const title = formData.get("title");
   const content = formData.get("content");
   const startDate = formData.get("startDate");
   const endDate = formData.get("endDate");
   const timelineId = formData.get("timelineId");
-  console.log(timelineId)
-
+  console.log(timelineId);
 
   if (typeof title !== "string" || title.length === 0) {
     return json<ActionData>(
@@ -64,7 +63,14 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  const event = await createEvent({ title, content, endDate, startDate, timelineId, userId });
+  const event = await createEvent({
+    title,
+    content,
+    endDate,
+    startDate,
+    timelineId,
+    userId,
+  });
 
   return redirect(`/timelines/${timelineId}/${event.id}`);
 };
@@ -178,17 +184,17 @@ export default function NewTimelinePage() {
         )}
       </div>
 
-          <input
-            hidden
-            ref={timelineIdRef}
-            name="timelineId"
-            defaultValue={params.timelineId}
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.timelineId ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.timelineId ? "body-error" : undefined
-            }
-          />
+      <input
+        hidden
+        ref={timelineIdRef}
+        name="timelineId"
+        defaultValue={params.timelineId}
+        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+        aria-invalid={actionData?.errors?.timelineId ? true : undefined}
+        aria-errormessage={
+          actionData?.errors?.timelineId ? "body-error" : undefined
+        }
+      />
 
       <div className="text-right">
         <button
