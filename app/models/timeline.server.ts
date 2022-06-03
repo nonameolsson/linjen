@@ -43,6 +43,26 @@ export function createTimeline({
   });
 }
 
+export function updateTimeline({
+  id,
+  description,
+  title,
+  userId,
+}: Pick<Timeline, "id" | "description" | "title"> & {
+  userId: User["id"];
+}) {
+  return prisma.timeline.update({
+    where: {
+      id
+    },
+    data: {
+      description,
+      title
+    }
+   
+  });
+}
+
 export function deleteTimeline({
   id,
   userId,

@@ -1,5 +1,4 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import type { Event } from "@prisma/client";
 import { json, redirect } from "@remix-run/node";
 import {
   Form,
@@ -69,13 +68,13 @@ export default function TimelineDetailsPage() {
               Delete
             </button>
           </Form>
-          <button
-            type="button"
+          <Link
+            to="edit"
             className="ml-3 inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-orange-800"
           >
             <PencilIcon className="-ml-0.5 mr-2 h-4 w-4" aria-hidden="true" />
             Edit
-          </button>
+          </Link>
         </>
       }
     >
