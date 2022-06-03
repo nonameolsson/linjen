@@ -4,6 +4,7 @@ import { json, redirect } from "@remix-run/node";
 import { Form, useActionData } from "@remix-run/react";
 import * as React from "react";
 
+import { Page } from "~/components/page";
 import { createTimeline } from "~/models/timeline.server";
 import { requireUserId } from "~/session.server";
 
@@ -37,7 +38,7 @@ export const action: ActionFunction = async ({ request }) => {
 
   const timeline = await createTimeline({ title, description, userId });
 
-  return redirect(`/timelines/${timeline.id}`);
+  return redirect(`/timeline/${timeline.id}/events`);
 };
 
 export default function NewTimelinePage() {
@@ -54,8 +55,7 @@ export default function NewTimelinePage() {
   }, [actionData]);
 
   return (
-    <div>
-      <h2 className="text-3xl font-bold">New timelne</h2>
+    <Page title="New Timeline">
       <Form
         method="post"
         style={{
@@ -138,6 +138,6 @@ export default function NewTimelinePage() {
           </button>
         </div>
       </Form>
-    </div>
+    </Page>
   );
 }

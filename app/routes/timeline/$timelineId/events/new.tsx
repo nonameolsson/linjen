@@ -71,10 +71,10 @@ export const action: ActionFunction = async ({ request }) => {
     userId,
   });
 
-  return redirect(`/timelines/${timelineId}/${event.id}`);
+  return redirect(`/timeline/${timelineId}/events/${event.id}`);
 };
 
-export default function NewTimelinePage() {
+export default function NewEventPage() {
   const params = useParams();
 
   const actionData = useActionData() as ActionData;

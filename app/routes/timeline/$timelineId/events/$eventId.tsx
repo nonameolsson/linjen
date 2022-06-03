@@ -28,14 +28,14 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   await deleteEvent({ userId, id: params.eventId });
 
-  return redirect(`/timelines/${params.timelineId}`);
+  return redirect(`/timeline/${params.timelineId}/events`);
 };
 
 export default function EventDetailsPage() {
   const data = useLoaderData() as LoaderData;
 
   return (
-    <div>
+    <div className="bg-white p-4">
       <h3 className="text-2xl font-bold">{data.event.title}</h3>
       <p className="py-6">{data.event.content}</p>
       <hr className="my-4" />
@@ -43,7 +43,7 @@ export default function EventDetailsPage() {
         <input name="timelineId" hidden />
         <button
           type="submit"
-          className="rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          className="rounded bg-red-500  py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"
         >
           Delete
         </button>
