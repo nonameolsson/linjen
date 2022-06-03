@@ -48,6 +48,29 @@ export function createEvent({
   });
 }
 
+export function updateEvent({
+  id,
+  content,
+  endDate,
+  startDate,
+  title,
+  userId,
+}: Pick<Event, "content" | "id" | "startDate" | "endDate" | "title"> & {
+  userId: User["id"];
+}) {
+  return prisma.event.update({
+    where: {
+      id
+    },
+    data: {
+      title,
+      content,
+      endDate,
+      startDate,
+    },
+  });
+}
+
 export function deleteEvent({
   id,
   userId,

@@ -1,6 +1,6 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useCatch, useLoaderData } from "@remix-run/react";
+import { Form, Link, Outlet, useCatch, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
 
 import type { Event } from "~/models/event.server";
@@ -41,6 +41,12 @@ export default function EventDetailsPage() {
       <hr className="my-4" />
       <Form method="post">
         <input name="timelineId" hidden />
+        <Link
+          to="edit"
+          className="rounded bg-orange-500  py-2 px-4 text-white hover:bg-orange-600 focus:bg-orange-400"
+        >
+          Edit
+        </Link>
         <button
           type="submit"
           className="rounded bg-red-500  py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400"

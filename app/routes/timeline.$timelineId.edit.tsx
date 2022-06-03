@@ -7,7 +7,7 @@ import invariant from "tiny-invariant";
 import type { Timeline } from "@prisma/client";
 
 import { Page } from "~/components/page";
-import { createTimeline, getTimeline, updateTimeline } from "~/models/timeline.server";
+import { getTimeline, updateTimeline } from "~/models/timeline.server";
 import { requireUserId } from "~/session.server";
 
 type LoaderData = {

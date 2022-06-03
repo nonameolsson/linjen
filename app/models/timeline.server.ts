@@ -1,4 +1,5 @@
 import type { User, Timeline } from "@prisma/client";
+import { title } from "process";
 
 import { prisma } from "~/db.server";
 
@@ -16,11 +17,19 @@ export function getTimeline({
 }
 
 export function getTimelineListItems({ userId }: { userId: User["id"] }) {
-  return prisma.timeline.findMany({
+  const timelines = prisma.timeline.findMany({
     where: { userId },
-    select: { id: true, title: true,  },
+
+    include: {
+      _count: {
+        select: { Event: true },
+      },
+    },
+
     orderBy: { updatedAt: "desc" },
   });
+
+  return timelines;
 }
 
 export function createTimeline({
@@ -47,19 +56,18 @@ export function updateTimeline({
   id,
   description,
   title,
-  userId,
+  userId, //TODO: Verify that the current user is the owner of the timeline
 }: Pick<Timeline, "id" | "description" | "title"> & {
   userId: User["id"];
 }) {
   return prisma.timeline.update({
     where: {
-      id
+      id,
     },
     data: {
       description,
-      title
-    }
-   
+      title,
+    },
   });
 }
 
