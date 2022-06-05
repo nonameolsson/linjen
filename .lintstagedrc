@@ -5,7 +5,4 @@
   "*.{js,ts,jsx,tsx}": [
     "trunk fmt"
   ]
-  // "src/**/*.{js,ts,jsx,tsx}": [
-  //   "eslint --fix"
-  // ]
 }
