@@ -11,7 +11,7 @@ import { requireUserId } from "~/session.server";
 
 function validateEventTitle(title: string) {
   if (title.length === 0) {
-    return "Title is required";
+    return "You must add a title";
   }
 }
 
@@ -23,7 +23,7 @@ function validateEventContent(content: string) {
 
 function validateEventStartDate(startDate: string) {
   if (startDate.length === 0) {
-    return "Start date is required";
+    return "You must select a start date";
   }
 }
 
