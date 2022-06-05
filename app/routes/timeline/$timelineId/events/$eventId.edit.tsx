@@ -1,74 +1,97 @@
-import type { ActionFunction, LoaderFunction } from "@remix-run/node";
-import { json, redirect } from "@remix-run/node";
-import {
-  Form,
-  useActionData,
-  useLoaderData,
-  useParams,
-} from "@remix-run/react";
-import * as React from "react";
+import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
+import { Form, useActionData, useLoaderData, useParams } from '@remix-run/react'
+import * as React from 'react'
 
-import { getEvent, updateEvent } from "~/models/event.server";
-import { requireUserId } from "~/session.server";
-import invariant from "tiny-invariant";
-import type { Event } from "@prisma/client";
+import { getEvent, updateEvent } from '~/models/event.server'
+import { requireUserId } from '~/session.server'
+import invariant from 'tiny-invariant'
+import type { Event } from '@prisma/client'
 
 type LoaderData = {
-  event: Event;
-};
+  event: Event
+}
+
+function validateEventTitle(title: string) {
+  if (title.length === 0) {
+    return 'You must add a title'
+  }
+}
+
+function validateEventContent(content: string) {
+  if (typeof content !== 'string') {
+    return 'Content must be a string'
+  }
+}
+
+function validateEventStartDate(startDate: string) {
+  if (startDate.length === 0) {
+    return 'You must select a start date'
+  }
+}
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  await requireUserId(request);
+  await requireUserId(request)
 
-  invariant(params.eventId, "eventId not found");
+  invariant(params.eventId, 'eventId not found')
 
-  const event = await getEvent({ id: params.eventId });
+  const event = await getEvent({ id: params.eventId })
   if (!event) {
-    throw new Response("Not Found", { status: 404 });
+    throw new Response('Not Found', { status: 404 })
   }
 
-  return json<LoaderData>({ event });
-};
+  return json<LoaderData>({ event })
+}
 
 type ActionData = {
-  errors?: {
-    title?: string;
-    content?: string;
-    startDate?: number;
-    timelineId?: string;
-  };
-};
+  formError?: string
+  fieldErrors?: {
+    title: string | undefined
+    content: string | undefined
+    startDate: string | undefined
+  }
+  fields?: {
+    title: string
+    content: string
+    startDate: string
+  }
+}
+
+const badRequest = (data: ActionData) => json(data, { status: 400 })
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request);
+  const userId = await requireUserId(request)
+  const formData = await request.formData()
 
-  invariant(params.timelineId, "timelineId not found");
-  invariant(params.eventId, "eventId not found");
+  const timelineId = params.timelineId
+  invariant(timelineId, 'Timeline ID is required')
 
-  const formData = await request.formData();
-  const title = formData.get("title");
-  const content = formData.get("content");
-  const startDate = formData.get("startDate");
+  const eventId = params.eventId
+  invariant(eventId, 'Event ID is required')
 
-  if (typeof title !== "string" || title.length === 0) {
-    return json<ActionData>(
-      { errors: { title: "Title is required" } },
-      { status: 400 }
-    );
+  const title = formData.get('title')
+  const content = formData.get('content')
+  const startDate = formData.get('startDate')
+
+  if (
+    typeof title !== 'string' ||
+    typeof content !== 'string' ||
+    typeof startDate !== 'string'
+  ) {
+    return badRequest({
+      formError: `Form not submitted correctly.`
+    })
   }
 
-  if (typeof content !== "string") {
-    return json<ActionData>(
-      { errors: { content: "Content must be a string" } },
-      { status: 400 }
-    );
+  const fieldErrors = {
+    title: validateEventTitle(title),
+    content: validateEventContent(content),
+    startDate: validateEventStartDate(startDate)
   }
 
-  if (typeof startDate !== "string" || startDate.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "Start Date is required" } },
-      { status: 400 }
-    );
+  const fields = { title, content, startDate, timelineId }
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({ fieldErrors, fields })
   }
 
   await updateEvent({
@@ -76,102 +99,102 @@ export const action: ActionFunction = async ({ request, params }) => {
     content,
     startDate,
     userId,
-    id: params.eventId,
-  });
+    id: eventId
+  })
 
-  return redirect(`/timeline/${params.timelineId}/events/${params.eventId}`);
-};
+  return redirect(`/timeline/${params.timelineId}/events/${params.eventId}`)
+}
 
 export default function EditEvent() {
-  const data = useLoaderData() as LoaderData;
-  const params = useParams();
+  const data = useLoaderData() as LoaderData
+  const params = useParams()
 
-  const actionData = useActionData() as ActionData;
-  const titleRef = React.useRef<HTMLInputElement>(null);
-  const contentRef = React.useRef<HTMLTextAreaElement>(null);
-  const startDateRef = React.useRef<HTMLInputElement>(null);
-  const timelineIdRef = React.useRef<HTMLInputElement>(null);
+  const actionData = useActionData() as ActionData
+  const titleRef = React.useRef<HTMLInputElement>(null)
+  const contentRef = React.useRef<HTMLTextAreaElement>(null)
+  const startDateRef = React.useRef<HTMLInputElement>(null)
+  const timelineIdRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
-      titleRef.current?.focus();
+      titleRef.current?.focus()
     } else if (actionData?.errors?.content) {
-      contentRef.current?.focus();
+      contentRef.current?.focus()
     } else if (actionData?.errors?.startDate) {
-      startDateRef.current?.focus();
+      startDateRef.current?.focus()
     }
-  }, [actionData]);
+  }, [actionData])
 
   return (
     <Form
-      method="post"
+      method='post'
       style={{
-        display: "flex",
-        flexDirection: "column",
+        display: 'flex',
+        flexDirection: 'column',
         gap: 8,
-        width: "100%",
+        width: '100%'
       }}
     >
       <div>
-        <label className="flex w-full flex-col gap-1">
+        <label className='flex w-full flex-col gap-1'>
           <span>Title: </span>
           <input
             defaultValue={data.event.title}
             ref={titleRef}
-            name="title"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+            name='title'
+            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={actionData?.errors?.title ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.title ? "title-error" : undefined
+              actionData?.errors?.title ? 'title-error' : undefined
             }
           />
         </label>
         {actionData?.errors?.title && (
-          <div className="pt-1 text-red-700" id="title-error">
+          <div className='pt-1 text-red-700' id='title-error'>
             {actionData.errors.title}
           </div>
         )}
       </div>
 
       <div>
-        <label className="flex w-full flex-col gap-1">
+        <label className='flex w-full flex-col gap-1'>
           <span>Content: </span>
           <textarea
             defaultValue={data.event.content}
             ref={contentRef}
-            name="content"
+            name='content'
             rows={4}
-            className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
+            className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
             aria-invalid={actionData?.errors?.content ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.content ? "body-error" : undefined
+              actionData?.errors?.content ? 'body-error' : undefined
             }
           />
         </label>
         {actionData?.errors?.content && (
-          <div className="pt-1 text-red-700" id="body-error">
+          <div className='pt-1 text-red-700' id='body-error'>
             {actionData.errors.content}
           </div>
         )}
       </div>
 
       <div>
-        <label className="flex w-full flex-col gap-1">
+        <label className='flex w-full flex-col gap-1'>
           <span>Start Date: </span>
           <input
             ref={startDateRef}
-            type="number"
+            type='number'
             defaultValue={data.event.startDate}
-            name="startDate"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+            name='startDate'
+            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={actionData?.errors?.startDate ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.startDate ? "body-error" : undefined
+              actionData?.errors?.startDate ? 'body-error' : undefined
             }
           />
         </label>
         {actionData?.errors?.startDate && (
-          <div className="pt-1 text-red-700" id="body-error">
+          <div className='pt-1 text-red-700' id='body-error'>
             {actionData.errors.startDate}
           </div>
         )}
@@ -180,23 +203,23 @@ export default function EditEvent() {
       <input
         hidden
         ref={timelineIdRef}
-        name="timelineId"
+        name='timelineId'
         defaultValue={params.timelineId}
-        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
+        className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
         aria-invalid={actionData?.errors?.timelineId ? true : undefined}
         aria-errormessage={
-          actionData?.errors?.timelineId ? "body-error" : undefined
+          actionData?.errors?.timelineId ? 'body-error' : undefined
         }
       />
 
-      <div className="text-right">
+      <div className='text-right'>
         <button
-          type="submit"
-          className="rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400"
+          type='submit'
+          className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
         >
           Save
         </button>
       </div>
     </Form>
-  );
+  )
 }

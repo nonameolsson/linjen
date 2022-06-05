@@ -23,7 +23,19 @@
     "validate": "run-p \"test -- --run\" lint typecheck test:e2e:run",
     "prepare": "husky install"
   },
-  "prettier": {},
+  "prettier": {
+    "arrowParens": "avoid",
+    "bracketSameLine": false,
+    "bracketSpacing": true,
+    "jsxSingleQuote": true,
+    "printWidth": 80,
+    "quoteProps": "as-needed",
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "useTabs": false
+  },
   "eslintIgnore": [
     "/node_modules",
     "/build",
