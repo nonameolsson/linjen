@@ -1,12 +1,19 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useLoaderData, useParams } from '@remix-run/react'
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useParams,
+  useTransition
+} from '@remix-run/react'
 import * as React from 'react'
 
 import { getEvent, updateEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 import invariant from 'tiny-invariant'
 import type { Event } from '@prisma/client'
+import EventCard from '~/components/event-card'
 
 type LoaderData = {
   event: Event
@@ -106,24 +113,40 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export default function EditEvent() {
-  const data = useLoaderData() as LoaderData
-  const params = useParams()
+  const data = useLoaderData<LoaderData | undefined>()
+  const transition = useTransition()
 
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const startDateRef = React.useRef<HTMLInputElement>(null)
-  const timelineIdRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    if (actionData?.errors?.title) {
+    if (actionData?.fieldErrors?.title) {
       titleRef.current?.focus()
-    } else if (actionData?.errors?.content) {
+    } else if (actionData?.fieldErrors?.content) {
       contentRef.current?.focus()
-    } else if (actionData?.errors?.startDate) {
+    } else if (actionData?.fieldErrors?.startDate) {
       startDateRef.current?.focus()
     }
   }, [actionData])
+
+  if (transition.submission) {
+    const title = transition.submission.formData.get('title')
+    const content = transition.submission.formData.get('content')
+    const startDate = transition.submission.formData.get('startDate')
+
+    if (
+      typeof title === 'string' &&
+      typeof content === 'string' &&
+      typeof startDate === 'string' &&
+      !validateEventTitle(title) &&
+      !validateEventContent(content) &&
+      !validateEventStartDate(startDate)
+    ) {
+      return <EventCard content={content} startDate={startDate} title={title} />
+    }
+  }
 
   return (
     <Form
@@ -139,19 +162,19 @@ export default function EditEvent() {
         <label className='flex w-full flex-col gap-1'>
           <span>Title: </span>
           <input
-            defaultValue={data.event.title}
+            defaultValue={data?.event.title}
             ref={titleRef}
             name='title'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
-            aria-invalid={actionData?.errors?.title ? true : undefined}
+            aria-invalid={actionData?.fieldErrors?.title ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.title ? 'title-error' : undefined
+              actionData?.fieldErrors?.title ? 'title-error' : undefined
             }
           />
         </label>
-        {actionData?.errors?.title && (
+        {actionData?.fieldErrors?.title && (
           <div className='pt-1 text-red-700' id='title-error'>
-            {actionData.errors.title}
+            {actionData?.fieldErrors?.title}
           </div>
         )}
       </div>
@@ -160,20 +183,20 @@ export default function EditEvent() {
         <label className='flex w-full flex-col gap-1'>
           <span>Content: </span>
           <textarea
-            defaultValue={data.event.content}
+            defaultValue={data?.event.content || ''}
             ref={contentRef}
             name='content'
             rows={4}
             className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
-            aria-invalid={actionData?.errors?.content ? true : undefined}
+            aria-invalid={actionData?.fieldErrors?.content ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.content ? 'body-error' : undefined
+              actionData?.fieldErrors?.content ? 'body-error' : undefined
             }
           />
         </label>
-        {actionData?.errors?.content && (
+        {actionData?.fieldErrors?.content && (
           <div className='pt-1 text-red-700' id='body-error'>
-            {actionData.errors.content}
+            {actionData?.fieldErrors?.content}
           </div>
         )}
       </div>
@@ -184,33 +207,21 @@ export default function EditEvent() {
           <input
             ref={startDateRef}
             type='number'
-            defaultValue={data.event.startDate}
+            defaultValue={data?.event.startDate}
             name='startDate'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
-            aria-invalid={actionData?.errors?.startDate ? true : undefined}
+            aria-invalid={actionData?.fieldErrors?.startDate ? true : undefined}
             aria-errormessage={
-              actionData?.errors?.startDate ? 'body-error' : undefined
+              actionData?.fieldErrors?.startDate ? 'body-error' : undefined
             }
           />
         </label>
-        {actionData?.errors?.startDate && (
+        {actionData?.fieldErrors?.startDate && (
           <div className='pt-1 text-red-700' id='body-error'>
-            {actionData.errors.startDate}
+            {actionData?.fieldErrors?.startDate}
           </div>
         )}
       </div>
-
-      <input
-        hidden
-        ref={timelineIdRef}
-        name='timelineId'
-        defaultValue={params.timelineId}
-        className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
-        aria-invalid={actionData?.errors?.timelineId ? true : undefined}
-        aria-errormessage={
-          actionData?.errors?.timelineId ? 'body-error' : undefined
-        }
-      />
 
       <div className='text-right'>
         <button
