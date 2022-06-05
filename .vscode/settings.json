@@ -1,3 +1,22 @@
 {
-    "prisma.fileWatcher": true
+  "prisma.fileWatcher": true,
+  "diffEditor.ignoreTrimWhitespace": false,
+  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll"],
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "eslint.packageManager": "yarn",
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "files.watcherExclude": {
+    "**/dist": true
+  },
+  "git.enableCommitSigning": true,
+  "javascript.format.enable": false,
+  "typescript.disableAutomaticTypeAcquisition": true,
+  "typescript.tsdk": "node_modules/typescript/lib"
 }

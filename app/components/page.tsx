@@ -23,7 +23,17 @@ const sidebarNavigation: SidebarNavigationItem[] = [
   { name: "People", to: "/people", icon: PhotographIcon, current: true },
 ];
 
-export function Page({ children, actions, description, title }: { children: React.ReactNode, actions?: JSX.Element,description?: string, title: string }): JSX.Element {
+export function Page({
+  children,
+  actions,
+  description,
+  title,
+}: {
+  children: React.ReactNode;
+  actions?: JSX.Element;
+  description?: string;
+  title: string;
+}): JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
@@ -39,7 +49,14 @@ export function Page({ children, actions, description, title }: { children: Reac
       />
 
       {/* Content area */}
-      <Content description={description} title={title} actions={actions} setMobileMenuOpen={setMobileMenuOpen}>{children}</Content>
+      <Content
+        description={description}
+        title={title}
+        actions={actions}
+        setMobileMenuOpen={setMobileMenuOpen}
+      >
+        {children}
+      </Content>
     </div>
   );
 }

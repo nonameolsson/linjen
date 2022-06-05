@@ -1,6 +1,7 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
 import { Form, useActionData, useTransition } from "@remix-run/react";
+import React from "react";
 
 import invariant from "tiny-invariant";
 import EventCard from "~/components/event-card";
@@ -66,7 +67,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const fieldErrors = {
     title: validateEventTitle(title),
     content: validateEventContent(content),
-    startDate: validateEventStartDate(startDate)
+    startDate: validateEventStartDate(startDate),
   };
 
   const fields = { title, content, startDate, timelineId };
@@ -86,8 +87,22 @@ export const action: ActionFunction = async ({ request, params }) => {
 };
 
 export default function NewEventPage() {
-  const actionData = useActionData<ActionData | undefined>();
-  const transition = useTransition()
+  const actionData = useActionData<ActionData | undefined>();
+  const transition = useTransition();
+
+  const titleRef = React.useRef<HTMLInputElement>(null);
+  const contentRef = React.useRef<HTMLTextAreaElement>(null);
+  const startDateRef = React.useRef<HTMLInputElement>(null);
+
+  React.useEffect(() => {
+    if (actionData?.fieldErrors?.title) {
+      titleRef.current?.focus();
+    } else if (actionData?.fieldErrors?.content) {
+      contentRef.current?.focus();
+    } else if (actionData?.fieldErrors?.startDate) {
+      startDateRef.current?.focus();
+    }
+  }, [actionData]);
 
   if (transition.submission) {
     const title = transition.submission.formData.get("title");
@@ -103,7 +118,7 @@ export default function NewEventPage() {
       !validateEventStartDate(startDate)
     ) {
       return (
-        <EventCard content={content} startDate={startDate} title={title} /> 
+        <EventCard content={content} startDate={startDate} title={title} />
       );
     }
   }
@@ -122,6 +137,7 @@ export default function NewEventPage() {
         <label className="flex w-full flex-col gap-1">
           <span>Title: </span>
           <input
+            ref={titleRef}
             defaultValue={actionData?.fields?.title}
             name="title"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
@@ -142,11 +158,14 @@ export default function NewEventPage() {
         <label className="flex w-full flex-col gap-1">
           <span>Content: </span>
           <textarea
+            ref={contentRef}
             defaultValue={actionData?.fields?.content}
             name="content"
             rows={4}
             className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
-            aria-invalid={Boolean(actionData?.fieldErrors?.content) || undefined}
+            aria-invalid={
+              Boolean(actionData?.fieldErrors?.content) || undefined
+            }
             aria-errormessage={
               actionData?.fieldErrors?.content ? "content-error" : undefined
             }
@@ -163,9 +182,12 @@ export default function NewEventPage() {
         <label className="flex w-full flex-col gap-1">
           <span>Year: </span>
           <input
+            ref={startDateRef}
             name="startDate"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={Boolean(actionData?.fieldErrors?.startDate) || undefined}
+            aria-invalid={
+              Boolean(actionData?.fieldErrors?.startDate) || undefined
+            }
             aria-errormessage={
               actionData?.fieldErrors?.startDate ? "startdate-error" : undefined
             }
@@ -177,19 +199,6 @@ export default function NewEventPage() {
           </div>
         )}
       </div>
-
-      {/* 
-      <input
-        hidden
-        ref={timelineIdRef}
-        name="timelineId"
-        defaultValue={params.timelineId}
-        className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-        aria-invalid={actionData?.errors?.timelineId ? true : undefined}
-        aria-errormessage={
-          actionData?.errors?.timelineId ? "body-error" : undefined
-        }
-      /> */}
 
       <div className="text-right">
         <button

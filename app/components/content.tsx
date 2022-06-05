@@ -5,11 +5,11 @@ export function Content({
   actions,
   description,
   setMobileMenuOpen,
-  title
+  title,
 }: {
   children?: React.ReactNode;
-  actions?: JSX.Element,
-  description?: string
+  actions?: JSX.Element;
+  description?: string;
   setMobileMenuOpen: (open: boolean) => void;
   title: string;
 }): JSX.Element {
@@ -27,7 +27,7 @@ export function Content({
             <h1 id="primary-heading" className="sr-only">
               {title}
             </h1>
-            
+
             <div className="flex justify-between">
               <div className="flex flex-col">
                 <h1 className="text-3xl font-bold">{title}</h1>
@@ -35,9 +35,7 @@ export function Content({
               </div>
               <div className="flex items-start">{actions}</div>
             </div>
-            <div className="mt-4">
-              {children}
-            </div>
+            <div className="mt-4">{children}</div>
           </section>
         </main>
       </div>

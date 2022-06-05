@@ -57,7 +57,9 @@ export default function TimelinesPage() {
                   <div className="flex-1 truncate px-4 py-2 text-sm">
                     {timeline.title}
 
-                    <p className="text-gray-500">{timeline._count.Event} events</p>
+                    <p className="text-gray-500">
+                      {timeline._count.Event} events
+                    </p>
                   </div>
                 </div>
               </li>

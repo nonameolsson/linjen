@@ -11,7 +11,11 @@ export function getEvent({ id }: Pick<Event, "id">) {
   });
 }
 
-export function getEventListItems({ timelineId }: { timelineId: Timeline["id"] }) {
+export function getEventListItems({
+  timelineId,
+}: {
+  timelineId: Timeline["id"];
+}) {
   return prisma.event.findMany({
     where: { timelineId },
     // select: { id: true, title: true },
@@ -35,8 +39,8 @@ export function createEvent({
       startDate,
       timeline: {
         connect: {
-          id: timelineId
-        }
+          id: timelineId,
+        },
       },
       user: {
         connect: {
@@ -58,7 +62,7 @@ export function updateEvent({
 }) {
   return prisma.event.update({
     where: {
-      id
+      id,
     },
     data: {
       title,
