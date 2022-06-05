@@ -59,14 +59,13 @@ export default function EventsTab() {
                                 <p className="mt-2 flex items-center text-sm text-gray-500">
                                   <span className="truncate">
                                     {event.startDate}
-                                    {event.endDate}
                                   </span>
                                 </p>
                               </div>
                               <div className="hidden md:block">
                                 <div>
                                   <p className="text-sm text-gray-900">
-                                    {event.description}
+                                    {event.content}
                                   </p>
                                 </div>
                               </div>

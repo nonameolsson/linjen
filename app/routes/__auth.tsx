@@ -1,10 +1,7 @@
 import { Outlet } from "@remix-run/react";
 
-export default function Auth() {
+export default function AuthPage() {
   return (
-    <>
-      <div>Auth</div>
-      <Outlet />
-    </>
+    <Outlet />
   );
 }

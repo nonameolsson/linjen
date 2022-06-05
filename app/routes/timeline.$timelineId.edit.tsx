@@ -67,7 +67,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function EditTimelinePage() {
-  const data = useLoaderData() as LoaderData;
+  const data = useLoaderData<LoaderData>();
   const actionData = useActionData() as ActionData;
   const titleRef = React.useRef<HTMLInputElement>(null);
   const descriptionRef = React.useRef<HTMLTextAreaElement>(null);
@@ -104,7 +104,7 @@ export default function EditTimelinePage() {
               id="title"
               ref={titleRef}
               name="title"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
               aria-invalid={actionData?.errors?.title ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.title ? "title-error" : undefined

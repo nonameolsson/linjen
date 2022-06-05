@@ -77,8 +77,7 @@ export default function NewTimelinePage() {
               id="title"
               ref={titleRef}
               name="title"
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-
+              className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose focus:border-indigo-500 focus:ring-indigo-500"
               aria-invalid={actionData?.errors?.title ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.title ? "title-error" : undefined
@@ -114,7 +113,7 @@ export default function NewTimelinePage() {
               rows={4}
               name="description"
               ref={descriptionRef}
-              className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+              className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
               defaultValue={""}
               aria-invalid={actionData?.errors?.description ? true : undefined}
               aria-errormessage={

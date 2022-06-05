@@ -7,6 +7,7 @@ export type { Event } from "@prisma/client";
 export function getEvent({ id }: Pick<Event, "id">) {
   return prisma.event.findFirst({
     where: { id },
+    // select: { locations: true, id: true, title: true, content: true }
   });
 }
 
@@ -14,25 +15,23 @@ export function getEventListItems({ timelineId }: { timelineId: Timeline["id"] }
   return prisma.event.findMany({
     where: { timelineId },
     // select: { id: true, title: true },
-    orderBy: { updatedAt: "desc" },
+    orderBy: { startDate: "desc" },
   });
 }
 
 export function createEvent({
   content,
-  endDate,
   startDate,
   timelineId,
   title,
   userId,
-}: Pick<Event, "content" | "startDate" | "endDate" | "timelineId" | "title"> & {
+}: Pick<Event, "content" | "startDate" | "timelineId" | "title"> & {
   userId: User["id"];
 }) {
   return prisma.event.create({
     data: {
       title,
       content,
-      endDate,
       startDate,
       timeline: {
         connect: {
@@ -51,11 +50,10 @@ export function createEvent({
 export function updateEvent({
   id,
   content,
-  endDate,
   startDate,
   title,
   userId,
-}: Pick<Event, "content" | "id" | "startDate" | "endDate" | "title"> & {
+}: Pick<Event, "content" | "id" | "startDate" | "title"> & {
   userId: User["id"];
 }) {
   return prisma.event.update({
@@ -65,7 +63,6 @@ export function updateEvent({
     data: {
       title,
       content,
-      endDate,
       startDate,
     },
   });

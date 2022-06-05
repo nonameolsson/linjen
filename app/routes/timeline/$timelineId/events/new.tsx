@@ -1,71 +1,82 @@
 import type { ActionFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useParams } from "@remix-run/react";
-import * as React from "react";
+import { Form, useActionData, useTransition } from "@remix-run/react";
+
+import invariant from "tiny-invariant";
+import EventCard from "~/components/event-card";
 
 import { createEvent } from "~/models/event.server";
 import { requireUserId } from "~/session.server";
 
+function validateEventTitle(title: string) {
+  if (title.length === 0) {
+    return "Title is required";
+  }
+}
+
+function validateEventContent(content: string) {
+  if (typeof content !== "string") {
+    return "Content must be a string";
+  }
+}
+
+function validateEventStartDate(startDate: string) {
+  if (startDate.length === 0) {
+    return "Start date is required";
+  }
+}
+
 type ActionData = {
-  errors?: {
-    title?: string;
-    content?: string;
-    startDate?: string;
-    endDate?: string;
-    timelineId?: string;
+  formError?: string;
+  fieldErrors?: {
+    title: string | undefined;
+    content: string | undefined;
+    startDate: string | undefined;
+  };
+  fields?: {
+    title: string;
+    content: string;
+    startDate: string;
   };
 };
 
-export const action: ActionFunction = async ({ request }) => {
-  const userId = await requireUserId(request);
+const badRequest = (data: ActionData) => json(data, { status: 400 });
 
+export const action: ActionFunction = async ({ request, params }) => {
+  const userId = await requireUserId(request);
   const formData = await request.formData();
+
   const title = formData.get("title");
   const content = formData.get("content");
   const startDate = formData.get("startDate");
-  const endDate = formData.get("endDate");
-  const timelineId = formData.get("timelineId");
-  
 
-  if (typeof title !== "string" || title.length === 0) {
-    return json<ActionData>(
-      { errors: { title: "Title is required" } },
-      { status: 400 }
-    );
+  const timelineId = params.timelineId;
+  invariant(timelineId, "Timeline ID is required");
+
+  if (
+    typeof title !== "string" ||
+    typeof content !== "string" ||
+    typeof startDate !== "string"
+  ) {
+    return badRequest({
+      formError: `Form not submitted correctly.`,
+    });
   }
 
-  if (typeof content !== "string" || content.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "Content is required" } },
-      { status: 400 }
-    );
-  }
+  const fieldErrors = {
+    title: validateEventTitle(title),
+    content: validateEventContent(content),
+    startDate: validateEventStartDate(startDate)
+  };
 
-  if (typeof startDate !== "string" || startDate.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "Start Date is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (typeof endDate !== "string" || endDate.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "End Date is required" } },
-      { status: 400 }
-    );
-  }
-
-  if (typeof timelineId !== "string" || timelineId.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "Timeline ID is required" } },
-      { status: 400 }
-    );
+  const fields = { title, content, startDate, timelineId };
+  if (Object.values(fieldErrors).some(Boolean)) {
+    return badRequest({ fieldErrors, fields });
   }
 
   const event = await createEvent({
     title,
     content,
-    endDate,
     startDate,
     timelineId,
     userId,
@@ -75,28 +86,27 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function NewEventPage() {
-  const params = useParams();
+  const actionData = useActionData<ActionData | undefined>();
+  const transition = useTransition()
 
-  const actionData = useActionData() as ActionData;
-  const titleRef = React.useRef<HTMLInputElement>(null);
-  const contentRef = React.useRef<HTMLTextAreaElement>(null);
-  const startDateRef = React.useRef<HTMLInputElement>(null);
-  const endDateRef = React.useRef<HTMLInputElement>(null);
-  const timelineIdRef = React.useRef<HTMLInputElement>(null);
+  if (transition.submission) {
+    const title = transition.submission.formData.get("title");
+    const content = transition.submission.formData.get("content");
+    const startDate = transition.submission.formData.get("startDate");
 
-  React.useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus();
-    } else if (actionData?.errors?.content) {
-      contentRef.current?.focus();
-    
-    } else if (actionData?.errors?.startDate) {
-      startDateRef.current?.focus();
-    
-    } else if (actionData?.errors?.endDate) {
-      endDateRef.current?.focus();
+    if (
+      typeof title === "string" &&
+      typeof content === "string" &&
+      typeof startDate === "string" &&
+      !validateEventTitle(title) &&
+      !validateEventContent(content) &&
+      !validateEventStartDate(startDate)
+    ) {
+      return (
+        <EventCard content={content} startDate={startDate} title={title} /> 
+      );
     }
-  }, [actionData]);
+  }
 
   return (
     <Form
@@ -112,18 +122,18 @@ export default function NewEventPage() {
         <label className="flex w-full flex-col gap-1">
           <span>Title: </span>
           <input
-            ref={titleRef}
+            defaultValue={actionData?.fields?.title}
             name="title"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.title ? true : undefined}
+            aria-invalid={Boolean(actionData?.fieldErrors?.title) || undefined}
             aria-errormessage={
-              actionData?.errors?.title ? "title-error" : undefined
+              actionData?.fieldErrors?.title ? "title-error" : undefined
             }
           />
         </label>
-        {actionData?.errors?.title && (
+        {actionData?.fieldErrors?.title && (
           <div className="pt-1 text-red-700" id="title-error">
-            {actionData.errors.title}
+            {actionData.fieldErrors.title}
           </div>
         )}
       </div>
@@ -132,63 +142,43 @@ export default function NewEventPage() {
         <label className="flex w-full flex-col gap-1">
           <span>Content: </span>
           <textarea
-            ref={contentRef}
+            defaultValue={actionData?.fields?.content}
             name="content"
-            rows={8}
+            rows={4}
             className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
-            aria-invalid={actionData?.errors?.content ? true : undefined}
+            aria-invalid={Boolean(actionData?.fieldErrors?.content) || undefined}
             aria-errormessage={
-              actionData?.errors?.content ? "body-error" : undefined
+              actionData?.fieldErrors?.content ? "content-error" : undefined
             }
           />
         </label>
-        {actionData?.errors?.content && (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.content}
+        {actionData?.fieldErrors?.content && (
+          <div className="pt-1 text-red-700" id="content-error">
+            {actionData.fieldErrors.content}
           </div>
         )}
       </div>
 
       <div>
         <label className="flex w-full flex-col gap-1">
-          <span>Start Date: </span>
+          <span>Year: </span>
           <input
-            ref={startDateRef}
             name="startDate"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.startDate ? true : undefined}
+            aria-invalid={Boolean(actionData?.fieldErrors?.startDate) || undefined}
             aria-errormessage={
-              actionData?.errors?.startDate ? "body-error" : undefined
+              actionData?.fieldErrors?.startDate ? "startdate-error" : undefined
             }
           />
         </label>
-        {actionData?.errors?.startDate && (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.startDate}
+        {actionData?.fieldErrors?.startDate && (
+          <div className="pt-1 text-red-700" id="startdate-error">
+            {actionData.fieldErrors.startDate}
           </div>
         )}
       </div>
 
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>End Date: </span>
-          <input
-            ref={endDateRef}
-            name="endDate"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.endDate ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.endDate ? "body-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.endDate && (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.endDate}
-          </div>
-        )}
-      </div>
-
+      {/* 
       <input
         hidden
         ref={timelineIdRef}
@@ -199,7 +189,7 @@ export default function NewEventPage() {
         aria-errormessage={
           actionData?.errors?.timelineId ? "body-error" : undefined
         }
-      />
+      /> */}
 
       <div className="text-right">
         <button

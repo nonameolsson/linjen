@@ -1,9 +1,14 @@
 import type { ActionFunction, LoaderFunction } from "@remix-run/node";
 import { json, redirect } from "@remix-run/node";
-import { Form, useActionData, useLoaderData, useParams } from "@remix-run/react";
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useParams,
+} from "@remix-run/react";
 import * as React from "react";
 
-import { createEvent, getEvent, updateEvent } from "~/models/event.server";
+import { getEvent, updateEvent } from "~/models/event.server";
 import { requireUserId } from "~/session.server";
 import invariant from "tiny-invariant";
 import type { Event } from "@prisma/client";
@@ -29,29 +34,21 @@ type ActionData = {
   errors?: {
     title?: string;
     content?: string;
-    startDate?: string;
-    endDate?: string;
+    startDate?: number;
     timelineId?: string;
   };
 };
-
-type Params = {
-  timelineId: string
-  eventId: string
-}
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request);
 
   invariant(params.timelineId, "timelineId not found");
   invariant(params.eventId, "eventId not found");
-  
 
   const formData = await request.formData();
   const title = formData.get("title");
   const content = formData.get("content");
   const startDate = formData.get("startDate");
-  const endDate = formData.get("endDate");
 
   if (typeof title !== "string" || title.length === 0) {
     return json<ActionData>(
@@ -60,9 +57,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     );
   }
 
-  if (typeof content !== "string" || content.length === 0) {
+  if (typeof content !== "string") {
     return json<ActionData>(
-      { errors: { content: "Content is required" } },
+      { errors: { content: "Content must be a string" } },
       { status: 400 }
     );
   }
@@ -74,17 +71,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     );
   }
 
-  if (typeof endDate !== "string" || endDate.length === 0) {
-    return json<ActionData>(
-      { errors: { content: "End Date is required" } },
-      { status: 400 }
-    );
-  }
-
   await updateEvent({
     title,
     content,
-    endDate,
     startDate,
     userId,
     id: params.eventId,
@@ -101,7 +90,6 @@ export default function EditEvent() {
   const titleRef = React.useRef<HTMLInputElement>(null);
   const contentRef = React.useRef<HTMLTextAreaElement>(null);
   const startDateRef = React.useRef<HTMLInputElement>(null);
-  const endDateRef = React.useRef<HTMLInputElement>(null);
   const timelineIdRef = React.useRef<HTMLInputElement>(null);
 
   React.useEffect(() => {
@@ -111,8 +99,6 @@ export default function EditEvent() {
       contentRef.current?.focus();
     } else if (actionData?.errors?.startDate) {
       startDateRef.current?.focus();
-    } else if (actionData?.errors?.endDate) {
-      endDateRef.current?.focus();
     }
   }, [actionData]);
 
@@ -151,10 +137,10 @@ export default function EditEvent() {
         <label className="flex w-full flex-col gap-1">
           <span>Content: </span>
           <textarea
-          defaultValue={data.event.content}
+            defaultValue={data.event.content}
             ref={contentRef}
             name="content"
-            rows={8}
+            rows={4}
             className="w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6"
             aria-invalid={actionData?.errors?.content ? true : undefined}
             aria-errormessage={
@@ -174,6 +160,7 @@ export default function EditEvent() {
           <span>Start Date: </span>
           <input
             ref={startDateRef}
+            type="number"
             defaultValue={data.event.startDate}
             name="startDate"
             className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
@@ -186,27 +173,6 @@ export default function EditEvent() {
         {actionData?.errors?.startDate && (
           <div className="pt-1 text-red-700" id="body-error">
             {actionData.errors.startDate}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label className="flex w-full flex-col gap-1">
-          <span>End Date: </span>
-          <input
-          defaultValue={data.event.endDate}
-            ref={endDateRef}
-            name="endDate"
-            className="flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose"
-            aria-invalid={actionData?.errors?.endDate ? true : undefined}
-            aria-errormessage={
-              actionData?.errors?.endDate ? "body-error" : undefined
-            }
-          />
-        </label>
-        {actionData?.errors?.endDate && (
-          <div className="pt-1 text-red-700" id="body-error">
-            {actionData.errors.endDate}
           </div>
         )}
       </div>
