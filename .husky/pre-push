@@ -1,4 +1,8 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run validate
+npm run lint
+npm run typecheck
+trunk check
+npm run test -- --run
+
