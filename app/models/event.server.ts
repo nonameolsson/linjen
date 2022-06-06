@@ -1,26 +1,26 @@
-import type { Event, Timeline, User } from "@prisma/client";
+import type { Event, Timeline, User } from '@prisma/client'
 
-import { prisma } from "~/db.server";
+import { prisma } from '~/db.server'
 
-export type { Event } from "@prisma/client";
+export type { Event } from '@prisma/client'
 
-export function getEvent({ id }: Pick<Event, "id">) {
+export function getEvent({ id }: Pick<Event, 'id'>) {
   return prisma.event.findFirst({
-    where: { id },
+    where: { id }
     // select: { locations: true, id: true, title: true, content: true }
-  });
+  })
 }
 
 export function getEventListItems({
-  timelineId,
+  timelineId
 }: {
-  timelineId: Timeline["id"];
+  timelineId: Timeline['id']
 }) {
   return prisma.event.findMany({
     where: { timelineId },
     // select: { id: true, title: true },
-    orderBy: { startDate: "desc" },
-  });
+    orderBy: { startDate: 'desc' }
+  })
 }
 
 export function createEvent({
@@ -28,9 +28,9 @@ export function createEvent({
   startDate,
   timelineId,
   title,
-  userId,
-}: Pick<Event, "content" | "startDate" | "timelineId" | "title"> & {
-  userId: User["id"];
+  userId
+}: Pick<Event, 'content' | 'startDate' | 'timelineId' | 'title'> & {
+  userId: User['id']
 }) {
   return prisma.event.create({
     data: {
@@ -39,16 +39,16 @@ export function createEvent({
       startDate,
       timeline: {
         connect: {
-          id: timelineId,
-        },
+          id: timelineId
+        }
       },
       user: {
         connect: {
-          id: userId,
-        },
-      },
-    },
-  });
+          id: userId
+        }
+      }
+    }
+  })
 }
 
 export function updateEvent({
@@ -56,27 +56,27 @@ export function updateEvent({
   content,
   startDate,
   title,
-  userId,
-}: Pick<Event, "content" | "id" | "startDate" | "title"> & {
-  userId: User["id"];
+  userId
+}: Pick<Event, 'content' | 'id' | 'startDate' | 'title'> & {
+  userId: User['id']
 }) {
   return prisma.event.update({
     where: {
-      id,
+      id
     },
     data: {
       title,
       content,
-      startDate,
-    },
-  });
+      startDate
+    }
+  })
 }
 
 export function deleteEvent({
   id,
-  userId,
-}: Pick<Event, "id"> & { userId: User["id"] }) {
+  userId
+}: Pick<Event, 'id'> & { userId: User['id'] }) {
   return prisma.event.deleteMany({
-    where: { id, userId },
-  });
+    where: { id, userId }
+  })
 }

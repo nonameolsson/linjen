@@ -1,43 +1,43 @@
-import type { User, Timeline } from "@prisma/client";
-import { title } from "process";
+import type { User, Timeline } from '@prisma/client'
+import { title } from 'process'
 
-import { prisma } from "~/db.server";
+import { prisma } from '~/db.server'
 
-export type { Timeline } from "@prisma/client";
+export type { Timeline } from '@prisma/client'
 
 export function getTimeline({
   id,
-  userId,
-}: Pick<Timeline, "id"> & {
-  userId: User["id"];
+  userId
+}: Pick<Timeline, 'id'> & {
+  userId: User['id']
 }) {
   return prisma.timeline.findFirst({
-    where: { id, userId },
-  });
+    where: { id, userId }
+  })
 }
 
-export function getTimelineListItems({ userId }: { userId: User["id"] }) {
+export function getTimelineListItems({ userId }: { userId: User['id'] }) {
   const timelines = prisma.timeline.findMany({
     where: { userId },
 
     include: {
       _count: {
-        select: { Event: true },
-      },
+        select: { Event: true }
+      }
     },
 
-    orderBy: { updatedAt: "desc" },
-  });
+    orderBy: { updatedAt: 'desc' }
+  })
 
-  return timelines;
+  return timelines
 }
 
 export function createTimeline({
   description,
   title,
-  userId,
-}: Pick<Timeline, "description" | "title"> & {
-  userId: User["id"];
+  userId
+}: Pick<Timeline, 'description' | 'title'> & {
+  userId: User['id']
 }) {
   return prisma.timeline.create({
     data: {
@@ -45,37 +45,37 @@ export function createTimeline({
       description,
       user: {
         connect: {
-          id: userId,
-        },
-      },
-    },
-  });
+          id: userId
+        }
+      }
+    }
+  })
 }
 
 export function updateTimeline({
   id,
   description,
   title,
-  userId, //TODO: Verify that the current user is the owner of the timeline
-}: Pick<Timeline, "id" | "description" | "title"> & {
-  userId: User["id"];
+  userId //TODO: Verify that the current user is the owner of the timeline
+}: Pick<Timeline, 'id' | 'description' | 'title'> & {
+  userId: User['id']
 }) {
   return prisma.timeline.update({
     where: {
-      id,
+      id
     },
     data: {
       description,
-      title,
-    },
-  });
+      title
+    }
+  })
 }
 
 export function deleteTimeline({
   id,
-  userId,
-}: Pick<Timeline, "id"> & { userId: User["id"] }) {
+  userId
+}: Pick<Timeline, 'id'> & { userId: User['id'] }) {
   return prisma.timeline.deleteMany({
-    where: { id, userId },
-  });
+    where: { id, userId }
+  })
 }

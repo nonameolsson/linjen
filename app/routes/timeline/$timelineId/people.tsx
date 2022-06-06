@@ -1,3 +1,3 @@
 export default function PeopleTab() {
-  return <div>People</div>;
+  return <div>People</div>
 }
