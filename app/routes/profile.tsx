@@ -1,8 +1,8 @@
-import { Page } from "~/components/page";
-import { useUser } from "~/utils";
+import { Page } from '~/components/page'
+import { useUser } from '~/utils'
 
 export default function NotesPage() {
-  const user = useUser();
+  const user = useUser()
 
-  return <Page>{user.email}</Page>;
+  return <Page title='Profile'>{user.email}</Page>
 }
