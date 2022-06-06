@@ -1,9 +1,4 @@
-import {
-  CheckCircleIcon,
-  ChevronRightIcon,
-  MailIcon,
-  PlusIcon
-} from '@heroicons/react/outline'
+import { ChevronRightIcon, PlusIcon } from '@heroicons/react/outline'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'

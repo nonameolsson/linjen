@@ -1,7 +1,6 @@
-import { Location } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, Link, Outlet, useCatch, useLoaderData } from '@remix-run/react'
+import { useCatch, useLoaderData } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import EventCard from '~/components/event-card'
 

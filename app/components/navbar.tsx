@@ -1,8 +1,8 @@
 import { Fragment } from 'react'
 import { SearchIcon } from '@heroicons/react/solid'
-import { MenuAlt2Icon, PlusSmIcon } from '@heroicons/react/outline'
+import { MenuAlt2Icon } from '@heroicons/react/outline'
 import { Menu, Transition } from '@headlessui/react'
-import { Form, Link, NavLink } from '@remix-run/react'
+import { Form, NavLink } from '@remix-run/react'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')

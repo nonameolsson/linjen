@@ -1,5 +1,4 @@
 import type { User, Timeline } from '@prisma/client'
-import { title } from 'process'
 
 import { prisma } from '~/db.server'
 
@@ -55,9 +54,9 @@ export function createTimeline({
 export function updateTimeline({
   id,
   description,
-  title,
-  userId //TODO: Verify that the current user is the owner of the timeline
-}: Pick<Timeline, 'id' | 'description' | 'title'> & {
+  title
+}: // userId //TODO: Verify that the current user is the owner of the timeline
+Pick<Timeline, 'id' | 'description' | 'title'> & {
   userId: User['id']
 }) {
   return prisma.timeline.update({

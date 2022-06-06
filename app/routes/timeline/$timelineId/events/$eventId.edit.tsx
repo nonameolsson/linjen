@@ -4,7 +4,6 @@ import {
   Form,
   useActionData,
   useLoaderData,
-  useParams,
   useTransition
 } from '@remix-run/react'
 import * as React from 'react'
