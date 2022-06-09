@@ -8,7 +8,10 @@ export default function EventCard({ content, startDate, title }: Props) {
     <div className='bg-white p-4'>
       <h3 className='mb-4 text-2xl font-bold'>Title: {title}</h3>
       <p>Content: {content}</p>
-      <p>Year: {startDate}</p>
+      <p>
+        Start Date:{' '}
+        {new Intl.DateTimeFormat('sv-SE').format(new Date(startDate))}
+      </p>
 
       <hr className='my-4' />
 

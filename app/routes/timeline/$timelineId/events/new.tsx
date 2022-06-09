@@ -78,7 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const event = await createEvent({
     title,
     content,
-    startDate,
+    startDate: new Date(startDate),
     timelineId,
     userId
   })
@@ -178,9 +178,10 @@ export default function NewEventPage() {
 
       <div>
         <label className='flex w-full flex-col gap-1'>
-          <span>Year: </span>
+          <span>Start Date: </span>
           <input
             ref={startDateRef}
+            type='date'
             name='startDate'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={

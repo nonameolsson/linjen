@@ -53,7 +53,9 @@ export default function EventsTab() {
                                 </p>
                                 <p className='mt-2 flex items-center text-sm text-gray-500'>
                                   <span className='truncate'>
-                                    {event.startDate}
+                                    {new Intl.DateTimeFormat('sv-SE').format(
+                                      new Date(event.startDate)
+                                    )}
                                   </span>
                                 </p>
                               </div>

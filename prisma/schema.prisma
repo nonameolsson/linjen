@@ -62,7 +62,7 @@ model Event {
   timeline   Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   timelineId String
 
-  startDate String
+  startDate  DateTime @default(now())
   // endDate   String?
 
   createdAt DateTime @default(now())

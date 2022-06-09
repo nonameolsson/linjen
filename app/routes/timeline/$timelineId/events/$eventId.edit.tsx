@@ -103,7 +103,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   await updateEvent({
     title,
     content,
-    startDate,
+    startDate: new Date(startDate),
     userId,
     id: eventId
   })
@@ -112,7 +112,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export default function EditEvent() {
-  const data = useLoaderData<LoaderData | undefined>()
+  const data = useLoaderData<LoaderData>()
   const transition = useTransition()
 
   const actionData = useActionData() as ActionData
@@ -143,7 +143,13 @@ export default function EditEvent() {
       !validateEventContent(content) &&
       !validateEventStartDate(startDate)
     ) {
-      return <EventCard content={content} startDate={startDate} title={title} />
+      return (
+        <EventCard
+          content={content}
+          startDate={new Date(startDate).toISOString()}
+          title={title}
+        />
+      )
     }
   }
 
@@ -200,13 +206,19 @@ export default function EditEvent() {
         )}
       </div>
 
+      {console.log(
+        new Intl.DateTimeFormat('sv-SV').format(new Date(data.event.startDate))
+      )}
+
       <div>
         <label className='flex w-full flex-col gap-1'>
           <span>Start Date: </span>
           <input
             ref={startDateRef}
-            type='number'
-            defaultValue={data?.event.startDate}
+            type='date'
+            defaultValue={new Intl.DateTimeFormat('sv-SV').format(
+              new Date(data.event.startDate)
+            )}
             name='startDate'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={actionData?.fieldErrors?.startDate ? true : undefined}
