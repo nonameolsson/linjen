@@ -146,7 +146,7 @@ export default function EditEvent() {
       return (
         <EventCard
           content={content}
-          startDate={new Date(startDate).toISOString()}
+          startDate={new Date(startDate)}
           title={title}
         />
       )
@@ -167,7 +167,7 @@ export default function EditEvent() {
         <label className='flex w-full flex-col gap-1'>
           <span>Title: </span>
           <input
-            defaultValue={data?.event.title}
+            defaultValue={data.event.title}
             ref={titleRef}
             name='title'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
@@ -188,7 +188,7 @@ export default function EditEvent() {
         <label className='flex w-full flex-col gap-1'>
           <span>Content: </span>
           <textarea
-            defaultValue={data?.event.content || ''}
+            defaultValue={data.event.content || ''}
             ref={contentRef}
             name='content'
             rows={4}

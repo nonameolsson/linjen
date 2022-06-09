@@ -135,6 +135,7 @@ export default function NewEventPage() {
         <label className='flex w-full flex-col gap-1'>
           <span>Title: </span>
           <input
+            autoFocus
             ref={titleRef}
             defaultValue={actionData?.fields?.title}
             name='title'
@@ -182,6 +183,7 @@ export default function NewEventPage() {
           <input
             ref={startDateRef}
             type='date'
+            defaultValue={new Intl.DateTimeFormat('sv-SE').format(new Date())}
             name='startDate'
             className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={
