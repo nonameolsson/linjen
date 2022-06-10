@@ -2,10 +2,8 @@ import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useTransition } from '@remix-run/react'
 import React from 'react'
-
 import invariant from 'tiny-invariant'
 import EventCard from '~/components/event-card'
-
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
@@ -117,7 +115,13 @@ export default function NewEventPage() {
       !validateEventContent(content) &&
       !validateEventStartDate(startDate)
     ) {
-      return <EventCard content={content} startDate={startDate} title={title} />
+      return (
+        <EventCard
+          content={content}
+          startDate={new Date(startDate)}
+          title={title}
+        />
+      )
     }
   }
 

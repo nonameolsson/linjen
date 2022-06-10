@@ -2,7 +2,7 @@ import type { Event } from '@prisma/client'
 import { Link } from '@remix-run/react'
 
 interface Props extends Pick<Event, 'startDate' | 'content' | 'title'> {
-  onDeleteClick: () => void
+  onDeleteClick?: () => void
 }
 
 export default function EventCard({

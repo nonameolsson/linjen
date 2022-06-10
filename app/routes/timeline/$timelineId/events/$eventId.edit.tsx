@@ -1,3 +1,4 @@
+import type { Event } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -7,12 +8,10 @@ import {
   useTransition
 } from '@remix-run/react'
 import * as React from 'react'
-
+import invariant from 'tiny-invariant'
+import EventCard from '~/components/event-card'
 import { getEvent, updateEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
-import invariant from 'tiny-invariant'
-import type { Event } from '@prisma/client'
-import EventCard from '~/components/event-card'
 
 type LoaderData = {
   event: Event
@@ -164,13 +163,13 @@ export default function EditEvent() {
       }}
     >
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Title: </span>
           <input
             defaultValue={data.event.title}
             ref={titleRef}
             name='title'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.title ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.title ? 'title-error' : undefined
@@ -185,14 +184,14 @@ export default function EditEvent() {
       </div>
 
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Content: </span>
           <textarea
             defaultValue={data.event.content || ''}
             ref={contentRef}
             name='content'
             rows={4}
-            className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
+            className='flex-1 py-2 px-3 w-full text-lg leading-6 rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.content ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.content ? 'body-error' : undefined
@@ -211,7 +210,7 @@ export default function EditEvent() {
       )}
 
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Start Date: </span>
           <input
             ref={startDateRef}
@@ -220,7 +219,7 @@ export default function EditEvent() {
               new Date(data.event.startDate)
             )}
             name='startDate'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.startDate ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.startDate ? 'body-error' : undefined
@@ -237,7 +236,7 @@ export default function EditEvent() {
       <div className='text-right'>
         <button
           type='submit'
-          className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
+          className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
         >
           Save
         </button>
