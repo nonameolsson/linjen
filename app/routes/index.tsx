@@ -31,7 +31,7 @@ export default function Index() {
                 {user ? (
                   <Link
                     to='/timelines'
-                    className='flex items-center justify-center rounded-md border border-transparent bg-white py-3 px-4 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8'
+                    className='flex justify-center items-center py-3 px-4 text-base font-medium text-yellow-700 bg-white hover:bg-yellow-50 rounded-md border border-transparent shadow-sm sm:px-8'
                   >
                     View Timelines for {user.email}
                   </Link>
@@ -39,13 +39,13 @@ export default function Index() {
                   <div className='space-y-4 sm:mx-auto sm:inline-grid sm:grid-cols-2 sm:gap-5 sm:space-y-0'>
                     <Link
                       to='/join'
-                      className='flex items-center justify-center rounded-md border border-transparent bg-white py-3 px-4 text-base font-medium text-yellow-700 shadow-sm hover:bg-yellow-50 sm:px-8'
+                      className='flex justify-center items-center py-3 px-4 text-base font-medium text-yellow-700 bg-white hover:bg-yellow-50 rounded-md border border-transparent shadow-sm sm:px-8'
                     >
                       Sign up
                     </Link>
                     <Link
                       to='/login'
-                      className='flex items-center justify-center rounded-md bg-yellow-500 py-3 px-4 font-medium text-white hover:bg-yellow-600  '
+                      className='flex justify-center items-center py-3 px-4 font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-md  '
                     >
                       Log In
                     </Link>

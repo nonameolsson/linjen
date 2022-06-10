@@ -1,12 +1,11 @@
-import { useState } from 'react'
 import { ChevronRightIcon, PlusIcon } from '@heroicons/react/outline'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
+import type { Event } from '~/models/event.server'
 import { getEventListItems } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
-import type { Event } from '~/models/event.server'
 
 type LoaderData = {
   events: Event[]
@@ -33,9 +32,9 @@ export default function EventsTab() {
             <div className='flex justify-between'>
               <Link
                 to='new'
-                className='flex items-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800'
+                className='flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
               >
-                <PlusIcon className='mr-3 -ml-1 h-5 w-5' aria-hidden='true' />
+                <PlusIcon className='mr-3 -ml-1 w-5 h-5' aria-hidden='true' />
                 Add Event
               </Link>
             </div>

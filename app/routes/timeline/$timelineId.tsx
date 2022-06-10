@@ -54,25 +54,25 @@ export default function TimelineDetailsPage() {
         <>
           <Link
             to='/timelines'
-            className='inline-flex items-center rounded-md border border-transparent bg-gray-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800'
+            className='inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
           >
-            <XIcon className='mr-2 -ml-0.5 h-4 w-4' aria-hidden='true' />
+            <XIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
             Close
           </Link>
           <Form method='post'>
             <button
               type='submit'
-              className='ml-3 inline-flex items-center rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800'
+              className='inline-flex items-center py-2 px-4 ml-3 text-sm font-medium text-white bg-red-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
             >
-              <TrashIcon className='mr-2 -ml-0.5 h-4 w-4' aria-hidden='true' />
+              <TrashIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
               Delete
             </button>
           </Form>
           <Link
             to='edit'
-            className='ml-3 inline-flex items-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-orange-800'
+            className='inline-flex items-center py-2 px-4 ml-3 text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-orange-800 shadow-sm'
           >
-            <PencilIcon className='mr-2 -ml-0.5 h-4 w-4' aria-hidden='true' />
+            <PencilIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
             Edit
           </Link>
         </>
@@ -87,7 +87,7 @@ export default function TimelineDetailsPage() {
           <select
             id='tabs'
             name='tabs'
-            className='block w-full rounded-md border-gray-300 py-2 pr-10 pl-3 text-base focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
+            className='block py-2 pr-10 pl-3 w-full text-base rounded-md border-gray-300 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm'
             defaultValue='events'
           >
             <option>Events</option>

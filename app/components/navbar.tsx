@@ -15,7 +15,7 @@ export function Navbar({
 }): JSX.Element {
   return (
     <header className='w-full'>
-      <div className='relative z-10 flex h-16 shrink-0 border-b border-gray-200 bg-white shadow-sm'>
+      <div className='flex relative z-10 shrink-0 h-16 bg-white border-b border-gray-200 shadow-sm'>
         <button
           type='button'
           className='border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden'
@@ -32,12 +32,12 @@ export function Navbar({
               </label>
               <div className='relative w-full text-gray-400 focus-within:text-gray-600'>
                 <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center'>
-                  <SearchIcon className='h-5 w-5 shrink-0' aria-hidden='true' />
+                  <SearchIcon className='shrink-0 w-5 h-5' aria-hidden='true' />
                 </div>
                 <input
                   name='search-field'
                   id='search-field'
-                  className='h-full w-full border-transparent py-2 pr-3 pl-8 text-base text-gray-900 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-0 focus:placeholder:text-gray-400'
+                  className='py-2 pr-3 pl-8 w-full h-full text-base text-gray-900 placeholder:text-gray-500 focus:placeholder:text-gray-400 border-transparent focus:border-transparent focus:outline-none focus:ring-0'
                   placeholder='Search'
                   type='search'
                 />
@@ -66,7 +66,7 @@ export function Navbar({
                 leaveFrom='transform opacity-100 scale-100'
                 leaveTo='transform opacity-0 scale-95'
               >
-                <Menu.Items className='absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none'>
+                <Menu.Items className='absolute right-0 py-1 mt-2 w-48 bg-white rounded-md focus:outline-none ring-1 ring-black/5 shadow-lg origin-top-right'>
                   <Menu.Item>
                     {({ active }) => (
                       <NavLink

@@ -113,7 +113,7 @@ export default function Join() {
                 autoComplete='email'
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby='email-error'
-                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
+                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
               {actionData?.errors?.email && (
                 <div className='pt-1 text-red-700' id='email-error'>
@@ -139,7 +139,7 @@ export default function Join() {
                 autoComplete='new-password'
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby='password-error'
-                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
+                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
               {actionData?.errors?.password && (
                 <div className='pt-1 text-red-700' id='password-error'>

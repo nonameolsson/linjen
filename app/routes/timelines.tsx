@@ -27,9 +27,9 @@ export default function TimelinesPage() {
     <Page title='Your Timelines'>
       <Link
         to='/timelines/new'
-        className='inline-flex items-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
+        className='inline-flex items-center py-2 px-4 text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm'
       >
-        <PlusIcon className='mr-2 -ml-1 h-5 w-5' aria-hidden='true' />
+        <PlusIcon className='mr-2 -ml-1 w-5 h-5' aria-hidden='true' />
         New Timeline
       </Link>
 
@@ -53,8 +53,8 @@ export default function TimelinesPage() {
                 >
                   {timeline.title.slice(0, 2)}
                 </div>
-                <div className='flex flex-1 items-center justify-between truncate rounded-r-md border-y border-r border-gray-200 bg-white'>
-                  <div className='flex-1 truncate py-2 px-4 text-sm'>
+                <div className='flex flex-1 justify-between items-center truncate bg-white rounded-r-md border-y border-r border-gray-200'>
+                  <div className='flex-1 py-2 px-4 text-sm truncate'>
                     {timeline.title}
 
                     <p className='text-gray-500'>

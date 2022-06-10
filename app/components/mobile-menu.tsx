@@ -105,7 +105,7 @@ export function MobileMenu({
               </div>
             </Dialog.Panel>
           </Transition.Child>
-          <div className='w-14 shrink-0' aria-hidden='true'>
+          <div className='shrink-0 w-14' aria-hidden='true'>
             {/* Dummy element to force sidebar to shrink to fit close icon */}
           </div>
         </div>
