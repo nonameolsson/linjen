@@ -1,7 +1,11 @@
 {
   "prisma.fileWatcher": true,
   "diffEditor.ignoreTrimWhitespace": false,
-  "editor.codeActionsOnSave": ["source.addMissingImports", "source.fixAll"],
+  "editor.codeActionsOnSave": [
+    "source.addMissingImports",
+    "source.fixAll",
+    "source.organizeImports"
+  ],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.tabSize": 2,
