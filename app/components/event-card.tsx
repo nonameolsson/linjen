@@ -29,13 +29,16 @@ export default function EventCard({
         >
           Edit
         </Link>
-        <button
-          onClick={() => onDeleteClick()}
-          type='button'
-          className='rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400'
-        >
-          Delete
-        </button>
+        {onDeleteClick && (
+          <button
+            disabled={!onDeleteClick}
+            onClick={() => onDeleteClick()}
+            type='button'
+            className='rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400'
+          >
+            Delete
+          </button>
+        )}
       </div>
     </>
   )
