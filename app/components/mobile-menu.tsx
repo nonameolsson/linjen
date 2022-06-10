@@ -1,7 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Fragment } from 'react'
 import { XIcon } from '@heroicons/react/outline'
-
+import { Fragment } from 'react'
 import type { SidebarNavigationItem } from './page'
 
 function classNames(...classes: string[]) {
@@ -33,7 +32,7 @@ export function MobileMenu({
           leaveFrom='opacity-100'
           leaveTo='opacity-0'
         >
-          <div className='fixed inset-0 bg-gray-600 bg-opacity-75' />
+          <div className='fixed inset-0 bg-gray-600/75' />
         </Transition.Child>
 
         <div className='fixed inset-0 z-40 flex'>
@@ -67,7 +66,7 @@ export function MobileMenu({
                   </button>
                 </div>
               </Transition.Child>
-              <div className='flex flex-shrink-0 items-center px-4'>
+              <div className='flex shrink-0 items-center px-4'>
                 <img
                   className='h-8 w-auto'
                   src='https://tailwindui.com/img/logos/workflow-mark.svg?color=white'
@@ -106,7 +105,7 @@ export function MobileMenu({
               </div>
             </Dialog.Panel>
           </Transition.Child>
-          <div className='w-14 flex-shrink-0' aria-hidden='true'>
+          <div className='w-14 shrink-0' aria-hidden='true'>
             {/* Dummy element to force sidebar to shrink to fit close icon */}
           </div>
         </div>

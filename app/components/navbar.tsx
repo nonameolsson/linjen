@@ -1,8 +1,8 @@
-import { Fragment } from 'react'
-import { SearchIcon } from '@heroicons/react/solid'
-import { MenuAlt2Icon } from '@heroicons/react/outline'
 import { Menu, Transition } from '@headlessui/react'
+import { MenuAlt2Icon } from '@heroicons/react/outline'
+import { SearchIcon } from '@heroicons/react/solid'
 import { Form, NavLink } from '@remix-run/react'
+import { Fragment } from 'react'
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
@@ -15,7 +15,7 @@ export function Navbar({
 }): JSX.Element {
   return (
     <header className='w-full'>
-      <div className='relative z-10 flex h-16 flex-shrink-0 border-b border-gray-200 bg-white shadow-sm'>
+      <div className='relative z-10 flex h-16 shrink-0 border-b border-gray-200 bg-white shadow-sm'>
         <button
           type='button'
           className='border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden'
@@ -32,15 +32,12 @@ export function Navbar({
               </label>
               <div className='relative w-full text-gray-400 focus-within:text-gray-600'>
                 <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center'>
-                  <SearchIcon
-                    className='h-5 w-5 flex-shrink-0'
-                    aria-hidden='true'
-                  />
+                  <SearchIcon className='h-5 w-5 shrink-0' aria-hidden='true' />
                 </div>
                 <input
                   name='search-field'
                   id='search-field'
-                  className='h-full w-full border-transparent py-2 pl-8 pr-3 text-base text-gray-900 placeholder-gray-500 focus:border-transparent focus:placeholder-gray-400 focus:outline-none focus:ring-0'
+                  className='h-full w-full border-transparent py-2 pr-3 pl-8 text-base text-gray-900 placeholder:text-gray-500 focus:border-transparent focus:outline-none focus:ring-0 focus:placeholder:text-gray-400'
                   placeholder='Search'
                   type='search'
                 />
@@ -49,7 +46,7 @@ export function Navbar({
           </div>
           <div className='ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6'>
             {/* Profile dropdown */}
-            <Menu as='div' className='relative flex-shrink-0'>
+            <Menu as='div' className='relative shrink-0'>
               <div>
                 <Menu.Button className='flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
                   <span className='sr-only'>Open user menu</span>
@@ -69,7 +66,7 @@ export function Navbar({
                 leaveFrom='transform opacity-100 scale-100'
                 leaveTo='transform opacity-0 scale-95'
               >
-                <Menu.Items className='absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+                <Menu.Items className='absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 focus:outline-none'>
                   <Menu.Item>
                     {({ active }) => (
                       <NavLink
