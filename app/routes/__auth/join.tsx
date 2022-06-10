@@ -92,8 +92,8 @@ export default function Join() {
   }, [actionData])
 
   return (
-    <div className='flex flex-col justify-center min-h-full'>
-      <div className='px-8 mx-auto w-full max-w-md'>
+    <div className='flex min-h-full flex-col justify-center'>
+      <div className='mx-auto w-full max-w-md px-8'>
         <Form method='post' className='space-y-6'>
           <div>
             <label
@@ -113,7 +113,7 @@ export default function Join() {
                 autoComplete='email'
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby='email-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
+                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
               />
               {actionData?.errors?.email && (
                 <div className='pt-1 text-red-700' id='email-error'>
@@ -139,7 +139,7 @@ export default function Join() {
                 autoComplete='new-password'
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby='password-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
+                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
               />
               {actionData?.errors?.password && (
                 <div className='pt-1 text-red-700' id='password-error'>
@@ -152,12 +152,12 @@ export default function Join() {
           <input type='hidden' name='redirectTo' value={redirectTo} />
           <button
             type='submit'
-            className='py-2 px-4 w-full  text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
+            className='w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
           >
             Create Account
           </button>
-          <div className='flex justify-center items-center'>
-            <div className='text-sm text-center text-gray-500'>
+          <div className='flex items-center justify-center'>
+            <div className='text-center text-sm text-gray-500'>
               Already have an account?{' '}
               <Link
                 className='text-blue-500 underline'

@@ -136,14 +136,14 @@ export default function NewEventPage() {
       }}
     >
       <div>
-        <label className='flex flex-col gap-1 w-full'>
+        <label className='flex w-full flex-col gap-1'>
           <span>Title: </span>
           <input
             autoFocus
             ref={titleRef}
             defaultValue={actionData?.fields?.title}
             name='title'
-            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
+            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={Boolean(actionData?.fieldErrors?.title) || undefined}
             aria-errormessage={
               actionData?.fieldErrors?.title ? 'title-error' : undefined
@@ -158,14 +158,14 @@ export default function NewEventPage() {
       </div>
 
       <div>
-        <label className='flex flex-col gap-1 w-full'>
+        <label className='flex w-full flex-col gap-1'>
           <span>Content: </span>
           <textarea
             ref={contentRef}
             defaultValue={actionData?.fields?.content}
             name='content'
             rows={4}
-            className='flex-1 py-2 px-3 w-full text-lg leading-6 rounded-md border-2 border-blue-500'
+            className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
             aria-invalid={
               Boolean(actionData?.fieldErrors?.content) || undefined
             }
@@ -182,14 +182,14 @@ export default function NewEventPage() {
       </div>
 
       <div>
-        <label className='flex flex-col gap-1 w-full'>
+        <label className='flex w-full flex-col gap-1'>
           <span>Start Date: </span>
           <input
             ref={startDateRef}
             type='date'
             defaultValue={new Intl.DateTimeFormat('sv-SE').format(new Date())}
             name='startDate'
-            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
+            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
             aria-invalid={
               Boolean(actionData?.fieldErrors?.startDate) || undefined
             }
@@ -208,7 +208,7 @@ export default function NewEventPage() {
       <div className='text-right'>
         <button
           type='submit'
-          className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
+          className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
         >
           Save
         </button>

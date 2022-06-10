@@ -77,7 +77,7 @@ export default function NewTimelinePage() {
               id='title'
               ref={titleRef}
               name='title'
-              className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500 focus:border-indigo-500 focus:ring-indigo-500'
+              className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose focus:border-indigo-500 focus:ring-indigo-500'
               aria-invalid={actionData?.errors?.title ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.title ? 'title-error' : undefined
@@ -87,9 +87,9 @@ export default function NewTimelinePage() {
               aria-describedby='email-error'
             />
             {actionData?.errors?.title && (
-              <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
+              <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3'>
                 <ExclamationCircleIcon
-                  className='w-5 h-5 text-red-500'
+                  className='h-5 w-5 text-red-500'
                   aria-hidden='true'
                 />
               </div>
@@ -113,7 +113,7 @@ export default function NewTimelinePage() {
               rows={4}
               name='description'
               ref={descriptionRef}
-              className='rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm'
+              className='rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
               defaultValue={''}
               aria-invalid={actionData?.errors?.description ? true : undefined}
               aria-errormessage={
@@ -131,7 +131,7 @@ export default function NewTimelinePage() {
         <div className='text-right'>
           <button
             type='submit'
-            className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
+            className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
           >
             Save
           </button>

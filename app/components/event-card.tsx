@@ -13,7 +13,7 @@ export default function EventCard({
 }: Props) {
   return (
     <>
-      <div className='p-4 bg-white'>
+      <div className='bg-white p-4'>
         <h3 className='mb-4 text-2xl font-bold'>Title: {title}</h3>
         <p>Content: {content}</p>
         <p>
@@ -25,7 +25,7 @@ export default function EventCard({
 
         <Link
           to='edit'
-          className='py-2 px-4 text-white bg-orange-500 hover:bg-orange-600 focus:bg-orange-400 rounded'
+          className='rounded bg-orange-500 py-2 px-4 text-white hover:bg-orange-600 focus:bg-orange-400'
         >
           Edit
         </Link>
@@ -34,7 +34,7 @@ export default function EventCard({
             disabled={!onDeleteClick}
             onClick={() => onDeleteClick()}
             type='button'
-            className='py-2 px-4 text-white bg-red-500 hover:bg-red-600 focus:bg-red-400 rounded'
+            className='rounded bg-red-500 py-2 px-4 text-white hover:bg-red-600 focus:bg-red-400'
           >
             Delete
           </button>
