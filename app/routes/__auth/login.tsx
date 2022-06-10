@@ -6,9 +6,8 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
-
-import { createUserSession, getUserId } from '~/session.server'
 import { verifyLogin } from '~/models/user.server'
+import { createUserSession, getUserId } from '~/session.server'
 import { safeRedirect, validateEmail } from '~/utils'
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -112,7 +111,7 @@ export default function LoginPage() {
                 autoComplete='email'
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby='email-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
+                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
               />
               {actionData?.errors?.email && (
                 <div className='pt-1 text-red-700' id='email-error'>
@@ -138,7 +137,7 @@ export default function LoginPage() {
                 autoComplete='current-password'
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby='password-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
+                className='w-full rounded border border-gray-500 py-1 px-2 text-lg'
               />
               {actionData?.errors?.password && (
                 <div className='pt-1 text-red-700' id='password-error'>
@@ -171,7 +170,7 @@ export default function LoginPage() {
               </label>
             </div>
             <div className='text-center text-sm text-gray-500'>
-              Don't have an account?{' '}
+              Don't have an account yet?{' '}
               <Link
                 className='text-blue-500 underline'
                 to={{
