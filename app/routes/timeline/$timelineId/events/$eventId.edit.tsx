@@ -10,11 +10,12 @@ import {
 import * as React from 'react'
 import invariant from 'tiny-invariant'
 import EventCard from '~/components/event-card'
-import { getEvent, updateEvent } from '~/models/event.server'
+import { getEvent, getEventsList, updateEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
   event: Event
+  availableEvents: Pick<Event, 'id' | 'title'>[]
 }
 
 function validateEventTitle(title: string) {
@@ -41,11 +42,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.eventId, 'eventId not found')
 
   const event = await getEvent({ id: params.eventId })
+  const availableEvents = await getEventsList({ id: params.eventId })
+
   if (!event) {
     throw new Response('Not Found', { status: 404 })
   }
 
-  return json<LoaderData>({ event })
+  return json<LoaderData>({ event, availableEvents })
 }
 
 type ActionData = {
@@ -77,6 +80,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const title = formData.get('title')
   const content = formData.get('content')
   const startDate = formData.get('startDate')
+  const relatedEvents = formData.get('relatedEvents')
 
   if (
     typeof title !== 'string' ||
@@ -104,7 +108,8 @@ export const action: ActionFunction = async ({ request, params }) => {
     content,
     startDate: new Date(startDate),
     userId,
-    id: eventId
+    id: eventId,
+    relatedEvents
   })
 
   return redirect(`/timeline/${params.timelineId}/events/${params.eventId}`)
@@ -144,6 +149,7 @@ export default function EditEvent() {
     ) {
       return (
         <EventCard
+          events={data.availableEvents.map(event => event.title)}
           content={content}
           startDate={new Date(startDate)}
           title={title}
@@ -163,13 +169,13 @@ export default function EditEvent() {
       }}
     >
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Title: </span>
           <input
             defaultValue={data.event.title}
             ref={titleRef}
             name='title'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.title ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.title ? 'title-error' : undefined
@@ -184,14 +190,14 @@ export default function EditEvent() {
       </div>
 
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Content: </span>
           <textarea
             defaultValue={data.event.content || ''}
             ref={contentRef}
             name='content'
             rows={4}
-            className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
+            className='flex-1 py-2 px-3 w-full text-lg leading-6 rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.content ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.content ? 'body-error' : undefined
@@ -205,12 +211,8 @@ export default function EditEvent() {
         )}
       </div>
 
-      {console.log(
-        new Intl.DateTimeFormat('sv-SV').format(new Date(data.event.startDate))
-      )}
-
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Start Date: </span>
           <input
             ref={startDateRef}
@@ -219,7 +221,7 @@ export default function EditEvent() {
               new Date(data.event.startDate)
             )}
             name='startDate'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={actionData?.fieldErrors?.startDate ? true : undefined}
             aria-errormessage={
               actionData?.fieldErrors?.startDate ? 'body-error' : undefined
@@ -233,12 +235,26 @@ export default function EditEvent() {
         )}
       </div>
 
+      <div>
+        <label className='flex flex-col gap-1 w-full'>
+          <span>Related events: </span>
+          <select name='relatedEvents'>
+            <option value={undefined}></option>
+            {data.availableEvents.map(event => (
+              <option key={event.id} value={event.id}>
+                {event.title}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
       <div className='text-right'>
         <button
           type='submit'
-          className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
+          className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
         >
-          Save
+          Saves
         </button>
       </div>
     </Form>

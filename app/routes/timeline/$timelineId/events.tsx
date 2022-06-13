@@ -8,7 +8,9 @@ import { getEventListItems } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  events: Event[]
+  events: (Event & { relatedEvents: Event[] } & {
+    relatedEventsRelation: Event[]
+  })[]
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -17,18 +19,20 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const events = await getEventListItems({ timelineId: params.timelineId })
 
-  return json<LoaderData>({ events })
+  return json<LoaderData>({
+    events
+  })
 }
 
 export default function EventsTab() {
-  const data = useLoaderData() as LoaderData
+  const data = useLoaderData<LoaderData>()
 
   return (
     <>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
+      <div className='flex overflow-hidden flex-1 items-stretch'>
+        <main className='overflow-y-auto flex-1 p-4'>
           {/* Primary column */}
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+          <section className='flex flex-col flex-1 min-w-0 h-full lg:order-last'>
             <div className='flex justify-between'>
               <Link
                 to='new'
@@ -39,19 +43,26 @@ export default function EventsTab() {
               </Link>
             </div>
             {data.events.length > 0 ? (
-              <div className='mt-4 overflow-hidden bg-white shadow sm:rounded-md'>
+              <div className='overflow-hidden mt-4 bg-white shadow sm:rounded-md'>
                 <ul role='list' className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>
                       <Link to={event.id} className='block hover:bg-gray-50'>
                         <div className='flex items-center p-4 sm:px-6'>
-                          <div className='flex min-w-0 flex-1 items-center'>
-                            <div className='min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4'>
+                          <div className='flex flex-1 items-center min-w-0'>
+                            <div className='flex-1 px-4 min-w-0 md:grid md:grid-cols-2 md:gap-4'>
                               <div>
-                                <p className='truncate text-sm font-medium text-indigo-600'>
+                                <p className='text-sm font-medium text-indigo-600 truncate'>
                                   {event.title}
                                 </p>
-                                <p className='mt-2 flex items-center text-sm text-gray-500'>
+                                <p className='text-sm font-medium text-indigo-600 truncate'>
+                                  Relates to: {event.relatedEvents.length}
+                                </p>
+                                <p className='text-sm font-medium text-indigo-600 truncate'>
+                                  Relates from:{' '}
+                                  {event.relatedEventsRelation.length}
+                                </p>
+                                <p className='flex items-center mt-2 text-sm text-gray-500'>
                                   <span className='truncate'>
                                     {new Intl.DateTimeFormat('sv-SE').format(
                                       new Date(event.startDate)
@@ -70,7 +81,7 @@ export default function EventsTab() {
                           </div>
                           <div>
                             <ChevronRightIcon
-                              className='h-5 w-5 text-gray-400'
+                              className='w-5 h-5 text-gray-400'
                               aria-hidden='true'
                             />
                           </div>
@@ -87,7 +98,7 @@ export default function EventsTab() {
         </main>
 
         {/* Secondary column (hidden on smaller screens) */}
-        <aside className='hidden w-96 overflow-y-auto border-l border-gray-200 p-4 lg:block'>
+        <aside className='hidden overflow-y-auto p-4 w-96 border-l border-gray-200 lg:block'>
           <Outlet />
         </aside>
       </div>

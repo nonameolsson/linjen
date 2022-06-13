@@ -1,3 +1,4 @@
+import { PencilIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -10,12 +11,8 @@ import {
 } from '@remix-run/react'
 import invariant from 'tiny-invariant'
 import { Page } from '~/components/page'
-import { XIcon, TrashIcon, PencilIcon } from '@heroicons/react/outline'
-
 import type { Timeline } from '~/models/timeline.server'
-import { deleteTimeline } from '~/models/timeline.server'
-import { getTimeline } from '~/models/timeline.server'
-
+import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
@@ -97,7 +94,7 @@ export default function TimelineDetailsPage() {
         </div>
         <div className='hidden sm:block'>
           <div className='border-b border-gray-200'>
-            <nav className='-mb-px flex space-x-8' aria-label='Tabs'>
+            <nav className='flex -mb-px space-x-8' aria-label='Tabs'>
               <NavLink
                 to='events'
                 className={({ isActive }) =>

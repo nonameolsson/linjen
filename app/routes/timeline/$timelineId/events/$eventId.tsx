@@ -11,14 +11,18 @@ import { deleteEvent, getEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  event: Event
+  event: Event & { relatedEvents: { id: string; title: string }[] } & {
+    relatedEventsRelation: { id: string; title: string }[]
+  }
 }
 
+// TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request)
   invariant(params.eventId, 'eventId not found')
 
   const event = await getEvent({ id: params.eventId })
+
   if (!event) {
     throw new Response('Not Found', { status: 404 })
   }
@@ -38,7 +42,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-
+  console.log('HERP', data)
   return (
     <Form method='post' id='delete-event'>
       <DeleteEventDialog
@@ -67,9 +71,14 @@ export default function EventDetailsPage() {
           </button>
         }
       />
+
       <EventCard
         onDeleteClick={() => setIsOpen(true)}
         title={data.event.title}
+        events={[
+          ...data.event.relatedEvents,
+          ...data.event.relatedEventsRelation
+        ]}
         content={data.event.content}
         startDate={data.event.startDate}
       />

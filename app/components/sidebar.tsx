@@ -11,18 +11,18 @@ export function Sidebar({
   sidebarNavigation: SidebarNavigationItem[]
 }): JSX.Element {
   return (
-    <div className='hidden w-28 overflow-y-auto bg-indigo-700 md:block'>
-      <div className='flex w-full flex-col items-center py-6'>
+    <div className='hidden overflow-y-auto w-28 bg-indigo-700 md:block'>
+      <div className='flex flex-col items-center py-6 w-full'>
         <div className='flex shrink-0 items-center'>
           <Link to='/'>
             <img
-              className='h-8 w-auto'
+              className='w-auto h-8'
               src='https://tailwindui.com/img/logos/workflow-mark.svg?color=white'
               alt='Workflow'
             />
           </Link>
         </div>
-        <div className='mt-6 w-full flex-1 space-y-1 px-2'>
+        <div className='flex-1 px-2 mt-6 space-y-1 w-full'>
           {sidebarNavigation.map(item => (
             <NavLink
               key={item.name}

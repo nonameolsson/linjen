@@ -36,14 +36,14 @@ export default function TimelinesPage() {
       {data.timelineListItems.length === 0 ? (
         <p className='p-4'>No timelines yet</p>
       ) : (
-        <ul className='mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4'>
+        <ul className='grid grid-cols-1 gap-5 mt-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4'>
           {data.timelineListItems.map(timeline => (
             <Link
               key={timeline.title}
               to={`/timeline/${timeline.id}/events`}
               className='font-medium text-gray-900 hover:text-gray-600'
             >
-              <li className='col-span-1 flex rounded-md shadow-sm'>
+              <li className='flex col-span-1 rounded-md shadow-sm'>
                 <div
                   className={classNames(
                     // timeline.bgColor,

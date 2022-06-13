@@ -18,11 +18,11 @@ export function Navbar({
       <div className='flex relative z-10 shrink-0 h-16 bg-white border-b border-gray-200 shadow-sm'>
         <button
           type='button'
-          className='border-r border-gray-200 px-4 text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden'
+          className='px-4 text-gray-500 border-r border-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden'
           onClick={() => setMobileMenuOpen(true)}
         >
           <span className='sr-only'>Open sidebar</span>
-          <MenuAlt2Icon className='h-6 w-6' aria-hidden='true' />
+          <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
         </button>
         <div className='flex flex-1 justify-between px-4 sm:px-6'>
           <div className='flex flex-1'>
@@ -31,7 +31,7 @@ export function Navbar({
                 Search all files
               </label>
               <div className='relative w-full text-gray-400 focus-within:text-gray-600'>
-                <div className='pointer-events-none absolute inset-y-0 left-0 flex items-center'>
+                <div className='flex absolute inset-y-0 left-0 items-center pointer-events-none'>
                   <SearchIcon className='shrink-0 w-5 h-5' aria-hidden='true' />
                 </div>
                 <input
@@ -44,14 +44,14 @@ export function Navbar({
               </div>
             </form>
           </div>
-          <div className='ml-2 flex items-center space-x-4 sm:ml-6 sm:space-x-6'>
+          <div className='flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6'>
             {/* Profile dropdown */}
             <Menu as='div' className='relative shrink-0'>
               <div>
-                <Menu.Button className='flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
+                <Menu.Button className='flex text-sm bg-white rounded-full focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'>
                   <span className='sr-only'>Open user menu</span>
                   <img
-                    className='h-8 w-8 rounded-full'
+                    className='w-8 h-8 rounded-full'
                     src='https://images.unsplash.com/photo-1517365830460-955ce3ccd263?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=256&h=256&q=80'
                     alt=''
                   />

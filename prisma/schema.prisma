@@ -71,6 +71,10 @@ model Event {
   user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId     String
 
+  relatedEvents         Event[] @relation("relatedEvents")
+  relatedEventsRelation Event[] @relation("relatedEvents")
+
+
   // locations Location[] @relation(references: [id])
 }
 
