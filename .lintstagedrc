@@ -1,8 +1,5 @@
 {
-  "*.json": [
-    "trunk fmt"
-  ],
-  "*.{js,ts,jsx,tsx}": [
+  "*.{js,ts,jsx,tsx,json}": [
     "trunk fmt"
   ]
 }
