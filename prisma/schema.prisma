@@ -3,6 +3,10 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,9 +19,11 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
-  Event    Event[]
-  Timeline Timeline[]
+  event    Event[]
+  timeline Timeline[]
+  location Location[]
+
+  @@map("user")
 }
 
 model Password {
@@ -25,18 +31,8 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-}
 
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  @@map("password")
 }
 
 model Timeline {
@@ -48,38 +44,45 @@ model Timeline {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdById String
 
-  Event Event[]
+  event Event[]
+
+  @@map("timeline") 
 }
 
 model Event {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   title   String
   content String?
 
   timeline   Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   timelineId String
 
-  startDate  DateTime @default(now())
-  // endDate   String?
+  startDate DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId     String
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdById String
 
   relatedEvents         Event[] @relation("relatedEvents")
   relatedEventsRelation Event[] @relation("relatedEvents")
 
-
-  // locations Location[] @relation(references: [id])
+  @@map("event")
 }
 
 model Location {
-  id     String  @id @default(cuid())
-  title  String
-  // events Event[] @relation(references: [id])
+  id    String @id @default(cuid())
+  title String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  createdById String
+
+  @@map("location")
 }

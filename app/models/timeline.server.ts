@@ -14,13 +14,13 @@ export function getTimeline({
   })
 }
 
-export function getTimelineListItems({ userId }: { userId: User['id'] }) {
-  const timelines = prisma.timeline.findMany({
+export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
+  const timelines = await prisma.timeline.findMany({
     where: { userId },
 
     include: {
       _count: {
-        select: { Event: true }
+        select: { event: true }
       }
     },
 

@@ -113,6 +113,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     userId,
     relatedEvents
   })
+
   console.log(2)
   console.log('event created', event)
   return redirect(`/timeline/${timelineId}/events/${event.id}`)

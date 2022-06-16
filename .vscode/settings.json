@@ -18,5 +18,8 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[toml]": {
     "editor.defaultFormatter": "trunk.io"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "trunk.io"
   }
 }

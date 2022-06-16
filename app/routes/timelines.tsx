@@ -21,7 +21,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 }
 
 export default function TimelinesPage() {
-  const data = useLoaderData() as LoaderData
+  const data = useLoaderData<LoaderData>()
 
   return (
     <Page title='Your Timelines'>
@@ -58,7 +58,7 @@ export default function TimelinesPage() {
                     {timeline.title}
 
                     <p className='text-gray-500'>
-                      {timeline._count.Event} events
+                      {timeline._count.event} events
                     </p>
                   </div>
                 </div>

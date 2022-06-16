@@ -16,10 +16,6 @@ export default function EventCard({
   console.log(events)
   return (
     <>
-      <div className='flex justify-center items-center w-9 h-9 rounded-md'>
-        issue #105
-      </div>
-
       <div className='p-4 bg-white'>
         <h3 className='mb-4 text-2xl font-bold'>Title: {title}</h3>
         <p>Content: {content}</p>

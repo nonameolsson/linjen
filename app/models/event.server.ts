@@ -1,4 +1,4 @@
-import type { Event, Timeline, User } from '@prisma/client'
+import type { Event, Prisma, Timeline, User } from '@prisma/client'
 import { prisma } from '~/db.server'
 
 export type { Event } from '@prisma/client'
@@ -45,53 +45,83 @@ export function getEventListItems({
   })
 }
 
-export function createEvent({
-  content,
-  startDate,
-  timelineId,
-  relatedEvents,
-  title,
-  userId
-}: Pick<
-  Event,
-  'content' | 'relatedEvents' | 'startDate' | 'timelineId' | 'title'
-> & {
-  userId: User['id']
-}) {
-  const data = prisma.event.create({
+// type EventWithRelated = Prisma.FactionGetPayload<{
+//   include: { owner: true }
+// }>
+
+// const herp: Prisma.EventCreateInput = {}
+
+type FactionWithOwner = Prisma.EventGetPayload<{
+  include: { relatedEvents: true }
+}>
+
+export async function createEvent({
+  data: { startDate, title, content, userId, relatedEvents, timelineId }
+}: Prisma.EventCreateArgs) {
+  return await prisma.event.create({
     data: {
       title,
       content,
-      startDate,
-      timeline: {
-        connect: {
-          id: timelineId
-        }
-      },
       user: {
         connect: {
           id: userId
         }
       },
-      relatedEvents: {
-        connect: [{ id: relatedEvents as Event['id'] }]
-        // id: relatedEvents as Event['id']
+      startDate,
+      timeline: {
+        connect: {
+          id: timelineId
+        }
       }
     },
     include: {
-      relatedEvents: true
+      relatedEventsRelation: true
     }
   })
+  //   data: {
+  //     title,
+  //     content,
+  //     startDate,
+  //     timeline: {
+  //       connect: {
+  //         id: timelineId
+  //       }
+  //     },
+  //     // user: {
+  //     //   connect: {
+  //     //     id: userId
+  //     //   }
+  //     // },
+  //     // relatedEvents: {
+  //     //   connect: [relatedEvents].map((event) => ({ id: } })),
+  //     // }
+  //   },
+  //   include: {
+  //     relatedEventsRelation: true
+  //   }}
 
-  return data
+  //   // return prisma.post.update({
+  //   //   where: {
+  //   //     id,
+  //   //   },
+  //   //   data: {
+  //   //     categories: {
+  //   //       connect: [category1, category2].map((cat) => ({ id: cat.id })),
+  //   //     },
+  //   //   },
+  //   //   include: {
+  //   //     categories: true,
+  //   //   },
+  //   // })
+
+  // // const updatedEvent = await prisma.timeline.update({
+  // //   where: { id: data.timelineId },
+  // //   data: {
+  // //     event: { connect: { id: data.id } }
+  // //   }
+  // // })
+  // // console.log('updatedEvent', updatedEvent)
 }
-
-// await prisma.user.create({
-//   data: {
-//     name: 'user 1',
-//     friends: { create: [{ name: 'user 2' }, { name: 'user 3' }] },
-//   },
-// })
 
 export function updateEvent({
   id,
