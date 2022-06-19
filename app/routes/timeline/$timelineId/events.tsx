@@ -5,12 +5,12 @@ import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
 import type { Event } from '~/models/event.server'
 import { getEventListItems } from '~/models/event.server'
+import { getLocationsForEvent } from '~/models/location.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  events: (Event & { relatedEvents: Event[] } & {
-    relatedEventsRelation: Event[]
-  })[]
+  events: Event[]
+  locations: any
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -18,14 +18,19 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.timelineId, 'timelineId not found')
 
   const events = await getEventListItems({ timelineId: params.timelineId })
+  const locations = await getLocationsForEvent(events[2].id)
 
   return json<LoaderData>({
-    events
+    events,
+    locations
   })
 }
 
 export default function EventsTab() {
   const data = useLoaderData<LoaderData>()
+  console.log('data.locations')
+  console.log(data.locations)
+  
 
   return (
     <>
@@ -54,13 +59,6 @@ export default function EventsTab() {
                               <div>
                                 <p className='text-sm font-medium text-indigo-600 truncate'>
                                   {event.title}
-                                </p>
-                                <p className='text-sm font-medium text-indigo-600 truncate'>
-                                  Relates to: {event.relatedEvents.length}
-                                </p>
-                                <p className='text-sm font-medium text-indigo-600 truncate'>
-                                  Relates from:{' '}
-                                  {event.relatedEventsRelation.length}
                                 </p>
                                 <p className='flex items-center mt-2 text-sm text-gray-500'>
                                   <span className='truncate'>

@@ -37,13 +37,11 @@ type ActionData = {
     title: string | undefined
     content: string | undefined
     startDate: string | undefined
-    relatedEvents: string | undefined
   }
   fields?: {
     title: string
     content: string
     startDate: string
-    relatedEvents: number[]
   }
 }
 
@@ -74,9 +72,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const title = formData.get('title')
   const content = formData.get('content')
   const startDate = formData.get('startDate')
-  const relatedEvents = formData.get('relatedEvents')
-  console.log('relatedEvents')
-  console.log(relatedEvents)
+
   const timelineId = params.timelineId
   invariant(timelineId, 'Timeline ID is required')
   console.log(formData)
@@ -84,7 +80,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     typeof title !== 'string' ||
     typeof content !== 'string' ||
     typeof startDate !== 'string'
-    // typeof relatedEvents
+
   ) {
     return badRequest({
       formError: `Form not submitted correctly.`
@@ -95,11 +91,9 @@ export const action: ActionFunction = async ({ request, params }) => {
     title: validateEventTitle(title),
     content: validateEventContent(content),
     startDate: validateEventStartDate(startDate),
-    // relatedEvents: validateRelatedEvents(relatedEvents)
-    relatedEvents: false
   }
 
-  const fields = { title, content, startDate, timelineId, relatedEvents }
+  const fields = { title, content, startDate, timelineId }
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({ fieldErrors, fields })
   }
@@ -111,7 +105,6 @@ export const action: ActionFunction = async ({ request, params }) => {
     startDate: new Date(startDate),
     timelineId,
     userId,
-    relatedEvents
   })
 
   console.log(2)
@@ -156,7 +149,6 @@ export default function NewEventPage() {
           content={content}
           startDate={new Date(startDate)}
           title={title}
-          events={[]} // TODO: Add correct events
         />
       )
     }
@@ -238,25 +230,6 @@ export default function NewEventPage() {
         {actionData?.fieldErrors?.startDate && (
           <div className='pt-1 text-red-700' id='startdate-error'>
             {actionData.fieldErrors.startDate}
-          </div>
-        )}
-      </div>
-
-      <div>
-        <label className='flex flex-col gap-1 w-full'>
-          <span>Related events: </span>
-          <select name='relatedEvents'>
-            <option value={undefined}></option>
-            {data.events.map(event => (
-              <option key={event.id} value={event.id}>
-                {event.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        {actionData?.fieldErrors?.relatedEvents && (
-          <div className='pt-1 text-red-700' id='relatedevents-error'>
-            {actionData.fieldErrors.relatedEvents}
           </div>
         )}
       </div>

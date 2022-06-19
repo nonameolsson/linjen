@@ -1,19 +1,16 @@
-import type { Event } from '@prisma/client'
-import { Link, NavLink } from '@remix-run/react'
+import type { Event } from '@prisma/client';
+import { Link } from '@remix-run/react';
 
 interface Props extends Pick<Event, 'startDate' | 'content' | 'title'> {
   onDeleteClick?: () => void
-  events: { id: string; title: string }[]
 }
 
 export default function EventCard({
   content,
   onDeleteClick,
   startDate,
-  events,
   title
 }: Props) {
-  console.log(events)
   return (
     <>
       <div className='p-4 bg-white'>
@@ -23,15 +20,7 @@ export default function EventCard({
           Start Date:{' '}
           {new Intl.DateTimeFormat('sv-SE').format(new Date(startDate))}
         </p>
-        <h5>Related events:</h5>
-        <ul className='list-disc'>
-          {events.map(event => (
-            <NavLink key={event.id} to={`../${event.id}`}>
-              <li>{event.title}</li>
-            </NavLink>
-          ))}
-        </ul>
-
+       
         <hr className='my-4' />
 
         <Link

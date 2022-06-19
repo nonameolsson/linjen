@@ -1,14 +1,14 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
-import type { Timeline } from '@prisma/client'
-
 import { Page } from '~/components/page'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
+
 
 type LoaderData = {
   timeline: Timeline
@@ -18,7 +18,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const timeline = await getTimeline({ userId, id: params.timelineId })
+  const timeline = await getTimeline({ createdById: userId, id: params.timelineId })
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }

@@ -42,7 +42,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.eventId, 'eventId not found')
 
   const event = await getEvent({ id: params.eventId })
-  const availableEvents = await getEventsList({ id: params.eventId })
+  const availableEvents = await getEventsList(params.eventId)
 
   if (!event) {
     throw new Response('Not Found', { status: 404 })
@@ -68,7 +68,7 @@ type ActionData = {
 const badRequest = (data: ActionData) => json(data, { status: 400 })
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request)
+  await requireUserId(request)
   const formData = await request.formData()
 
   const timelineId = params.timelineId
@@ -80,7 +80,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const title = formData.get('title')
   const content = formData.get('content')
   const startDate = formData.get('startDate')
-  const relatedEvents = formData.get('relatedEvents')
 
   if (
     typeof title !== 'string' ||
@@ -103,14 +102,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ fieldErrors, fields })
   }
 
-  await updateEvent({
-    title,
-    content,
-    startDate: new Date(startDate),
-    userId,
-    id: eventId,
-    relatedEvents
-  })
+ await updateEvent({ content, startDate: new Date(startDate), title  }, eventId)
 
   return redirect(`/timeline/${params.timelineId}/events/${params.eventId}`)
 }
@@ -233,20 +225,6 @@ export default function EditEvent() {
             {actionData?.fieldErrors?.startDate}
           </div>
         )}
-      </div>
-
-      <div>
-        <label className='flex flex-col gap-1 w-full'>
-          <span>Related events: </span>
-          <select name='relatedEvents'>
-            <option value={undefined}></option>
-            {data.availableEvents.map(event => (
-              <option key={event.id} value={event.id}>
-                {event.title}
-              </option>
-            ))}
-          </select>
-        </label>
       </div>
 
       <div className='text-right'>

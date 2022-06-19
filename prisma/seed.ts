@@ -1,4 +1,4 @@
-import type { Event, Timeline } from '@prisma/client'
+import type { Event } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
@@ -6,7 +6,7 @@ const prisma = new PrismaClient()
 
 const mockEvents: Omit<
   Event,
-  'id' | 'updatedAt' | 'createdAt' | 'createdById' | 'timelineId'
+  'id' | 'updatedAt' | 'createdAt' | 'createdById' | 'timelineId' | 'locationId'
 >[] = [
   {
     title: 'My first event',
@@ -25,61 +25,94 @@ const mockEvents: Omit<
   }
 ]
 
+const userData = [
+  {
+    email: 'demo@user.com',
+    password: 'demouser'
+  },
+  {
+    email: 'noname.olsson@gmail.com',
+    password: 'abc123abc123'
+  }
+]
+
 async function seed() {
-  const email = 'demo@user.com'
+  const hashedPassword1 = await bcrypt.hash(userData[0].password, 10)
+  const hashedPassword2 = await bcrypt.hash(userData[1].password, 10)
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
-    // no worries if it doesn't exist yet
-  })
+  await prisma.user
+    .delete({ where: { email: userData[0].email } })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    })
+  await prisma.user
+    .delete({ where: { email: userData[1].email } })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    })
 
-  const hashedPassword = await bcrypt.hash('demouser', 10)
-
-  const user = await prisma.user.create({
+  const user1 = await prisma.user.create({
     data: {
-      email,
+      email: userData[0].email,
       password: {
         create: {
-          hash: hashedPassword
+          hash: hashedPassword1
         }
       }
     }
   })
 
-  await prisma.timeline.create({
+  const user2 = await prisma.user.create({
+    data: {
+      email: userData[1].email,
+      password: {
+        create: {
+          hash: hashedPassword2
+        }
+      }
+    }
+  })
+
+  const timeline1 = await prisma.timeline.create({
     data: {
       title: 'My first timeline',
       description: 'The biggest timeline ever',
-      createdById: user.id
+      createdById: user1.id
     }
   })
 
-  await prisma.timeline.create({
+  const timeline2 = await prisma.timeline.create({
     data: {
-      title: 'My second timeline',
-      description: 'The smallest timeline ever',
-      createdById: user.id
+      title: 'Vacation',
+      description: 'Follow me when I go on vacation',
+      createdById: user2.id
     }
   })
 
-  const timelines = await prisma.timeline.findMany({
-    where: { createdById: user.id }
+  mockEvents.map(async event => {
+    await prisma.event.create({
+      data: {
+        startDate: event.startDate,
+        title: event.title,
+        timelineId: timeline1.id
+      }
+    })
   })
 
-  await Promise.all(
-    timelines.map(async (timeline: Timeline) => {
-      mockEvents.map(async event => {
-        await prisma.event.create({
-          data: {
-            title: event.title,
-            timelineId: timeline.id,
-            startDate: event.startDate,
-            createdById: timeline.createdById
-          }
-        })
-      })
-    })
-  )
+  const location1 = await prisma.location.create({
+    data: {
+      title: 'Stockholm',
+      createdById: user2.id
+    }
+  })
+
+  const location2 = await prisma.location.create({
+    data: {
+      title: 'Malmö',
+      createdById: user2.id
+    }
+  })
 
   console.log(`Database has been seeded. 🌱`)
 }

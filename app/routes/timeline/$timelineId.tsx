@@ -23,7 +23,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const timeline = await getTimeline({ userId, id: params.timelineId })
+  const timeline = await getTimeline({ createdById: userId, id: params.timelineId })
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }

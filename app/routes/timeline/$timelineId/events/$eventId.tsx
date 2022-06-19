@@ -11,9 +11,7 @@ import { deleteEvent, getEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  event: Event & { relatedEvents: { id: string; title: string }[] } & {
-    relatedEventsRelation: { id: string; title: string }[]
-  }
+  event: Event
 }
 
 // TODO: Add Zod valiation on params
@@ -21,7 +19,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request)
   invariant(params.eventId, 'eventId not found')
 
-  const event = await getEvent({ id: params.eventId })
+  const event = await getEvent(params.eventId)
 
   if (!event) {
     throw new Response('Not Found', { status: 404 })
@@ -31,10 +29,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request)
+  await requireUserId(request)
   invariant(params.eventId, 'eventId not found')
 
-  await deleteEvent({ userId, id: params.eventId })
+  await deleteEvent(params.eventId)
 
   return redirect(`/timeline/${params.timelineId}/events`)
 }
@@ -75,10 +73,6 @@ export default function EventDetailsPage() {
       <EventCard
         onDeleteClick={() => setIsOpen(true)}
         title={data.event.title}
-        events={[
-          ...data.event.relatedEvents,
-          ...data.event.relatedEventsRelation
-        ]}
         content={data.event.content}
         startDate={data.event.startDate}
       />

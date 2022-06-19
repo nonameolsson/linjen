@@ -19,7 +19,6 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  event    Event[]
   timeline Timeline[]
   location Location[]
 
@@ -49,7 +48,7 @@ model Timeline {
 
   event Event[]
 
-  @@map("timeline") 
+  @@map("timeline")
 }
 
 model Event {
@@ -65,11 +64,7 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdById String
-
-  relatedEvents         Event[] @relation("relatedEvents")
-  relatedEventsRelation Event[] @relation("relatedEvents")
+  location LocationEvent[]
 
   @@map("event")
 }
@@ -84,5 +79,15 @@ model Location {
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdById String
 
+  event LocationEvent[]
+
   @@map("location")
+}
+
+model LocationEvent {
+  id         String   @id @default(cuid())
+  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventId    String
+  locationId String
 }
