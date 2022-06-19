@@ -82,7 +82,7 @@ async function seed() {
     }
   })
 
-  const timeline2 = await prisma.timeline.create({
+  await prisma.timeline.create({
     data: {
       title: 'Vacation',
       description: 'Follow me when I go on vacation',
@@ -100,14 +100,14 @@ async function seed() {
     })
   })
 
-  const location1 = await prisma.location.create({
+  await prisma.location.create({
     data: {
       title: 'Stockholm',
       createdById: user2.id
     }
   })
 
-  const location2 = await prisma.location.create({
+  await prisma.location.create({
     data: {
       title: 'Malmö',
       createdById: user2.id

@@ -66,7 +66,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request)
+  await requireUserId(request)
   const formData = await request.formData()
 
   const title = formData.get('title')
@@ -114,6 +114,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function NewEventPage() {
   const data = useLoaderData<LoaderData>()
+  console.log(data)
   const actionData = useActionData<ActionData | undefined>()
   const transition = useTransition()
 
