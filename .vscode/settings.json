@@ -21,5 +21,11 @@
   "typescript.tsdk": "node_modules/typescript/lib",
   "[toml]": {
     "editor.defaultFormatter": "trunk.io"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "trunk.io"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }
