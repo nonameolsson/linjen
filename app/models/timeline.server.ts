@@ -1,6 +1,6 @@
 import type { Timeline } from '@prisma/client'
 import { prisma } from '~/db.server'
-import { User } from './user.server'
+import type { User } from './user.server'
 
 export type { Timeline } from '@prisma/client'
 
