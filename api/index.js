@@ -1358,11 +1358,7 @@ function getEventsList(timelineId) {
       _count: true,
       location: {
         select: {
-          location: {
-            select: {
-              title: true
-            }
-          }
+          title: true
         }
       }
     }
@@ -1385,12 +1381,17 @@ function getEventListItems({ timelineId }) {
     }
   })
 }
-async function createEvent({ data, timelineId }) {
+async function createEvent({ data, eventId, timelineId }) {
   return await prisma.event.create({
     data: {
       startDate: data.startDate,
       title: data.title,
       content: data.content,
+      location: {
+        connect: {
+          id: eventId
+        }
+      },
       timeline: {
         connect: {
           id: timelineId
@@ -1419,12 +1420,15 @@ function deleteEvent(id) {
 
 // app/models/location.server.ts
 async function getLocationsForEvent(id) {
-  const locationIds = await prisma.locationEvent.findMany({
-    where: { eventId: id },
-    include: { event: { include: { _count: true } } }
+  return await prisma.location.findMany({
+    where: {
+      events: {
+        some: {
+          id
+        }
+      }
+    }
   })
-  console.log(locationIds)
-  return void 0
 }
 
 // route:/Users/andreas/Development/linje/app/routes/timeline/$timelineId/events.tsx
@@ -1435,7 +1439,7 @@ var loader4 = async ({ request, params }) => {
     'timelineId not found'
   )
   const events = await getEventListItems({ timelineId: params.timelineId })
-  const locations = await getLocationsForEvent(events[2].id)
+  const locations = await getLocationsForEvent(events[0].id)
   return (0, import_server_runtime.json)({
     events,
     locations
@@ -1443,8 +1447,6 @@ var loader4 = async ({ request, params }) => {
 }
 function EventsTab() {
   const data = (0, import_react12.useLoaderData)()
-  console.log('data.locations')
-  console.log(data.locations)
   return /* @__PURE__ */ React.createElement(
     React.Fragment,
     null,
@@ -1487,12 +1489,11 @@ function EventsTab() {
                 'div',
                 {
                   className:
-                    'mt-4 overflow-hidden bg-white shadow sm:rounded-md'
+                    'overflow-hidden mt-4 bg-white shadow sm:rounded-md'
                 },
                 /* @__PURE__ */ React.createElement(
                   'ul',
                   {
-                    role: 'list',
                     className: 'divide-y divide-gray-200'
                   },
                   data.events.map(event =>
@@ -1549,6 +1550,11 @@ function EventsTab() {
                                       new Date(event.startDate)
                                     )
                                   )
+                                ),
+                                /* @__PURE__ */ React.createElement(
+                                  'p',
+                                  null,
+                                  data.locations.map(l => l.title)
                                 )
                               ),
                               /* @__PURE__ */ React.createElement(
@@ -1688,7 +1694,7 @@ function validateEventStartDate(startDate) {
 var loader5 = async ({ request, params }) => {
   await requireUserId(request)
   ;(0, import_tiny_invariant5.default)(params.eventId, 'eventId not found')
-  const event = await getEvent({ id: params.eventId })
+  const event = await getEvent(params.eventId)
   const availableEvents = await getEventsList(params.eventId)
   if (!event) {
     throw new Response('Not Found', { status: 404 })
@@ -1772,7 +1778,6 @@ function EditEvent() {
       !validateEventStartDate(startDate)
     ) {
       return /* @__PURE__ */ React3.createElement(EventCard, {
-        events: data.availableEvents.map(event => event.title),
         content,
         startDate: new Date(startDate),
         title
@@ -2249,20 +2254,22 @@ var loader7 = async ({ request, params }) => {
     params.timelineId,
     'timelineId not found'
   )
-  const events = await getEventsList({ timelineId: params.timelineId })
+  const events = await getEventsList(params.timelineId)
   if (!events) {
     throw new Response('Not Found', { status: 404 })
   }
   return (0, import_node7.json)({ events })
 }
 var action5 = async ({ request, params }) => {
-  const userId = await requireUserId(request)
+  await requireUserId(request)
   const formData = await request.formData()
   const title = formData.get('title')
   const content = formData.get('content')
   const startDate = formData.get('startDate')
   const timelineId = params.timelineId
   ;(0, import_tiny_invariant7.default)(timelineId, 'Timeline ID is required')
+  const eventId = params.eventId
+  ;(0, import_tiny_invariant7.default)(eventId, 'eventId is required')
   console.log(formData)
   if (
     typeof title !== 'string' ||
@@ -2284,11 +2291,13 @@ var action5 = async ({ request, params }) => {
   }
   console.log(1)
   const event = await createEvent({
-    title,
-    content,
-    startDate: new Date(startDate),
-    timelineId,
-    userId
+    data: {
+      title,
+      content,
+      startDate: new Date(startDate)
+    },
+    eventId,
+    timelineId
   })
   console.log(2)
   console.log('event created', event)
@@ -2299,6 +2308,7 @@ var action5 = async ({ request, params }) => {
 function NewEventPage() {
   var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k
   const data = (0, import_react19.useLoaderData)()
+  console.log(data)
   const actionData = (0, import_react19.useActionData)()
   const transition = (0, import_react19.useTransition)()
   const titleRef = import_react20.default.useRef(null)
@@ -3608,12 +3618,12 @@ function Index() {
 
 // server-assets-manifest:@remix-run/dev/assets-manifest
 var assets_manifest_default = {
-  version: 'a4b8f197',
+  version: '6cb86855',
   entry: {
-    module: '/build/entry.client-XH3TQ5GL.js',
+    module: '/build/entry.client-R3QSJGWC.js',
     imports: [
       '/build/_shared/chunk-SXNYENQH.js',
-      '/build/_shared/chunk-LBDKZ7YU.js',
+      '/build/_shared/chunk-YZKHJVUZ.js',
       '/build/_shared/chunk-6BO74FWO.js'
     ]
   },
@@ -3624,7 +3634,7 @@ var assets_manifest_default = {
       path: '',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/root-EMU2ABNR.js',
+      module: '/build/root-YACJWGKK.js',
       imports: void 0,
       hasAction: false,
       hasLoader: true,
@@ -3637,7 +3647,7 @@ var assets_manifest_default = {
       path: void 0,
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/__auth-66PO54NZ.js',
+      module: '/build/routes/__auth-IMZF42S7.js',
       imports: void 0,
       hasAction: false,
       hasLoader: false,
@@ -3650,10 +3660,10 @@ var assets_manifest_default = {
       path: 'join',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/__auth/join-2ARGSVQZ.js',
+      module: '/build/routes/__auth/join-NONAJVKH.js',
       imports: [
         '/build/_shared/chunk-DFG4XZEI.js',
-        '/build/_shared/chunk-M2LDWWV5.js',
+        '/build/_shared/chunk-BYDPOM6Y.js',
         '/build/_shared/chunk-ME5PAYV3.js'
       ],
       hasAction: true,
@@ -3667,10 +3677,10 @@ var assets_manifest_default = {
       path: 'login',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/__auth/login-T5JN4CAQ.js',
+      module: '/build/routes/__auth/login-XR7O37C2.js',
       imports: [
         '/build/_shared/chunk-DFG4XZEI.js',
-        '/build/_shared/chunk-M2LDWWV5.js',
+        '/build/_shared/chunk-BYDPOM6Y.js',
         '/build/_shared/chunk-ME5PAYV3.js'
       ],
       hasAction: true,
@@ -3697,9 +3707,9 @@ var assets_manifest_default = {
       path: 'events',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/events-3EMZ5DV2.js',
+      module: '/build/routes/events-H6LXZC3M.js',
       imports: [
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js'
       ],
@@ -3727,8 +3737,8 @@ var assets_manifest_default = {
       path: void 0,
       index: true,
       caseSensitive: void 0,
-      module: '/build/routes/index-MS7VD3ML.js',
-      imports: ['/build/_shared/chunk-M2LDWWV5.js'],
+      module: '/build/routes/index-7LMXVHAY.js',
+      imports: ['/build/_shared/chunk-BYDPOM6Y.js'],
       hasAction: false,
       hasLoader: false,
       hasCatchBoundary: false,
@@ -3740,9 +3750,9 @@ var assets_manifest_default = {
       path: 'people',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/people-6ZI6S2IM.js',
+      module: '/build/routes/people-2XAGDBGK.js',
       imports: [
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js'
       ],
@@ -3757,10 +3767,10 @@ var assets_manifest_default = {
       path: 'profile',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/profile-SURSF4P2.js',
+      module: '/build/routes/profile-B43CJ46W.js',
       imports: [
-        '/build/_shared/chunk-M2LDWWV5.js',
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-BYDPOM6Y.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js'
       ],
@@ -3775,10 +3785,10 @@ var assets_manifest_default = {
       path: 'timeline/:timelineId/edit',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timeline.$timelineId.edit-4TFP2FLK.js',
+      module: '/build/routes/timeline.$timelineId.edit-XINFSOBU.js',
       imports: [
         '/build/_shared/chunk-T572OESQ.js',
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js',
         '/build/_shared/chunk-ME5PAYV3.js'
@@ -3794,10 +3804,10 @@ var assets_manifest_default = {
       path: 'timeline/:timelineId',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timeline/$timelineId-NYJKSLYA.js',
+      module: '/build/routes/timeline/$timelineId-DYABUEGM.js',
       imports: [
         '/build/_shared/chunk-T572OESQ.js',
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js',
         '/build/_shared/chunk-ME5PAYV3.js'
@@ -3813,7 +3823,7 @@ var assets_manifest_default = {
       path: 'events',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timeline/$timelineId/events-H5VCGCDG.js',
+      module: '/build/routes/timeline/$timelineId/events-XON7X2SS.js',
       imports: ['/build/_shared/chunk-XDE3UXV6.js'],
       hasAction: false,
       hasLoader: true,
@@ -3826,10 +3836,10 @@ var assets_manifest_default = {
       path: ':eventId',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timeline/$timelineId/events/$eventId-NZHUXO43.js',
+      module: '/build/routes/timeline/$timelineId/events/$eventId-7AODLYH5.js',
       imports: [
         '/build/_shared/chunk-HBMZFJ4U.js',
-        '/build/_shared/chunk-WQ4DCF7J.js',
+        '/build/_shared/chunk-Y4CWM7IF.js',
         '/build/_shared/chunk-ME5PAYV3.js'
       ],
       hasAction: true,
@@ -3844,9 +3854,9 @@ var assets_manifest_default = {
       index: void 0,
       caseSensitive: void 0,
       module:
-        '/build/routes/timeline/$timelineId/events/$eventId.edit-T3IPGICU.js',
+        '/build/routes/timeline/$timelineId/events/$eventId.edit-6SYBUSIX.js',
       imports: [
-        '/build/_shared/chunk-WQ4DCF7J.js',
+        '/build/_shared/chunk-Y4CWM7IF.js',
         '/build/_shared/chunk-ME5PAYV3.js'
       ],
       hasAction: true,
@@ -3873,9 +3883,9 @@ var assets_manifest_default = {
       path: 'new',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timeline/$timelineId/events/new-2SPRJIQ3.js',
+      module: '/build/routes/timeline/$timelineId/events/new-TVYXYWFS.js',
       imports: [
-        '/build/_shared/chunk-WQ4DCF7J.js',
+        '/build/_shared/chunk-Y4CWM7IF.js',
         '/build/_shared/chunk-ME5PAYV3.js'
       ],
       hasAction: true,
@@ -3915,10 +3925,10 @@ var assets_manifest_default = {
       path: 'timelines',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timelines-32P7GDK7.js',
+      module: '/build/routes/timelines-MRKA42WA.js',
       imports: [
         '/build/_shared/chunk-T572OESQ.js',
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js',
         '/build/_shared/chunk-ME5PAYV3.js'
@@ -3934,10 +3944,10 @@ var assets_manifest_default = {
       path: 'timelines/new',
       index: void 0,
       caseSensitive: void 0,
-      module: '/build/routes/timelines.new-VAGZDYKB.js',
+      module: '/build/routes/timelines.new-4UZ6CHVC.js',
       imports: [
         '/build/_shared/chunk-T572OESQ.js',
-        '/build/_shared/chunk-3MRTQEVU.js',
+        '/build/_shared/chunk-B3TZKKQ4.js',
         '/build/_shared/chunk-W53SQCXG.js',
         '/build/_shared/chunk-HBMZFJ4U.js',
         '/build/_shared/chunk-ME5PAYV3.js'
@@ -3948,7 +3958,7 @@ var assets_manifest_default = {
       hasErrorBoundary: false
     }
   },
-  url: '/build/manifest-A4B8F197.js'
+  url: '/build/manifest-6CB86855.js'
 }
 
 // server-entry-module:@remix-run/dev/server-build

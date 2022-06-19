@@ -5,12 +5,13 @@ import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
 import type { Event } from '~/models/event.server'
 import { getEventListItems } from '~/models/event.server'
+import type { Location } from '~/models/location.server'
 import { getLocationsForEvent } from '~/models/location.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
   events: Event[]
-  locations: any
+  locations: Location[]
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -18,7 +19,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.timelineId, 'timelineId not found')
 
   const events = await getEventListItems({ timelineId: params.timelineId })
-  const locations = await getLocationsForEvent(events[2].id)
+
+  const locations = await getLocationsForEvent(events[0].id)
 
   return json<LoaderData>({
     events,
@@ -28,8 +30,6 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function EventsTab() {
   const data = useLoaderData<LoaderData>()
-  console.log('data.locations')
-  console.log(data.locations)
 
   return (
     <>
@@ -66,6 +66,7 @@ export default function EventsTab() {
                                     )}
                                   </span>
                                 </p>
+                                <p>{data.locations.map(l => l.title)}</p>
                               </div>
                               <div className='hidden md:block'>
                                 <div>
