@@ -1,3 +1,4 @@
+# trunk-ignore(hadolint/DL3006)
 FROM gitpod/workspace-full
 
 # Install Fly

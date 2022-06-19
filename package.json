@@ -38,6 +38,7 @@
     "useTabs": false
   },
   "eslintIgnore": [
+    "/api",
     "/node_modules",
     "/build",
     "/public/build"

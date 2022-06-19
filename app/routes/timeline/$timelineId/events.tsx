@@ -40,7 +40,7 @@ export default function EventsTab() {
             </div>
             {data.events.length > 0 ? (
               <div className='mt-4 overflow-hidden bg-white shadow sm:rounded-md'>
-                <ul role='list' className='divide-y divide-gray-200'>
+                <ul className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>
                       <Link to={event.id} className='block hover:bg-gray-50'>
