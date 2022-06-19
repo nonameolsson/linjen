@@ -6,12 +6,14 @@ node_modules
 
 /cypress/screenshots
 /cypress/videos
-/prisma/data.db
-/prisma/data.db-journal
-/prisma/*.svg
+
 
 /app/styles/tailwind.css
+.vercel
 
+.cache
+.vercel
+.output
 *.log
 
-.trunk/outgst
+.trunk/out

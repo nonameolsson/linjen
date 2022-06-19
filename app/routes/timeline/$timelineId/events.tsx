@@ -30,7 +30,6 @@ export default function EventsTab() {
   const data = useLoaderData<LoaderData>()
   console.log('data.locations')
   console.log(data.locations)
-  
 
   return (
     <>
@@ -48,8 +47,8 @@ export default function EventsTab() {
               </Link>
             </div>
             {data.events.length > 0 ? (
-              <div className='overflow-hidden mt-4 bg-white shadow sm:rounded-md'>
-                <ul className='divide-y divide-gray-200'>
+              <div className='mt-4 overflow-hidden bg-white shadow sm:rounded-md'>
+                <ul role='list' className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>
                       <Link to={event.id} className='block hover:bg-gray-50'>

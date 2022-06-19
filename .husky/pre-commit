@@ -1,6 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-# npm test TODO: Add correct test command in package.json for CI
-
 npx lint-staged

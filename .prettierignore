@@ -4,5 +4,10 @@ node_modules
 /public/build
 .env
 
+/cypress/screenshots
+/cypress/videos
+/postgres-data
+.trunk
+
 /app/styles/tailwind.css
 .trunk
