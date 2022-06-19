@@ -47,7 +47,7 @@ export default function EventsTab() {
               </Link>
             </div>
             {data.events.length > 0 ? (
-              <div className='mt-4 overflow-hidden bg-white shadow sm:rounded-md'>
+              <div className='overflow-hidden mt-4 bg-white shadow sm:rounded-md'>
                 <ul role='list' className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>

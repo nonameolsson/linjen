@@ -9,7 +9,6 @@ import { Page } from '~/components/page'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-
 type LoaderData = {
   timeline: Timeline
 }
@@ -18,7 +17,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const timeline = await getTimeline({ createdById: userId, id: params.timelineId })
+  const timeline = await getTimeline({
+    createdById: userId,
+    id: params.timelineId
+  })
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }

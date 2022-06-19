@@ -1,5 +1,5 @@
-import type { Event } from '@prisma/client';
-import { Link } from '@remix-run/react';
+import type { Event } from '@prisma/client'
+import { Link } from '@remix-run/react'
 
 interface Props extends Pick<Event, 'startDate' | 'content' | 'title'> {
   onDeleteClick?: () => void
@@ -20,7 +20,7 @@ export default function EventCard({
           Start Date:{' '}
           {new Intl.DateTimeFormat('sv-SE').format(new Date(startDate))}
         </p>
-       
+
         <hr className='my-4' />
 
         <Link

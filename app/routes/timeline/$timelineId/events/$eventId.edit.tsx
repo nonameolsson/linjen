@@ -102,7 +102,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     return badRequest({ fieldErrors, fields })
   }
 
- await updateEvent({ content, startDate: new Date(startDate), title  }, eventId)
+  await updateEvent({ content, startDate: new Date(startDate), title }, eventId)
 
   return redirect(`/timeline/${params.timelineId}/events/${params.eventId}`)
 }

@@ -80,7 +80,6 @@ export const action: ActionFunction = async ({ request, params }) => {
     typeof title !== 'string' ||
     typeof content !== 'string' ||
     typeof startDate !== 'string'
-
   ) {
     return badRequest({
       formError: `Form not submitted correctly.`
@@ -90,7 +89,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   const fieldErrors = {
     title: validateEventTitle(title),
     content: validateEventContent(content),
-    startDate: validateEventStartDate(startDate),
+    startDate: validateEventStartDate(startDate)
   }
 
   const fields = { title, content, startDate, timelineId }
@@ -104,7 +103,7 @@ export const action: ActionFunction = async ({ request, params }) => {
     content,
     startDate: new Date(startDate),
     timelineId,
-    userId,
+    userId
   })
 
   console.log(2)

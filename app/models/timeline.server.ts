@@ -1,15 +1,20 @@
-import type { Timeline, User } from '@prisma/client';
-import { prisma } from '~/db.server';
+import type { Timeline, User } from '@prisma/client'
+import { prisma } from '~/db.server'
 
-export type { Timeline } from '@prisma/client';
+export type { Timeline } from '@prisma/client'
 
-export function getTimeline({ createdById, id }: { createdById: Timeline['createdById']; id: Timeline['id']}) {
-  
+export function getTimeline({
+  createdById,
+  id
+}: {
+  createdById: Timeline['createdById']
+  id: Timeline['id']
+}) {
   return prisma.timeline.findFirst({
-    where: { 
+    where: {
       id,
       createdById
-     }
+    }
   })
 }
 
