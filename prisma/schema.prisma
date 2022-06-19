@@ -1,6 +1,6 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
@@ -9,7 +9,7 @@ generator erd {
 }
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
@@ -23,8 +23,6 @@ model User {
   password Password?
   timeline Timeline[]
   location Location[]
-
-  @@map("user")
 }
 
 model Password {
@@ -32,8 +30,6 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-
-  @@map("password")
 }
 
 model Timeline {
@@ -49,8 +45,6 @@ model Timeline {
   createdById String
 
   event Event[]
-
-  @@map("timeline")
 }
 
 model Event {
@@ -66,9 +60,7 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  location LocationEvent[]
-
-  @@map("event")
+  location Location[]
 }
 
 model Location {
@@ -81,15 +73,6 @@ model Location {
   createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
   createdById String
 
-  event LocationEvent[]
-
-  @@map("location")
+  events Event[]
 }
 
-model LocationEvent {
-  id         String   @id @default(cuid())
-  event      Event    @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  eventId    String
-  locationId String
-}

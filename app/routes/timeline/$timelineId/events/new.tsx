@@ -75,6 +75,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const timelineId = params.timelineId
   invariant(timelineId, 'Timeline ID is required')
+
+  const eventId = params.eventId
+  invariant(eventId, 'eventId is required')
+
   console.log(formData)
   if (
     typeof title !== 'string' ||
@@ -104,6 +108,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       content,
       startDate: new Date(startDate)
     },
+    eventId,
     timelineId
   })
 
