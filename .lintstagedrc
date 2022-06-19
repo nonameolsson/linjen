@@ -1,8 +1,5 @@
 {
-  "*.json": [
-    "prettier --write"
-  ],
-  "*.{js,ts,jsx,tsx}": [
+  "*.{js,ts,jsx,tsx,json}": [
     "trunk fmt"
   ]
 }
