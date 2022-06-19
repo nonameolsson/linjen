@@ -56,7 +56,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const events = await getEventsList({ timelineId: params.timelineId })
+  const events = await getEventsList(params.timelineId)
 
   if (!events) {
     throw new Response('Not Found', { status: 404 })
@@ -99,11 +99,12 @@ export const action: ActionFunction = async ({ request, params }) => {
   console.log(1)
 
   const event = await createEvent({
-    title,
-    content,
-    startDate: new Date(startDate),
-    timelineId,
-    userId
+    data: {
+      title,
+      content,
+      startDate: new Date(startDate)
+    },
+    timelineId
   })
 
   console.log(2)

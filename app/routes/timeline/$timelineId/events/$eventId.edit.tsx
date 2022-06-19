@@ -41,7 +41,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   invariant(params.eventId, 'eventId not found')
 
-  const event = await getEvent({ id: params.eventId })
+  const event = await getEvent(params.eventId)
   const availableEvents = await getEventsList(params.eventId)
 
   if (!event) {
@@ -141,7 +141,6 @@ export default function EditEvent() {
     ) {
       return (
         <EventCard
-          events={data.availableEvents.map(event => event.title)}
           content={content}
           startDate={new Date(startDate)}
           title={title}
