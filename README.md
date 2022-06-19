@@ -4,7 +4,7 @@
 
 Learn more about [Remix Stacks](https://remix.run/stacks).
 
-```
+```bash
 npx create-remix --template remix-run/indie-stack
 ```
 
@@ -53,7 +53,7 @@ The database seed script creates a new user with some data you can use to get st
 - Email: `rachel@remix.run`
 - Password: `racheliscool`
 
-### Relevant code:
+### Relevant code
 
 This is a pretty simple note-taking app, but it's a good example of how you can build a full stack app with Prisma and Remix. The main functionality is creating users, logging in and out, and creating and deleting notes.
 
