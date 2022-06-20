@@ -5,11 +5,11 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
+  - package-ecosystem: 'npm' # See documentation for possible values
     open-pull-requests-limit: 10
     labels:
-      - "dependencies"
-    directory: "/" # Location of package manifests
+      - 'dependencies'
+    directory: '/' # Location of package manifests
     schedule:
-      interval: "daily"
-    target-branch: "dev"
+      interval: 'daily'
+    target-branch: 'dev'
