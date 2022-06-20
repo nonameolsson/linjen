@@ -24,7 +24,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.timelineId, 'timelineId not found')
 
   const timeline = await getTimeline({
-    createdById: userId,
+    userId,
     id: params.timelineId
   })
   if (!timeline) {

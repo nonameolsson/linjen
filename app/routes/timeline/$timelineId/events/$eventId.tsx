@@ -40,7 +40,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  console.log('HERP', data)
+
   return (
     <Form method='post' id='delete-event'>
       <DeleteEventDialog

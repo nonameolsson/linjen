@@ -5,23 +5,23 @@ import type { User } from './user.server'
 export type { Timeline } from '@prisma/client'
 
 export function getTimeline({
-  createdById,
+  userId,
   id
 }: {
-  createdById: Timeline['createdById']
+  userId: Timeline['userId']
   id: Timeline['id']
 }) {
   return prisma.timeline.findFirst({
     where: {
       id,
-      createdById
+      userId
     }
   })
 }
 
 export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
   const timelines = await prisma.timeline.findMany({
-    where: { createdById: userId },
+    where: { userId },
 
     include: {
       _count: {
@@ -46,7 +46,7 @@ export function createTimeline({
     data: {
       title,
       description,
-      createdById: userId
+      userId: userId
     }
   })
 }
@@ -75,6 +75,6 @@ export function deleteTimeline({
   userId
 }: Pick<Timeline, 'id'> & { userId: User['id'] }) {
   return prisma.timeline.deleteMany({
-    where: { id, createdById: userId }
+    where: { id, userId: userId }
   })
 }

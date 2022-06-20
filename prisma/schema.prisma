@@ -41,8 +41,8 @@ model Timeline {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdById String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 
   event Event[]
 }
@@ -70,8 +70,8 @@ model Location {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy   User   @relation(fields: [createdById], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  createdById String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
 
   events Event[]
 }

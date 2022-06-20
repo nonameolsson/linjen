@@ -3,15 +3,13 @@ import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
+
 import type { Event } from '~/models/event.server'
 import { getEventListItems } from '~/models/event.server'
-import type { Location } from '~/models/location.server'
-import { getLocationsForEvent } from '~/models/location.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
   events: Event[]
-  locations: Location[]
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -20,11 +18,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
   const events = await getEventListItems({ timelineId: params.timelineId })
 
-  const locations = await getLocationsForEvent(events[0].id)
-
   return json<LoaderData>({
-    events,
-    locations
+    events
   })
 }
 
@@ -66,7 +61,6 @@ export default function EventsTab() {
                                     )}
                                   </span>
                                 </p>
-                                <p>{data.locations.map(l => l.title)}</p>
                               </div>
                               <div className='hidden md:block'>
                                 <div>

@@ -43,7 +43,6 @@ export function getEventListItems({
 
 export async function createEvent({
   data,
-  eventId,
   timelineId
 }: {
   data: {
@@ -51,7 +50,6 @@ export async function createEvent({
     content: Event['content']
     startDate: Event['startDate']
   }
-  eventId: Event['id']
   timelineId: Timeline['id']
 }) {
   return await prisma.event.create({
@@ -59,11 +57,6 @@ export async function createEvent({
       startDate: data.startDate,
       title: data.title,
       content: data.content,
-      location: {
-        connect: {
-          id: eventId
-        }
-      },
       timeline: {
         connect: {
           id: timelineId
