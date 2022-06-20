@@ -3,10 +3,15 @@ import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react'
 import { hydrate } from 'react-dom'
 
-// FIXME: Use correct variables, process is not available in client
-// const appId: string = (process.env.LOG_ROCKET_APP_ID = 'cvy8on/linje')
+import type { EnvironmentVariables } from './entry.server'
 
-// LogRocket.init(appId)
+declare global {
+  var ENV: EnvironmentVariables
+}
+
+const appId: string = window.ENV.LOG_ROCKET_APP_ID
+
+LogRocket.init(appId)
 setupLogRocketReact(LogRocket)
 
 hydrate(<RemixBrowser />, document)
