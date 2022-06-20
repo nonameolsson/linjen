@@ -5,6 +5,7 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
+
 import { Page } from '~/components/page'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -18,7 +19,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   invariant(params.timelineId, 'timelineId not found')
 
   const timeline = await getTimeline({
-    createdById: userId,
+    userId,
     id: params.timelineId
   })
   if (!timeline) {

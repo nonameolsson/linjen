@@ -78,7 +78,7 @@ async function seed() {
     data: {
       title: 'My first timeline',
       description: 'The biggest timeline ever',
-      createdById: user1.id
+      userId: user1.id
     }
   })
 
@@ -86,7 +86,7 @@ async function seed() {
     data: {
       title: 'Vacation',
       description: 'Follow me when I go on vacation',
-      createdById: user2.id
+      userId: user2.id
     }
   })
 
@@ -103,14 +103,14 @@ async function seed() {
   await prisma.location.create({
     data: {
       title: 'Stockholm',
-      createdById: user2.id
+      userId: user2.id
     }
   })
 
   await prisma.location.create({
     data: {
       title: 'Malmö',
-      createdById: user2.id
+      userId: user2.id
     }
   })
 

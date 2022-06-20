@@ -76,10 +76,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   const timelineId = params.timelineId
   invariant(timelineId, 'Timeline ID is required')
 
-  const eventId = params.eventId
-  invariant(eventId, 'eventId is required')
-
-  console.log(formData)
   if (
     typeof title !== 'string' ||
     typeof content !== 'string' ||
@@ -100,7 +96,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (Object.values(fieldErrors).some(Boolean)) {
     return badRequest({ fieldErrors, fields })
   }
-  console.log(1)
 
   const event = await createEvent({
     data: {
@@ -108,18 +103,15 @@ export const action: ActionFunction = async ({ request, params }) => {
       content,
       startDate: new Date(startDate)
     },
-    eventId,
     timelineId
   })
 
-  console.log(2)
-  console.log('event created', event)
   return redirect(`/timeline/${timelineId}/events/${event.id}`)
 }
 
 export default function NewEventPage() {
   const data = useLoaderData<LoaderData>()
-  console.log(data)
+
   const actionData = useActionData<ActionData | undefined>()
   const transition = useTransition()
 
