@@ -1,13 +1,29 @@
-import type { Event, Timeline, User } from '@prisma/client'
-
+import type { Event, Timeline } from '@prisma/client'
 import { prisma } from '~/db.server'
 
 export type { Event } from '@prisma/client'
 
-export function getEvent({ id }: Pick<Event, 'id'>) {
+export function getEventsList(timelineId: Timeline['id']) {
+  return prisma.event.findMany({
+    where: { timelineId },
+    orderBy: { title: 'desc' },
+    include: {
+      _count: true,
+      location: {
+        select: {
+          title: true
+        }
+      }
+    }
+  })
+}
+
+export function getEvent(id: Event['id']) {
   return prisma.event.findFirst({
-    where: { id }
-    // select: { locations: true, id: true, title: true, content: true }
+    where: { id },
+    include: {
+      location: true
+    }
   })
 }
 
@@ -18,65 +34,60 @@ export function getEventListItems({
 }) {
   return prisma.event.findMany({
     where: { timelineId },
-    // select: { id: true, title: true },
-    orderBy: { startDate: 'desc' }
+    orderBy: { startDate: 'desc' },
+    include: {
+      location: true
+    }
   })
 }
 
-export function createEvent({
-  content,
-  startDate,
-  timelineId,
-  title,
-  userId
-}: Pick<Event, 'content' | 'startDate' | 'timelineId' | 'title'> & {
-  userId: User['id']
+export async function createEvent({
+  data,
+  timelineId
+}: {
+  data: {
+    title: Event['title']
+    content: Event['content']
+    startDate: Event['startDate']
+  }
+  timelineId: Timeline['id']
 }) {
-  return prisma.event.create({
+  return await prisma.event.create({
     data: {
-      title,
-      content,
-      startDate,
+      startDate: data.startDate,
+      title: data.title,
+      content: data.content,
       timeline: {
         connect: {
           id: timelineId
-        }
-      },
-      user: {
-        connect: {
-          id: userId
         }
       }
     }
   })
 }
 
-export function updateEvent({
-  id,
-  content,
-  startDate,
-  title,
-  userId
-}: Pick<Event, 'content' | 'id' | 'startDate' | 'title'> & {
-  userId: User['id']
-}) {
+export function updateEvent(
+  data: {
+    title: Event['title']
+    content: Event['content']
+    startDate: Event['startDate']
+  },
+  id: Event['id']
+) {
   return prisma.event.update({
-    where: {
-      id
-    },
+    where: { id },
     data: {
-      title,
-      content,
-      startDate
+      content: data.content,
+      startDate: data.startDate,
+      title: data.title
     }
   })
 }
 
-export function deleteEvent({
-  id,
-  userId
-}: Pick<Event, 'id'> & { userId: User['id'] }) {
-  return prisma.event.deleteMany({
-    where: { id, userId }
+export function deleteEvent(id: Event['id']) {
+  return prisma.event.delete({
+    where: {
+      id
+    }
   })
 }

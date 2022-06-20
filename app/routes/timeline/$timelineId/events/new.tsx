@@ -1,12 +1,16 @@
-import type { ActionFunction } from '@remix-run/node'
+import type { Event } from '@prisma/client'
+import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useTransition } from '@remix-run/react'
+import {
+  Form,
+  useActionData,
+  useLoaderData,
+  useTransition
+} from '@remix-run/react'
 import React from 'react'
-
 import invariant from 'tiny-invariant'
 import EventCard from '~/components/event-card'
-
-import { createEvent } from '~/models/event.server'
+import { createEvent, getEventsList } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 function validateEventTitle(title: string) {
@@ -43,8 +47,26 @@ type ActionData = {
 
 const badRequest = (data: ActionData) => json(data, { status: 400 })
 
+type LoaderData = {
+  events: Pick<Event, 'id' | 'title'>[]
+}
+
+// TODO: Add Zod valiation on params
+export const loader: LoaderFunction = async ({ request, params }) => {
+  await requireUserId(request)
+  invariant(params.timelineId, 'timelineId not found')
+
+  const events = await getEventsList(params.timelineId)
+
+  if (!events) {
+    throw new Response('Not Found', { status: 404 })
+  }
+
+  return json<LoaderData>({ events })
+}
+
 export const action: ActionFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request)
+  await requireUserId(request)
   const formData = await request.formData()
 
   const title = formData.get('title')
@@ -76,17 +98,20 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 
   const event = await createEvent({
-    title,
-    content,
-    startDate,
-    timelineId,
-    userId
+    data: {
+      title,
+      content,
+      startDate: new Date(startDate)
+    },
+    timelineId
   })
 
   return redirect(`/timeline/${timelineId}/events/${event.id}`)
 }
 
 export default function NewEventPage() {
+  const data = useLoaderData<LoaderData>()
+
   const actionData = useActionData<ActionData | undefined>()
   const transition = useTransition()
 
@@ -117,7 +142,13 @@ export default function NewEventPage() {
       !validateEventContent(content) &&
       !validateEventStartDate(startDate)
     ) {
-      return <EventCard content={content} startDate={startDate} title={title} />
+      return (
+        <EventCard
+          content={content}
+          startDate={new Date(startDate)}
+          title={title}
+        />
+      )
     }
   }
 
@@ -132,13 +163,14 @@ export default function NewEventPage() {
       }}
     >
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Title: </span>
           <input
+            autoFocus
             ref={titleRef}
             defaultValue={actionData?.fields?.title}
             name='title'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={Boolean(actionData?.fieldErrors?.title) || undefined}
             aria-errormessage={
               actionData?.fieldErrors?.title ? 'title-error' : undefined
@@ -153,14 +185,14 @@ export default function NewEventPage() {
       </div>
 
       <div>
-        <label className='flex w-full flex-col gap-1'>
+        <label className='flex flex-col gap-1 w-full'>
           <span>Content: </span>
           <textarea
             ref={contentRef}
             defaultValue={actionData?.fields?.content}
             name='content'
             rows={4}
-            className='w-full flex-1 rounded-md border-2 border-blue-500 py-2 px-3 text-lg leading-6'
+            className='flex-1 py-2 px-3 w-full text-lg leading-6 rounded-md border-2 border-blue-500'
             aria-invalid={
               Boolean(actionData?.fieldErrors?.content) || undefined
             }
@@ -177,12 +209,14 @@ export default function NewEventPage() {
       </div>
 
       <div>
-        <label className='flex w-full flex-col gap-1'>
-          <span>Year: </span>
+        <label className='flex flex-col gap-1 w-full'>
+          <span>Start Date: </span>
           <input
             ref={startDateRef}
+            type='date'
+            defaultValue={new Intl.DateTimeFormat('sv-SE').format(new Date())}
             name='startDate'
-            className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
             aria-invalid={
               Boolean(actionData?.fieldErrors?.startDate) || undefined
             }
@@ -201,7 +235,7 @@ export default function NewEventPage() {
       <div className='text-right'>
         <button
           type='submit'
-          className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
+          className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
         >
           Save
         </button>

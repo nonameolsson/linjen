@@ -1,58 +1,116 @@
+import type { Event } from '@prisma/client'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 
 const prisma = new PrismaClient()
 
+const mockEvents: Omit<
+  Event,
+  'id' | 'updatedAt' | 'createdAt' | 'createdById' | 'timelineId' | 'locationId'
+>[] = [
+  {
+    title: 'My first event',
+    content: 'The biggest event ever',
+    startDate: new Date('2020-01-05')
+  },
+  {
+    title: 'The journey begins',
+    content: 'I am so excited',
+    startDate: new Date('2020-01-05')
+  },
+  {
+    title: 'I am on my way',
+    content: '',
+    startDate: new Date('2020-01-08')
+  }
+]
+
+const userData = [
+  {
+    email: 'demo@user.com',
+    password: 'demouser'
+  },
+  {
+    email: 'noname.olsson@gmail.com',
+    password: 'abc123abc123'
+  }
+]
+
 async function seed() {
-  const email = 'rachel@remix.run'
+  const hashedPassword1 = await bcrypt.hash(userData[0].password, 10)
+  const hashedPassword2 = await bcrypt.hash(userData[1].password, 10)
 
   // cleanup the existing database
-  await prisma.user.delete({ where: { email } }).catch(() => {
-    // no worries if it doesn't exist yet
-  })
+  await prisma.user
+    .delete({ where: { email: userData[0].email } })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    })
+  await prisma.user
+    .delete({ where: { email: userData[1].email } })
+    .catch(() => {
+      // no worries if it doesn't exist yet
+    })
 
-  const hashedPassword = await bcrypt.hash('racheliscool', 10)
-
-  const user = await prisma.user.create({
+  const user1 = await prisma.user.create({
     data: {
-      email,
+      email: userData[0].email,
       password: {
         create: {
-          hash: hashedPassword
+          hash: hashedPassword1
         }
       }
     }
   })
 
-  await prisma.note.create({
+  const user2 = await prisma.user.create({
     data: {
-      title: 'My first note',
-      body: 'Hello, world!',
-      userId: user.id
+      email: userData[1].email,
+      password: {
+        create: {
+          hash: hashedPassword2
+        }
+      }
     }
   })
 
-  await prisma.note.create({
-    data: {
-      title: 'My second note',
-      body: 'Hello, world!',
-      userId: user.id
-    }
-  })
-
-  await prisma.timeline.create({
+  const timeline1 = await prisma.timeline.create({
     data: {
       title: 'My first timeline',
       description: 'The biggest timeline ever',
-      userId: user.id
+      userId: user1.id
     }
   })
 
   await prisma.timeline.create({
     data: {
-      title: 'My second timeline',
-      description: 'The smallest timeline ever',
-      userId: user.id
+      title: 'Vacation',
+      description: 'Follow me when I go on vacation',
+      userId: user2.id
+    }
+  })
+
+  mockEvents.map(async event => {
+    await prisma.event.create({
+      data: {
+        startDate: event.startDate,
+        title: event.title,
+        timelineId: timeline1.id
+      }
+    })
+  })
+
+  await prisma.location.create({
+    data: {
+      title: 'Stockholm',
+      userId: user2.id
+    }
+  })
+
+  await prisma.location.create({
+    data: {
+      title: 'Malmö',
+      userId: user2.id
     }
   })
 

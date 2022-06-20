@@ -3,9 +3,10 @@ import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react'
 import { hydrate } from 'react-dom'
 
-const appId: string = (process.env.LOG_ROCKET_APP_ID = 'cvy8on/linje')
+// FIXME: Use correct variables, process is not available in client
+// const appId: string = (process.env.LOG_ROCKET_APP_ID = 'cvy8on/linje')
 
-LogRocket.init(appId)
+// LogRocket.init(appId)
 setupLogRocketReact(LogRocket)
 
 hydrate(<RemixBrowser />, document)

@@ -14,15 +14,15 @@ export function Content({
   title: string
 }): JSX.Element {
   return (
-    <div className='flex flex-1 flex-col overflow-hidden'>
+    <div className='flex overflow-hidden flex-col flex-1'>
       <Navbar setMobileMenuOpen={setMobileMenuOpen} />
 
       {/* Main content */}
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
+      <div className='flex overflow-hidden flex-1 items-stretch'>
+        <main className='overflow-y-auto flex-1 p-4'>
           <section
             aria-labelledby='primary-heading'
-            className='flex h-full min-w-0 flex-1 flex-col lg:order-last'
+            className='flex flex-col flex-1 min-w-0 h-full lg:order-last'
           >
             <h1 id='primary-heading' className='sr-only'>
               {title}

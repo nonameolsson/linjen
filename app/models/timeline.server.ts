@@ -1,27 +1,30 @@
 import type { Timeline, User } from '@prisma/client'
-
 import { prisma } from '~/db.server'
 
 export type { Timeline } from '@prisma/client'
 
 export function getTimeline({
-  id,
-  userId
-}: Pick<Timeline, 'id'> & {
-  userId: User['id']
+  userId,
+  id
+}: {
+  userId: Timeline['userId']
+  id: Timeline['id']
 }) {
   return prisma.timeline.findFirst({
-    where: { id, userId }
+    where: {
+      id,
+      userId
+    }
   })
 }
 
-export function getTimelineListItems({ userId }: { userId: User['id'] }) {
-  const timelines = prisma.timeline.findMany({
+export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
+  const timelines = await prisma.timeline.findMany({
     where: { userId },
 
     include: {
       _count: {
-        select: { Event: true }
+        select: { event: true }
       }
     },
 
@@ -42,11 +45,7 @@ export function createTimeline({
     data: {
       title,
       description,
-      user: {
-        connect: {
-          id: userId
-        }
-      }
+      userId: userId
     }
   })
 }
@@ -75,6 +74,6 @@ export function deleteTimeline({
   userId
 }: Pick<Timeline, 'id'> & { userId: User['id'] }) {
   return prisma.timeline.deleteMany({
-    where: { id, userId }
+    where: { id, userId: userId }
   })
 }

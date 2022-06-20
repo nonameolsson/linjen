@@ -10,3 +10,4 @@ node_modules
 .trunk
 
 /app/styles/tailwind.css
+.trunk

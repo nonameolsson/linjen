@@ -6,9 +6,8 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
-
-import { createUserSession, getUserId } from '~/session.server'
 import { verifyLogin } from '~/models/user.server'
+import { createUserSession, getUserId } from '~/session.server'
 import { safeRedirect, validateEmail } from '~/utils'
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -91,8 +90,8 @@ export default function LoginPage() {
   }, [actionData])
 
   return (
-    <div className='flex min-h-full flex-col justify-center'>
-      <div className='mx-auto w-full max-w-md px-8'>
+    <div className='flex flex-col justify-center min-h-full'>
+      <div className='px-8 mx-auto w-full max-w-md'>
         <Form method='post' className='space-y-6'>
           <div>
             <label
@@ -112,7 +111,7 @@ export default function LoginPage() {
                 autoComplete='email'
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby='email-error'
-                className='w-full rounded border border-gray-500 px-2 py-1 text-lg'
+                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
               {actionData?.errors?.email && (
                 <div className='pt-1 text-red-700' id='email-error'>
@@ -138,7 +137,7 @@ export default function LoginPage() {
                 autoComplete='current-password'
                 aria-invalid={actionData?.errors?.password ? true : undefined}
                 aria-describedby='password-error'
-                className='w-full rounded border border-gray-500 px-2 py-1 text-lg'
+                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
               {actionData?.errors?.password && (
                 <div className='pt-1 text-red-700' id='password-error'>
@@ -151,27 +150,27 @@ export default function LoginPage() {
           <input type='hidden' name='redirectTo' value={redirectTo} />
           <button
             type='submit'
-            className='w-full rounded bg-blue-500  py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
+            className='py-2 px-4 w-full  text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
           >
             Log in
           </button>
-          <div className='flex items-center justify-between'>
+          <div className='flex justify-between items-center'>
             <div className='flex items-center'>
               <input
                 id='remember'
                 name='remember'
                 type='checkbox'
-                className='h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500'
+                className='w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500'
               />
               <label
                 htmlFor='remember'
-                className='ml-2 block text-sm text-gray-900'
+                className='block ml-2 text-sm text-gray-900'
               >
                 Remember me
               </label>
             </div>
-            <div className='text-center text-sm text-gray-500'>
-              Don't have an account?{' '}
+            <div className='text-sm text-center text-gray-500'>
+              Don't have an account yet?{' '}
               <Link
                 className='text-blue-500 underline'
                 to={{

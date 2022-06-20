@@ -18,7 +18,10 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const timeline = await getTimeline({ userId, id: params.timelineId })
+  const timeline = await getTimeline({
+    userId,
+    id: params.timelineId
+  })
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }
@@ -104,7 +107,7 @@ export default function EditTimelinePage() {
               id='title'
               ref={titleRef}
               name='title'
-              className='flex-1 rounded-md border-2 border-blue-500 px-3 text-lg leading-loose'
+              className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
               aria-invalid={actionData?.errors?.title ? true : undefined}
               aria-errormessage={
                 actionData?.errors?.title ? 'title-error' : undefined
@@ -113,9 +116,9 @@ export default function EditTimelinePage() {
               aria-describedby='email-error'
             />
             {actionData?.errors?.title && (
-              <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3'>
+              <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
                 <ExclamationCircleIcon
-                  className='h-5 w-5 text-red-500'
+                  className='w-5 h-5 text-red-500'
                   aria-hidden='true'
                 />
               </div>
@@ -139,7 +142,7 @@ export default function EditTimelinePage() {
               rows={4}
               name='description'
               ref={descriptionRef}
-              className='block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'
+              className='block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm'
               defaultValue={data.timeline.description}
               aria-invalid={actionData?.errors?.description ? true : undefined}
               aria-errormessage={
@@ -157,7 +160,7 @@ export default function EditTimelinePage() {
         <div className='text-right'>
           <button
             type='submit'
-            className='rounded bg-blue-500 py-2 px-4 text-white hover:bg-blue-600 focus:bg-blue-400'
+            className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
           >
             Save
           </button>

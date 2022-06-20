@@ -1,11 +1,15 @@
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
+generator erd {
+  provider = "prisma-erd-generator"
+}
+
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
 }
 
@@ -17,9 +21,8 @@ model User {
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
-  Event    Event[]
-  Timeline Timeline[]
+  timeline Timeline[]
+  location Location[]
 }
 
 model Password {
@@ -27,18 +30,6 @@ model Password {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String @unique
-}
-
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
 }
 
 model Timeline {
@@ -53,31 +44,35 @@ model Timeline {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  Event Event[]
+  event Event[]
 }
 
 model Event {
-  id      String @id @default(cuid())
+  id      String  @id @default(cuid())
   title   String
   content String?
 
   timeline   Timeline @relation(fields: [timelineId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   timelineId String
 
-  startDate String
-  // endDate   String?
+  startDate DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId     String
-
-  // locations Location[] @relation(references: [id])
+  location Location[]
 }
 
 model Location {
-  id     String  @id @default(cuid())
-  title  String
-  // events Event[] @relation(references: [id])
+  id    String @id @default(cuid())
+  title String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  userId String
+
+  events Event[]
 }
+

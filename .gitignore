@@ -3,6 +3,7 @@ node_modules
 /build
 /public/build
 .env
+/api
 
 /cypress/screenshots
 /cypress/videos
@@ -15,3 +16,5 @@ node_modules
 .vercel
 .output
 *.log
+
+.trunk/out
