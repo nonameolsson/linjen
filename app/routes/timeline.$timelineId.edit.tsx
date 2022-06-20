@@ -1,10 +1,10 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
-import type { Timeline } from '@prisma/client'
 
 import { Page } from '~/components/page'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'

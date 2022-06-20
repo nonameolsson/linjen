@@ -8,11 +8,11 @@ import {
 } from '@remix-run/react'
 import * as React from 'react'
 
+import type { Event } from '@prisma/client'
+import invariant from 'tiny-invariant'
+import EventCard from '~/components/event-card'
 import { getEvent, updateEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
-import invariant from 'tiny-invariant'
-import type { Event } from '@prisma/client'
-import EventCard from '~/components/event-card'
 
 type LoaderData = {
   event: Event
