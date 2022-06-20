@@ -10,11 +10,13 @@ import {
   Meta,
   Outlet,
   Scripts,
-  ScrollRestoration
+  ScrollRestoration,
+  useLoaderData
 } from '@remix-run/react'
 
+import type { EnvironmentVariables } from './entry.server'
+
 import tailwindStylesheetUrl from './styles/tailwind.css'
-import { getUser } from './session.server'
 
 export const links: LinksFunction = () => {
   return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
@@ -27,16 +29,20 @@ export const meta: MetaFunction = () => ({
 })
 
 type LoaderData = {
-  user: Awaited<ReturnType<typeof getUser>>
+  ENV: EnvironmentVariables
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
-  return json<LoaderData>({
-    user: await getUser(request)
-  })
+export const loader: LoaderFunction = () => {
+  const ENV: EnvironmentVariables = {
+    LOG_ROCKET_APP_ID: process.env.LOG_ROCKET_APP_ID || ''
+  }
+
+  return json({ ENV })
 }
 
 export default function App() {
+  const data = useLoaderData<LoaderData>()
+
   return (
     <html lang='en' className='h-full bg-gray-100'>
       <head>
@@ -46,6 +52,11 @@ export default function App() {
       <body className='h-full'>
         <Outlet />
         <ScrollRestoration />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+          }}
+        />
         <Scripts />
         <LiveReload />
       </body>
