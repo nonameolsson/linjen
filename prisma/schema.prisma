@@ -60,7 +60,10 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  location Location[]
+  location Location[] @relation(references: [id])
+
+  referencedBy Event[]  @relation("References", references: [id])
+  referencing  Event[]  @relation("References", references: [id])
 }
 
 model Location {
@@ -73,6 +76,5 @@ model Location {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
-  events Event[]
+  events Event[] @relation(references: [id])
 }
-

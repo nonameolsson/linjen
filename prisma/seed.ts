@@ -114,6 +114,22 @@ async function seed() {
     }
   })
 
+  await prisma.event.create({
+    data: {
+      title: 'Jag föds',
+      startDate: new Date('2020-01-01'),
+      // timline: ,
+      timelineId: timeline1.id
+    }
+  })
+
+  await prisma.location.create({
+    data: {
+      title: 'Vimmerby',
+      userId: user1.id
+    }
+  })
+
   console.log(`Database has been seeded. 🌱`)
 }
 
