@@ -144,6 +144,8 @@ export default function NewEventPage() {
     ) {
       return (
         <EventCard
+          events={[]}
+          locations={[]}
           content={content}
           startDate={new Date(startDate)}
           title={title}
