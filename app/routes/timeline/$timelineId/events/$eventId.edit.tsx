@@ -141,6 +141,8 @@ export default function EditEvent() {
     ) {
       return (
         <EventCard
+          events={[]}
+          locations={[]}
           content={content}
           startDate={new Date(startDate)}
           title={title}
