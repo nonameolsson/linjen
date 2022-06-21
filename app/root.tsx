@@ -15,6 +15,7 @@ import {
 } from '@remix-run/react'
 
 import type { EnvironmentVariables } from './entry.server'
+import { getUser } from './session.server'
 
 import tailwindStylesheetUrl from './styles/tailwind.css'
 
@@ -24,20 +25,24 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
-  title: 'Linje',
+  title: 'Linjen',
   viewport: 'width=device-width,initial-scale=1'
 })
 
 type LoaderData = {
   ENV: EnvironmentVariables
+  user: Awaited<ReturnType<typeof getUser>>
 }
 
-export const loader: LoaderFunction = () => {
+export const loader: LoaderFunction = async ({ request }) => {
   const ENV: EnvironmentVariables = {
     LOG_ROCKET_APP_ID: process.env.LOG_ROCKET_APP_ID || ''
   }
 
-  return json({ ENV })
+  return json<LoaderData>({
+    ENV,
+    user: await getUser(request)
+  })
 }
 
 export default function App() {
