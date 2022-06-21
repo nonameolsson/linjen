@@ -1,4 +1,5 @@
 import { ExclamationIcon } from '@heroicons/react/solid'
+import type { Location } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useCatch, useLoaderData } from '@remix-run/react'
@@ -11,7 +12,11 @@ import { deleteEvent, getEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  event: Event
+  event: Event & {
+    referencedBy: Event[]
+    referencing: Event[]
+    location: Location[]
+  }
 }
 
 // TODO: Add Zod valiation on params
@@ -40,6 +45,11 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  const referencedEvents: Event[] = [
+    ...data.event.referencedBy,
+    ...data.event.referencing
+  ]
 
   return (
     <Form method='post' id='delete-event'>
@@ -71,8 +81,10 @@ export default function EventDetailsPage() {
       />
 
       <EventCard
+        locations={data.event.location}
         onDeleteClick={() => setIsOpen(true)}
         title={data.event.title}
+        events={referencedEvents}
         content={data.event.content}
         startDate={data.event.startDate}
       />

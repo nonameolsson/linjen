@@ -22,6 +22,8 @@ export function getEvent(id: Event['id']) {
   return prisma.event.findFirst({
     where: { id },
     include: {
+      referencedBy: true,
+      referencing: true,
       location: true
     }
   })

@@ -1,16 +1,21 @@
-import type { Event } from '@prisma/client'
+import type { Event, Location } from '@prisma/client'
 import { Link } from '@remix-run/react'
 
 interface Props extends Pick<Event, 'startDate' | 'content' | 'title'> {
+  locations: Location[]
+  events: Event[]
   onDeleteClick?: () => void
 }
 
 export default function EventCard({
   content,
   onDeleteClick,
+  events,
   startDate,
+  locations,
   title
 }: Props) {
+  console.log(locations)
   return (
     <>
       <div className='p-4 bg-white'>
@@ -20,7 +25,21 @@ export default function EventCard({
           Start Date:{' '}
           {new Intl.DateTimeFormat('sv-SE').format(new Date(startDate))}
         </p>
+        <hr className='my-4' />
+        <p>Events</p>
+        <ul>
+          {events.map(event => (
+            <li key={event.id}>{event.title}</li>
+          ))}
+        </ul>
+        <hr className='my-4' />
 
+        <p>Locations</p>
+        <ul>
+          {locations.map(location => (
+            <li key={location.id}>{location.title}</li>
+          ))}
+        </ul>
         <hr className='my-4' />
 
         <Link
