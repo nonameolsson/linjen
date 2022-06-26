@@ -6,6 +6,7 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
+
 import { TextField } from '~/components'
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
@@ -142,10 +143,7 @@ export default function LoginPage() {
           </div>
 
           <input type='hidden' name='redirectTo' value={redirectTo} />
-          <button
-            type='submit'
-            className='py-2 px-4 w-full  text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-          >
+          <button className='btn' type='submit'>
             Log in
           </button>
           <div className='flex justify-between items-center'>
