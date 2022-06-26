@@ -1,8 +1,8 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import * as React from 'react'
+import { Button, TextArea, TextField } from '~/components'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
@@ -66,75 +66,35 @@ export default function NewTimelinePage() {
         }}
       >
         <div>
-          <label
-            htmlFor='title'
-            className='block text-sm font-medium text-gray-700'
-          >
-            Title:
-          </label>
           <div className='mt-1'>
-            <input
+            <TextField
               id='title'
+              label='Title'
               ref={titleRef}
               name='title'
-              className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500 focus:border-indigo-500 focus:ring-indigo-500'
-              aria-invalid={actionData?.errors?.title ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.title ? 'title-error' : undefined
-              }
+              errorMessage={actionData?.errors?.title}
               placeholder='My awesome timeline'
               defaultValue=''
               aria-describedby='email-error'
             />
-            {actionData?.errors?.title && (
-              <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
-                <ExclamationCircleIcon
-                  className='w-5 h-5 text-red-500'
-                  aria-hidden='true'
-                />
-              </div>
-            )}
-            {actionData?.errors?.title && (
-              <p className='mt-2 text-sm text-red-600' id='title-error'>
-                {actionData.errors.title}
-              </p>
-            )}
           </div>
         </div>
         <div>
-          <label
-            htmlFor='comment'
-            className='block text-sm font-medium text-gray-700'
-          >
-            Description
-          </label>
           <div className='mt-1'>
-            <textarea
+            <TextArea
               rows={4}
               name='description'
               ref={descriptionRef}
-              className='rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm'
+              label='Description'
               defaultValue={''}
               aria-invalid={actionData?.errors?.description ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.description ? 'body-error' : undefined
-              }
+              errorMessage={actionData?.errors?.description}
             />
           </div>
-          {actionData?.errors?.description && (
-            <div className='pt-1 text-red-700' id='body-error'>
-              {actionData.errors.description}
-            </div>
-          )}
         </div>
 
         <div className='text-right'>
-          <button
-            type='submit'
-            className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-          >
-            Save
-          </button>
+          <Button type='submit'>Save</Button>
         </div>
       </Form>
     </Page>

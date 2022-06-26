@@ -6,6 +6,7 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
+import { TextField } from '~/components'
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
 import { safeRedirect, validateEmail } from '~/utils'
@@ -101,7 +102,7 @@ export default function LoginPage() {
               Email address
             </label>
             <div className='mt-1'>
-              <input
+              <TextField
                 ref={emailRef}
                 id='email'
                 required
@@ -109,9 +110,8 @@ export default function LoginPage() {
                 name='email'
                 type='email'
                 autoComplete='email'
-                aria-invalid={actionData?.errors?.email ? true : undefined}
+                errorMessage={actionData?.errors?.email}
                 aria-describedby='email-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
               {actionData?.errors?.email && (
                 <div className='pt-1 text-red-700' id='email-error'>
@@ -129,21 +129,15 @@ export default function LoginPage() {
               Password
             </label>
             <div className='mt-1'>
-              <input
+              <TextField
                 id='password'
                 ref={passwordRef}
                 name='password'
                 type='password'
                 autoComplete='current-password'
-                aria-invalid={actionData?.errors?.password ? true : undefined}
+                errorMessage={actionData?.errors?.password}
                 aria-describedby='password-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
               />
-              {actionData?.errors?.password && (
-                <div className='pt-1 text-red-700' id='password-error'>
-                  {actionData.errors.password}
-                </div>
-              )}
             </div>
           </div>
 

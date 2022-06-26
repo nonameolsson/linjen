@@ -9,6 +9,7 @@ import {
 } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
+import { Button, TextArea, TextField } from '~/components'
 import EventCard from '~/components/event-card'
 import { getEvent, getEventsList, updateEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
@@ -161,80 +162,36 @@ export default function EditEvent() {
         width: '100%'
       }}
     >
-      <div>
-        <label className='flex flex-col gap-1 w-full'>
-          <span>Title: </span>
-          <input
-            defaultValue={data.event.title}
-            ref={titleRef}
-            name='title'
-            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
-            aria-invalid={actionData?.fieldErrors?.title ? true : undefined}
-            aria-errormessage={
-              actionData?.fieldErrors?.title ? 'title-error' : undefined
-            }
-          />
-        </label>
-        {actionData?.fieldErrors?.title && (
-          <div className='pt-1 text-red-700' id='title-error'>
-            {actionData?.fieldErrors?.title}
-          </div>
-        )}
-      </div>
+      <TextField
+        defaultValue={data.event.title}
+        label='Title'
+        ref={titleRef}
+        name='title'
+        errorMessage={actionData?.fieldErrors?.title}
+      />
 
-      <div>
-        <label className='flex flex-col gap-1 w-full'>
-          <span>Content: </span>
-          <textarea
-            defaultValue={data.event.content || ''}
-            ref={contentRef}
-            name='content'
-            rows={4}
-            className='flex-1 py-2 px-3 w-full text-lg leading-6 rounded-md border-2 border-blue-500'
-            aria-invalid={actionData?.fieldErrors?.content ? true : undefined}
-            aria-errormessage={
-              actionData?.fieldErrors?.content ? 'body-error' : undefined
-            }
-          />
-        </label>
-        {actionData?.fieldErrors?.content && (
-          <div className='pt-1 text-red-700' id='body-error'>
-            {actionData?.fieldErrors?.content}
-          </div>
-        )}
-      </div>
+      <TextArea
+        label='Content'
+        defaultValue={data.event.content || ''}
+        ref={contentRef}
+        name='content'
+        rows={4}
+        errorMessage={actionData?.fieldErrors?.content}
+      />
 
-      <div>
-        <label className='flex flex-col gap-1 w-full'>
-          <span>Start Date: </span>
-          <input
-            ref={startDateRef}
-            type='date'
-            defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-              new Date(data.event.startDate)
-            )}
-            name='startDate'
-            className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
-            aria-invalid={actionData?.fieldErrors?.startDate ? true : undefined}
-            aria-errormessage={
-              actionData?.fieldErrors?.startDate ? 'body-error' : undefined
-            }
-          />
-        </label>
-        {actionData?.fieldErrors?.startDate && (
-          <div className='pt-1 text-red-700' id='body-error'>
-            {actionData?.fieldErrors?.startDate}
-          </div>
+      <TextField
+        label='Start Date'
+        ref={startDateRef}
+        type='date'
+        defaultValue={new Intl.DateTimeFormat('sv-SV').format(
+          new Date(data.event.startDate)
         )}
-      </div>
+        name='startDate'
+        errorMessage={actionData?.fieldErrors?.startDate}
+      />
 
       <div className='text-right'>
-        <button
-          type='submit'
-          className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-        >
-          Saves
-        </button>
+        <Button type='submit'>Save</Button>
       </div>
     </Form>
   )

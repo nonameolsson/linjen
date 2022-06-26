@@ -1,4 +1,3 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -6,7 +5,7 @@ import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
 
-import { Page } from '~/components/page'
+import { Button, Page, TextArea, TextField } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
@@ -95,75 +94,29 @@ export default function EditTimelinePage() {
         }}
       >
         <input type='hidden' name='timelineId' value={data.timeline.id} />
-        <div>
-          <label
-            htmlFor='title'
-            className='block text-sm font-medium text-gray-700'
-          >
-            Title:
-          </label>
-          <div className='mt-1'>
-            <input
-              id='title'
-              ref={titleRef}
-              name='title'
-              className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500'
-              aria-invalid={actionData?.errors?.title ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.title ? 'title-error' : undefined
-              }
-              defaultValue={data.timeline.title}
-              aria-describedby='email-error'
-            />
-            {actionData?.errors?.title && (
-              <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
-                <ExclamationCircleIcon
-                  className='w-5 h-5 text-red-500'
-                  aria-hidden='true'
-                />
-              </div>
-            )}
-            {actionData?.errors?.title && (
-              <p className='mt-2 text-sm text-red-600' id='title-error'>
-                {actionData.errors.title}
-              </p>
-            )}
-          </div>
+
+        <div className='mt-1'>
+          <TextField
+            id='title'
+            label='Title'
+            ref={titleRef}
+            name='title'
+            errorMessage={actionData?.errors?.title}
+            defaultValue={data.timeline.title}
+          />
         </div>
-        <div>
-          <label
-            htmlFor='comment'
-            className='block text-sm font-medium text-gray-700'
-          >
-            Description
-          </label>
-          <div className='mt-1'>
-            <textarea
-              rows={4}
-              name='description'
-              ref={descriptionRef}
-              className='block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm'
-              defaultValue={data.timeline.description}
-              aria-invalid={actionData?.errors?.description ? true : undefined}
-              aria-errormessage={
-                actionData?.errors?.description ? 'body-error' : undefined
-              }
-            />
-          </div>
-          {actionData?.errors?.description && (
-            <div className='pt-1 text-red-700' id='body-error'>
-              {actionData.errors.description}
-            </div>
-          )}
+        <div className='mt-1'>
+          <TextArea
+            rows={4}
+            name='description'
+            ref={descriptionRef}
+            defaultValue={data.timeline.description}
+            errorMessage={actionData?.errors?.description}
+          />
         </div>
 
         <div className='text-right'>
-          <button
-            type='submit'
-            className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-          >
-            Save
-          </button>
+          <Button type='submit'>Save</Button>
         </div>
       </Form>
     </Page>
