@@ -1,23 +1,16 @@
-import { Navbar } from './navbar'
-
 export function Content({
   children,
   actions,
   description,
-  setMobileMenuOpen,
   title
 }: {
   children?: React.ReactNode
   actions?: JSX.Element
   description?: string
-  setMobileMenuOpen: (open: boolean) => void
   title: string
 }): JSX.Element {
   return (
     <div className='flex overflow-hidden flex-col flex-1'>
-      <Navbar setMobileMenuOpen={setMobileMenuOpen} title={title} />
-
-      {/* Main content */}
       <div className='flex overflow-hidden flex-1 items-stretch'>
         <main className='overflow-y-auto flex-1 p-4'>
           <section

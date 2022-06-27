@@ -1,26 +1,30 @@
 import { Menu, Transition } from '@headlessui/react'
-import { MenuAlt2Icon } from '@heroicons/react/outline'
 import { Form, Link } from '@remix-run/react'
 import { Fragment } from 'react'
 
-export function Navbar({
-  setMobileMenuOpen,
-  title
-}: {
-  setMobileMenuOpen: (open: boolean) => void
-  title: string
-}): JSX.Element {
+export function Navbar({ title }: { title: string }): JSX.Element {
   return (
-    <div className='navbar bg-base-100'>
+    <div className='w-full navbar bg-base-100'>
       <div className='navbar-start'>
-        <button
-          type='button'
-          className='px-4 text-gray-500 border-r border-gray-200 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden'
-          onClick={() => setMobileMenuOpen(true)}
+        <label
+          className='lg:hidden btn btn-ghost btn-circle '
+          htmlFor='my-drawer'
         >
-          <span className='sr-only'>Open sidebar</span>
-          <MenuAlt2Icon className='w-6 h-6' aria-hidden='true' />
-        </button>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            className='w-5 h-5'
+            fill='none'
+            viewBox='0 0 24 24'
+            stroke='currentColor'
+          >
+            <path
+              stroke-linecap='round'
+              stroke-linejoin='round'
+              stroke-width='2'
+              d='M4 6h16M4 12h16M4 18h7'
+            />
+          </svg>
+        </label>
       </div>
       <div className='navbar-center'>
         <span className='text-xl normal-case'>{title}</span>

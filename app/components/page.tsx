@@ -1,13 +1,12 @@
-import { useState } from 'react'
 import {
   HomeIcon,
   PhotographIcon,
   ViewGridIcon
 } from '@heroicons/react/outline'
+import { NavLink } from 'react-router-dom'
 
 import { Content } from './content'
-import { MobileMenu } from './mobile-menu'
-import { Sidebar } from './sidebar'
+import { Navbar } from './navbar'
 
 // TODO: Move to type file
 export type SidebarNavigationItem = {
@@ -34,29 +33,26 @@ export function Page({
   description?: string
   title: string
 }): JSX.Element {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   return (
-    <div className='flex h-full'>
-      {/* Narrow sidebar */}
-      <Sidebar sidebarNavigation={sidebarNavigation} />
+    <div className='drawer drawer-mobile'>
+      <input id='my-drawer' type='checkbox' className='drawer-toggle' />
+      <div className='drawer-content'>
+        <Navbar title={title} />
+        <Content description={description} title={title} actions={actions}>
+          {children}
+        </Content>
+      </div>
 
-      {/* Mobile menu */}
-      <MobileMenu
-        setMobileMenuOpen={setMobileMenuOpen}
-        mobileMenuOpen={mobileMenuOpen}
-        sidebarNavigation={sidebarNavigation}
-      />
-
-      {/* Content area */}
-      <Content
-        description={description}
-        title={title}
-        actions={actions}
-        setMobileMenuOpen={setMobileMenuOpen}
-      >
-        {children}
-      </Content>
+      <div className='drawer-side'>
+        <label htmlFor='my-drawer' className='drawer-overlay'></label>
+        <ul className='overflow-y-auto p-4 w-80 menu bg-base-100 text-base-content'>
+          {sidebarNavigation.map(item => (
+            <li key={item.name}>
+              <NavLink to={item.to}>{item.name}</NavLink>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   )
 }
