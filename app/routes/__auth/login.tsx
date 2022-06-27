@@ -6,8 +6,8 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
-
 import { TextField } from '~/components'
+
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
 import { safeRedirect, validateEmail } from '~/utils'
@@ -92,89 +92,86 @@ export default function LoginPage() {
   }, [actionData])
 
   return (
-    <div className='flex flex-col justify-center min-h-full'>
-      <div className='px-8 mx-auto w-full max-w-md'>
-        <Form method='post' className='space-y-6'>
+    <div className='flex min-h-full'>
+      <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
+        <div className='mx-auto w-full max-w-sm lg:w-96'>
           <div>
-            <label
-              htmlFor='email'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Email address
-            </label>
-            <div className='mt-1'>
-              <TextField
-                ref={emailRef}
-                id='email'
-                required
-                autoFocus={true}
-                name='email'
-                type='email'
-                autoComplete='email'
-                errorMessage={actionData?.errors?.email}
-                aria-describedby='email-error'
-              />
-              {actionData?.errors?.email && (
-                <div className='pt-1 text-red-700' id='email-error'>
-                  {actionData.errors.email}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor='password'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Password
-            </label>
-            <div className='mt-1'>
-              <TextField
-                id='password'
-                ref={passwordRef}
-                name='password'
-                type='password'
-                autoComplete='current-password'
-                errorMessage={actionData?.errors?.password}
-                aria-describedby='password-error'
-              />
-            </div>
-          </div>
-
-          <input type='hidden' name='redirectTo' value={redirectTo} />
-          <button className='btn' type='submit'>
-            Log in
-          </button>
-          <div className='flex justify-between items-center'>
-            <div className='flex items-center'>
-              <input
-                id='remember'
-                name='remember'
-                type='checkbox'
-                className='w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500'
-              />
-              <label
-                htmlFor='remember'
-                className='block ml-2 text-sm text-gray-900'
-              >
-                Remember me
-              </label>
-            </div>
-            <div className='text-sm text-center text-gray-500'>
-              Don't have an account yet?{' '}
+            <img
+              className='w-auto h-12'
+              src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
+              alt='Workflow'
+            />
+            <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
+              Log in to your account
+            </h2>
+            <p className='mt-2 text-sm text-gray-600'>
+              Or{' '}
               <Link
-                className='text-blue-500 underline'
+                className='link link-primary'
                 to={{
                   pathname: '/join',
                   search: searchParams.toString()
                 }}
               >
-                Sign up
+                create a new account
               </Link>
+            </p>
+          </div>
+
+          <div className='mt-8'>
+            <div className='mt-6'>
+              <Form method='post' className='space-y-6'>
+                <TextField
+                  ref={emailRef}
+                  id='email'
+                  label='Email'
+                  required
+                  autoFocus={true}
+                  name='email'
+                  type='email'
+                  autoComplete='email'
+                  errorMessage={actionData?.errors?.email}
+                />
+
+                <TextField
+                  id='password'
+                  ref={passwordRef}
+                  name='password'
+                  type='password'
+                  label='Password'
+                  autoComplete='current-password'
+                  errorMessage={actionData?.errors?.password}
+                />
+
+                <div className='flex justify-between items-center'>
+                  <div className='flex items-center form-control'>
+                    <label htmlFor='remember' className='cursor-pointer label'>
+                      <input
+                        id='remember'
+                        name='remember'
+                        type='checkbox'
+                        className='mr-2 checkbox'
+                      />
+                      <span className='label-text'>Remember me</span>
+                    </label>
+                  </div>
+                </div>
+
+                <input type='hidden' name='redirectTo' value={redirectTo} />
+                <button className='btn btn-block' type='submit'>
+                  Log in
+                </button>
+              </Form>
             </div>
           </div>
-        </Form>
+        </div>
+      </div>
+      <div className='hidden flex-1 items-center bg-white lg:flex'>
+        <img
+          className='relative'
+          src='images/landing.jpg'
+          alt='Timelines and events'
+        />
       </div>
     </div>
   )

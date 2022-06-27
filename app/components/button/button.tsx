@@ -1,12 +1,17 @@
+import cx from 'classnames'
+
 export interface ButtonProps
-  extends React.ButtonHTMLAttributes<HTMLButtonElement> {}
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  fullWidth?: boolean
+}
 
 export function Button(props: ButtonProps) {
+  const classNames = cx('btn', {
+    'btn-block': props.fullWidth
+  })
+
   return (
-    <button
-      className='py-2 px-4 text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-      type={props.type}
-    >
+    <button className={classNames} type={props.type}>
       <span className='inline-block'>{props.children}</span>
     </button>
   )

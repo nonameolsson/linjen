@@ -1,4 +1,5 @@
 import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import cx from 'classnames'
 import { forwardRef } from 'react'
 
 interface TextFieldProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -13,14 +14,15 @@ export const TextField = forwardRef(
         'TextField: name is required when autocomplete is true. Reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete'
       )
 
+    const classNames = cx('input input-bordered', {
+      'input-error': !!props.errorMessage
+    })
+
     return (
-      <>
+      <div className='w-full form-control'>
         {props.label && (
-          <label
-            htmlFor={props.id}
-            className='block text-sm font-medium text-gray-700'
-          >
-            {props.label}
+          <label htmlFor={props.id} className='label'>
+            <span className='label-text'>{props.label}</span>
           </label>
         )}
         <input
@@ -29,7 +31,7 @@ export const TextField = forwardRef(
           autoComplete={props.autoComplete}
           autoCapitalize={props.autoCapitalize}
           autoFocus={props.autoFocus}
-          className='flex-1 px-3 text-lg leading-loose rounded-md border-2 border-blue-500 focus:border-indigo-500 focus:ring-indigo-500'
+          className={classNames}
           defaultValue={props.defaultValue}
           disabled={props.disabled}
           id={props.id}
@@ -52,7 +54,7 @@ export const TextField = forwardRef(
             {props.errorMessage}
           </div>
         )}
-      </>
+      </div>
     )
   }
 )

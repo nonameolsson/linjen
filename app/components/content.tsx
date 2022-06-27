@@ -15,7 +15,7 @@ export function Content({
 }): JSX.Element {
   return (
     <div className='flex overflow-hidden flex-col flex-1'>
-      <Navbar setMobileMenuOpen={setMobileMenuOpen} />
+      <Navbar setMobileMenuOpen={setMobileMenuOpen} title={title} />
 
       {/* Main content */}
       <div className='flex overflow-hidden flex-1 items-stretch'>
@@ -30,7 +30,6 @@ export function Content({
 
             <div className='flex justify-between'>
               <div className='flex flex-col'>
-                <h1 className='text-3xl font-bold'>{title}</h1>
                 <h3>{description}</h3>
               </div>
               <div className='flex items-start'>{actions}</div>

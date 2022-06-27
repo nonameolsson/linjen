@@ -49,7 +49,7 @@ export default function App() {
   const data = useLoaderData<LoaderData>()
 
   return (
-    <html lang='en' className='h-full bg-gray-100'>
+    <html lang='en' className='h-full bg-gray-50' data-theme='light'>
       <head>
         <Meta />
         <Links />
