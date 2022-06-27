@@ -7,7 +7,7 @@ export function Navbar({ title }: { title: string }): JSX.Element {
     <div className='w-full navbar bg-base-100'>
       <div className='navbar-start'>
         <label
-          className='lg:hidden btn btn-ghost btn-circle '
+          className='lg:hidden  btn btn-ghost btn-circle'
           htmlFor='my-drawer'
         >
           <svg
@@ -18,9 +18,9 @@ export function Navbar({ title }: { title: string }): JSX.Element {
             stroke='currentColor'
           >
             <path
-              stroke-linecap='round'
-              stroke-linejoin='round'
-              stroke-width='2'
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth='2'
               d='M4 6h16M4 12h16M4 18h7'
             />
           </svg>

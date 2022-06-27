@@ -1,4 +1,4 @@
-import { ChevronRightIcon, PlusIcon } from '@heroicons/react/outline'
+import { ChevronRightIcon } from '@heroicons/react/outline'
 import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
@@ -33,11 +33,7 @@ export default function EventsTab() {
           {/* Primary column */}
           <section className='flex flex-col flex-1 min-w-0 h-full lg:order-last'>
             <div className='flex justify-between'>
-              <Link
-                to='new'
-                className='flex items-center py-2 px-4 text-sm font-medium text-white bg-blue-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
-              >
-                <PlusIcon className='mr-3 -ml-1 w-5 h-5' aria-hidden='true' />
+              <Link to='new' className='btn btn-primary'>
                 Add Event
               </Link>
             </div>

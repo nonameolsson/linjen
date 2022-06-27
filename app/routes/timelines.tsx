@@ -27,9 +27,9 @@ export default function TimelinesPage() {
     <Page title='Your Timelines'>
       <Link
         to='/timelines/new'
-        className='inline-flex items-center py-2 px-4 text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm'
+        className='btn btn-success btn-outline btn-gap-2'
       >
-        <PlusIcon className='mr-2 -ml-1 w-5 h-5' aria-hidden='true' />
+        <PlusIcon className='w-5 h-5' aria-hidden='true' />
         New Timeline
       </Link>
 

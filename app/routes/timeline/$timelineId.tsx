@@ -1,4 +1,4 @@
-import { PencilIcon, TrashIcon, XIcon } from '@heroicons/react/outline'
+import { Menu, Transition } from '@headlessui/react'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -9,6 +9,8 @@ import {
   useCatch,
   useLoaderData
 } from '@remix-run/react'
+import cx from 'classnames'
+import { Fragment } from 'react'
 import invariant from 'tiny-invariant'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
@@ -51,31 +53,37 @@ export default function TimelineDetailsPage() {
       description={data.timeline.description}
       title={data.timeline.title}
       actions={
-        <>
-          <Link
-            to='/timelines'
-            className='inline-flex items-center py-2 px-4 text-sm font-medium text-white bg-gray-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
+        <Menu as='div' className='dropdown dropdown-end'>
+          <div>
+            <Menu.Button className='m-1 btn'>Options</Menu.Button>
+          </div>
+          <Transition
+            as={Fragment}
+            enter='transition ease-out duration-100'
+            enterFrom='transform opacity-0 scale-95'
+            enterTo='transform opacity-100 scale-100'
+            leave='transition ease-in duration-75'
+            leaveFrom='transform opacity-100 scale-100'
+            leaveTo='transform opacity-0 scale-95'
           >
-            <XIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
-            Close
-          </Link>
-          <Form method='post'>
-            <button
-              type='submit'
-              className='inline-flex items-center py-2 px-4 ml-3 text-sm font-medium text-white bg-red-600 hover:bg-gray-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-800 shadow-sm'
+            <Menu.Items
+              as='ul'
+              className='p-2 mt-3 w-52 shadow menu menu-compact dropdown-content bg-base-100 rounded-box'
             >
-              <TrashIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
-              Delete
-            </button>
-          </Form>
-          <Link
-            to='edit'
-            className='inline-flex items-center py-2 px-4 ml-3 text-sm font-medium text-white bg-orange-600 hover:bg-orange-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-orange-800 shadow-sm'
-          >
-            <PencilIcon className='mr-2 -ml-0.5 w-4 h-4' aria-hidden='true' />
-            Edit
-          </Link>
-        </>
+              <Menu.Item as='li'>
+                <Link to='/timelines'>Close</Link>
+              </Menu.Item>
+              <Menu.Item as='li'>
+                <Form method='post'>
+                  <button type='submit'>Delete</button>
+                </Form>
+              </Menu.Item>
+              <Menu.Item as='li'>
+                <Link to='edit'>Edit</Link>
+              </Menu.Item>
+            </Menu.Items>
+          </Transition>
+        </Menu>
       }
     >
       <div>
@@ -96,45 +104,31 @@ export default function TimelineDetailsPage() {
           </select>
         </div>
         <div className='hidden sm:block'>
-          <div className='border-b border-gray-200'>
-            <nav className='flex -mb-px space-x-8' aria-label='Tabs'>
-              <NavLink
-                to='events'
-                className={({ isActive }) =>
-                  `flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                    isActive
-                      ? 'border-indigo-500 text-indigo-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700'
-                  }`
-                }
-              >
-                Events
-              </NavLink>
-              <NavLink
-                to='places'
-                className={({ isActive }) =>
-                  `flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                    isActive
-                      ? 'border-indigo-500 text-indigo-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700'
-                  }`
-                }
-              >
-                Places
-              </NavLink>
-              <NavLink
-                to='people'
-                className={({ isActive }) =>
-                  `flex whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium ${
-                    isActive
-                      ? 'border-indigo-500 text-indigo-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-200 hover:text-gray-700'
-                  }`
-                }
-              >
-                People
-              </NavLink>
-            </nav>
+          <div className='tabs' aria-label='Tabs'>
+            <NavLink
+              to='events'
+              className={({ isActive }) =>
+                cx('tab tab-bordered', { 'tab-active': isActive })
+              }
+            >
+              Events
+            </NavLink>
+            <NavLink
+              to='places'
+              className={({ isActive }) =>
+                cx('tab tab-bordered', { 'tab-active': isActive })
+              }
+            >
+              Places
+            </NavLink>
+            <NavLink
+              to='people'
+              className={({ isActive }) =>
+                cx('tab tab-bordered', { 'tab-active': isActive })
+              }
+            >
+              People
+            </NavLink>
           </div>
         </div>
       </div>
