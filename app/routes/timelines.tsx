@@ -6,10 +6,6 @@ import { Page } from '~/components/page'
 import { getTimelineListItems } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
-
 type LoaderData = {
   timelineListItems: Awaited<ReturnType<typeof getTimelineListItems>>
 }
@@ -62,7 +58,7 @@ export default function TimelinesPage() {
                   )}
                   <div className='card-body'>
                     <h2 className='card-title'>{timeline.title}</h2>
-                    <p>{timeline.description}</p>
+                    <p className='line-clamp-3'>{timeline.description}</p>
                     <div className='justify-end card-actions'>
                       <div className='badge badge-outline'>
                         Events: {timeline._count.event}

@@ -23,10 +23,6 @@ export function DeleteEventDialog({
   const cancelButtonRef = useRef(null)
 
   function handleClick() {
-    // if (callbackFn) {
-    //   callbackFn()
-    // }
-
     onCloseClick()
   }
 

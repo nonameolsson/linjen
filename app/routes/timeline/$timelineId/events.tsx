@@ -1,4 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/outline'
+import { PlusIcon } from '@heroicons/react/solid'
 import { Link, useLoaderData, useLocation, useParams } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
@@ -34,16 +35,13 @@ export default function EventsTab() {
     <>
       <div className='flex overflow-hidden flex-1 items-stretch'>
         <main className='overflow-y-auto flex-1 p-4'>
-          {/* Primary column */}
           <section className='flex flex-col flex-1 min-w-0 h-full lg:order-last'>
-            <div className='flex justify-between'>
-              <Link
-                to={`/event/new?timelineId=${params.timelineId}`}
-                className='btn btn-primary'
-              >
-                Add Event
-              </Link>
-            </div>
+            <Link
+              to={`/event/new?timelineId=${params.timelineId}`}
+              className='fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl btn btn-primary btn-circle btn-xl'
+            >
+              <PlusIcon className='w-5 h-5' aria-hidden='true' />
+            </Link>
             {data.events.length > 0 ? (
               <div className='overflow-hidden mt-4 bg-white shadow sm:rounded-md'>
                 <ul className='divide-y divide-gray-200'>

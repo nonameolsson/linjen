@@ -4,7 +4,7 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
-import { Button, TextArea, TextField } from '~/components'
+import { Page, TextArea, TextField } from '~/components'
 import {
   getEvent,
   getEventListForTimeline,
@@ -112,47 +112,54 @@ export default function EditEvent() {
   const startDateRef = React.useRef<HTMLInputElement>(null)
 
   return (
-    <Form
-      replace
-      method='post'
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        width: '100%'
-      }}
-    >
-      <TextField
-        defaultValue={data.event.title}
-        label='Title'
-        ref={titleRef}
-        name='title'
-        errorMessage={actionData?.fieldErrors?.title}
-      />
+    <Page title='Edit event' showBackButton>
+      <Form
+        replace
+        method='post'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          width: '100%'
+        }}
+      >
+        <TextField
+          defaultValue={data.event.title}
+          label='Title'
+          ref={titleRef}
+          name='title'
+          errorMessage={actionData?.fieldErrors?.title}
+        />
 
-      <TextArea
-        label='Content'
-        defaultValue={data.event.content || ''}
-        ref={contentRef}
-        name='content'
-        rows={4}
-        errorMessage={actionData?.fieldErrors?.content}
-      />
+        <TextArea
+          label='Content'
+          defaultValue={data.event.content || ''}
+          ref={contentRef}
+          name='content'
+          rows={4}
+          errorMessage={actionData?.fieldErrors?.content}
+        />
 
-      <TextField
-        label='Start Date'
-        ref={startDateRef}
-        type='date'
-        defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-          new Date(data.event.startDate)
-        )}
-        name='startDate'
-        errorMessage={actionData?.fieldErrors?.startDate}
-      />
+        <TextField
+          label='Start Date'
+          ref={startDateRef}
+          type='date'
+          defaultValue={new Intl.DateTimeFormat('sv-SV').format(
+            new Date(data.event.startDate)
+          )}
+          name='startDate'
+          errorMessage={actionData?.fieldErrors?.startDate}
+        />
 
-      <div className='text-right'>
-        <Button type='submit'>Save</Button>
-      </div>
-    </Form>
+        <div className='flex justify-between'>
+          <button className='btn btn-error' type='submit'>
+            Delete
+          </button>
+          <button className='btn btn-primary' type='submit'>
+            Save
+          </button>
+        </div>
+      </Form>
+    </Page>
   )
 }

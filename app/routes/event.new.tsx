@@ -2,7 +2,7 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import React from 'react'
-import { TextArea, TextField } from '~/components'
+import { Page, TextArea, TextField } from '~/components'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
@@ -115,58 +115,60 @@ export default function NewEventPage() {
   }, [actionData])
 
   return (
-    <Form
-      replace
-      method='post'
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        gap: 8,
-        width: '100%'
-      }}
-    >
-      <TextField
-        autoFocus
-        ref={titleRef}
-        label='Title'
-        defaultValue={actionData?.fields?.title}
-        name='title'
-        errorMessage={actionData?.fieldErrors?.title}
-      />
+    <Page title='Add event' showBackButton>
+      <Form
+        replace
+        method='post'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          width: '100%'
+        }}
+      >
+        <TextField
+          autoFocus
+          ref={titleRef}
+          label='Title'
+          defaultValue={actionData?.fields?.title}
+          name='title'
+          errorMessage={actionData?.fieldErrors?.title}
+        />
 
-      <TextArea
-        ref={contentRef}
-        label='Content'
-        defaultValue={actionData?.fields?.content}
-        name='content'
-        rows={4}
-        errorMessage={actionData?.fieldErrors?.content}
-      />
+        <TextArea
+          ref={contentRef}
+          label='Content'
+          defaultValue={actionData?.fields?.content}
+          name='content'
+          rows={4}
+          errorMessage={actionData?.fieldErrors?.content}
+        />
 
-      <TextField
-        type='date'
-        ref={startDateRef}
-        label='Start Date'
-        defaultValue={
-          actionData?.fields?.startDate ||
-          new Intl.DateTimeFormat('sv-SE').format(new Date())
-        }
-        name='startDate'
-        errorMessage={actionData?.fieldErrors?.startDate}
-      />
+        <TextField
+          type='date'
+          ref={startDateRef}
+          label='Start Date'
+          defaultValue={
+            actionData?.fields?.startDate ||
+            new Intl.DateTimeFormat('sv-SE').format(new Date())
+          }
+          name='startDate'
+          errorMessage={actionData?.fieldErrors?.startDate}
+        />
 
-      <input
-        type='hidden'
-        ref={timelineIdRef}
-        name='timelineId'
-        defaultValue={data.timelineId}
-      />
+        <input
+          type='hidden'
+          ref={timelineIdRef}
+          name='timelineId'
+          defaultValue={data.timelineId}
+        />
 
-      <div className='text-right'>
-        <button type='submit' className='btn btn-primary'>
-          Save
-        </button>
-      </div>
-    </Form>
+        <div className='text-right'>
+          <button type='submit' className='btn btn-primary'>
+            Save
+          </button>
+        </div>
+      </Form>
+    </Page>
   )
 }

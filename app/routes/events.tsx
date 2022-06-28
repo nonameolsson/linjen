@@ -1,5 +1,6 @@
+import { PlusIcon } from '@heroicons/react/solid'
 import type { Event, Timeline } from '@prisma/client'
-import { Outlet, useLoaderData } from '@remix-run/react'
+import { Link, Outlet, useLoaderData } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 
@@ -22,9 +23,15 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function EventsPage() {
   const data = useLoaderData<LoaderData>()
-  console.log(data)
+
   return (
     <Page title='Events'>
+      <Link
+        to='/event/new'
+        className='fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl btn btn-primary btn-circle btn-xl'
+      >
+        <PlusIcon className='w-5 h-5' aria-hidden='true' />
+      </Link>
       <div className='overflow-x-auto'>
         <table className='table w-full'>
           <thead>
@@ -35,12 +42,18 @@ export default function EventsPage() {
           </thead>
           <tbody>
             {data.events.map(event => (
-              <tr key={event.id}>
-                <td>{event.title}</td>
-                <td>
-                  {new Intl.DateTimeFormat('sv-SE').format(
-                    new Date(event.startDate)
-                  )}
+              <tr className='hover:cursor-pointer hover:hover' key={event.id}>
+                <td className='p-0'>
+                  <Link className='flex p-4' to={`/event/${event.id}`}>
+                    {event.title}
+                  </Link>
+                </td>
+                <td className='p-0'>
+                  <Link className='flex p-4' to={`/event/${event.id}`}>
+                    {new Intl.DateTimeFormat('sv-SE').format(
+                      new Date(event.startDate)
+                    )}
+                  </Link>
                 </td>
               </tr>
             ))}

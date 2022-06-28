@@ -25,20 +25,29 @@ const sidebarNavigation: SidebarNavigationItem[] = [
 export function Page({
   children,
   actions,
+  toolbarButtons,
   description,
+  showBackButton = false,
   title
 }: {
   children: React.ReactNode
   actions?: JSX.Element
   description?: string
+  showBackButton?: boolean
+  toolbarButtons?: JSX.Element
   title: string
 }): JSX.Element {
   return (
     <div className='drawer drawer-mobile'>
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
       <div className='flex flex-col drawer-content'>
-        <Navbar description={description} title={title} />
-        <Content description={description} title={title} actions={actions}>
+        <Navbar
+          description={description}
+          title={title}
+          rightButtons={toolbarButtons}
+          showBackButton={showBackButton}
+        />
+        <Content title={title} actions={actions}>
           {children}
         </Content>
       </div>

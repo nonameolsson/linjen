@@ -99,7 +99,7 @@ export default function EditTimelinePage() {
   }, [actionData])
 
   return (
-    <Page title='Edit Timeline'>
+    <Page title='Edit Timeline' showBackButton>
       <Form
         replace
         method='post'

@@ -1,8 +1,9 @@
 import { ExclamationIcon } from '@heroicons/react/outline'
+import { PencilIcon } from '@heroicons/react/solid'
 import type { Location } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useCatch, useLoaderData } from '@remix-run/react'
+import { Form, Link, useCatch, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
 import { DeleteEventDialog, Page } from '~/components'
@@ -47,7 +48,6 @@ export const action: ActionFunction = async ({ request, params }) => {
   if (typeof redirectTo !== 'string') {
     redirectTo = 'timelines'
   }
-  console.log('redirectTo', redirectTo)
   return redirect(redirectTo)
 }
 
@@ -61,7 +61,18 @@ export default function EventDetailsPage() {
   ]
 
   return (
-    <Page title='Event'>
+    <Page
+      title={data.event.title}
+      showBackButton
+      toolbarButtons={
+        <Link
+          to={`/event/${data.event.id}/edit`}
+          className='btn btn-ghost btn-circle'
+        >
+          <PencilIcon className='w-5 h-5' />
+        </Link>
+      }
+    >
       <Form method='post' id='delete-event' replace>
         <input type='hidden' defaultValue={data.redirectTo} name='redirectTo' />
 
