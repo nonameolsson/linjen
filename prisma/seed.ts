@@ -101,9 +101,9 @@ async function seed() {
         title: event.title,
         timelines: {
           connect: {
-            id:  timeline1.id
+            id: timeline1.id
           }
-        },
+        }
       }
     })
   })
@@ -129,7 +129,7 @@ async function seed() {
       startDate: new Date('2020-01-01'),
       timelines: {
         connect: {
-          id:  timeline1.id
+          id: timeline1.id
         }
       }
     }

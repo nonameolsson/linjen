@@ -23,7 +23,7 @@ model User {
   password Password?
   timeline Timeline[]
   location Location[]
-  events    Event[]
+  events   Event[]
 }
 
 model Password {
@@ -34,10 +34,10 @@ model Password {
 }
 
 model Timeline {
-  id    String @id @default(cuid())
-  title String
+  id          String  @id @default(cuid())
+  title       String
   description String
-  imageUrl String?
+  imageUrl    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -60,8 +60,8 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  createdBy User @relation(fields: [userId], references: [id])
-  userId       String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
 
   location Location[] @relation(references: [id])
 
