@@ -17,5 +17,8 @@ module.exports = {
     jest: {
       version: 27
     }
+  },
+  rules: {
+    'eslint/tailwindcss/no-custom-classname': 'off'
   }
 }
