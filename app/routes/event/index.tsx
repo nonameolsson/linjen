@@ -2,7 +2,6 @@ import type { Location } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { useCatch, useLoaderData } from '@remix-run/react'
-import { useState } from 'react'
 import invariant from 'tiny-invariant'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
@@ -41,7 +40,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
 
   const referencedEvents: Event[] = [
     ...data.event.referencedBy,

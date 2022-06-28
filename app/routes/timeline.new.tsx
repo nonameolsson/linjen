@@ -38,6 +38,13 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
+  if (typeof imageUrl !== 'string') {
+    return json<ActionData>(
+      { errors: { description: 'ImageURL must be a string' } },
+      { status: 400 }
+    )
+  }
+
   const timeline = await createTimeline({
     title,
     description,
