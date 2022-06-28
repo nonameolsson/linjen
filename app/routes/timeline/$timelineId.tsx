@@ -46,7 +46,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 }
 
 export default function TimelineDetailsPage() {
-  const data = useLoaderData() as LoaderData
+  const data = useLoaderData<LoaderData>()
 
   return (
     <Page

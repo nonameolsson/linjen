@@ -24,12 +24,16 @@ export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
 
     include: {
       _count: {
-        select: { event: true }
+        select: {
+          event: true
+        }
       }
     },
 
     orderBy: { updatedAt: 'desc' }
   })
+
+  console.log(timelines)
 
   return timelines
 }

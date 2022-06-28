@@ -1,11 +1,11 @@
 import { ChevronRightIcon } from '@heroicons/react/outline'
-import { Link, Outlet, useLoaderData } from '@remix-run/react'
+import { Link, useLoaderData, useLocation, useParams } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
 
 import type { Event } from '~/models/event.server'
-import { getEventListItems } from '~/models/event.server'
+import { getEventListItemsForTimeline } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
@@ -16,7 +16,9 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request)
   invariant(params.timelineId, 'timelineId not found')
 
-  const events = await getEventListItems({ timelineId: params.timelineId })
+  const events = await getEventListItemsForTimeline({
+    timelineId: params.timelineId
+  })
 
   return json<LoaderData>({
     events
@@ -24,6 +26,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export default function EventsTab() {
+  const params = useParams()
+  const location = useLocation()
   const data = useLoaderData<LoaderData>()
 
   return (
@@ -33,7 +37,10 @@ export default function EventsTab() {
           {/* Primary column */}
           <section className='flex flex-col flex-1 min-w-0 h-full lg:order-last'>
             <div className='flex justify-between'>
-              <Link to='new' className='btn btn-primary'>
+              <Link
+                to={`/event/new?timelineId=${params.timelineId}`}
+                className='btn btn-primary'
+              >
                 Add Event
               </Link>
             </div>
@@ -42,7 +49,10 @@ export default function EventsTab() {
                 <ul className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>
-                      <Link to={event.id} className='block hover:bg-gray-50'>
+                      <Link
+                        to={`/event/${event.id}?from=${location.pathname}`}
+                        className='block hover:bg-gray-50'
+                      >
                         <div className='flex items-center p-4 sm:px-6'>
                           <div className='flex flex-1 items-center min-w-0'>
                             <div className='flex-1 px-4 min-w-0 md:grid md:grid-cols-2 md:gap-4'>
@@ -86,9 +96,9 @@ export default function EventsTab() {
         </main>
 
         {/* Secondary column (hidden on smaller screens) */}
-        <aside className='hidden overflow-y-auto p-4 w-96 border-l border-gray-200 lg:block'>
+        {/* <aside className='hidden overflow-y-auto p-4 w-96 border-l border-gray-200 lg:block'>
           <Outlet />
-        </aside>
+        </aside> */}
       </div>
     </>
   )

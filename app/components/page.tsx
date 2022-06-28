@@ -3,7 +3,8 @@ import {
   PhotographIcon,
   ViewGridIcon
 } from '@heroicons/react/outline'
-import { NavLink } from 'react-router-dom'
+import { NavLink } from '@remix-run/react'
+
 
 import { Content } from './content'
 import { Navbar } from './navbar'

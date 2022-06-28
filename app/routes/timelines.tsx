@@ -26,7 +26,7 @@ export default function TimelinesPage() {
   return (
     <Page title='Your Timelines'>
       <Link
-        to='/timelines/new'
+        to='/timeline/new'
         className='btn btn-success btn-outline btn-gap-2'
       >
         <PlusIcon className='w-5 h-5' aria-hidden='true' />

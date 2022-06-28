@@ -85,6 +85,7 @@ export default function EditTimelinePage() {
   return (
     <Page title='Edit Timeline'>
       <Form
+        replace
         method='post'
         style={{
           display: 'flex',

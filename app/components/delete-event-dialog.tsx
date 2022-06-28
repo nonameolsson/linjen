@@ -38,7 +38,7 @@ export function DeleteEventDialog({
         initialFocus={cancelButtonRef}
         onClose={handleClick}
       >
-        {/* <Transition.Child
+        <Transition.Child
           as={Fragment}
           enter='ease-out duration-300'
           enterFrom='opacity-0'
@@ -48,11 +48,11 @@ export function DeleteEventDialog({
           leaveTo='opacity-0'
         >
           <div className='fixed inset-0 bg-gray-500/75 transition-opacity' />
-        </Transition.Child> */}
+        </Transition.Child>
 
         <div className='overflow-y-auto fixed inset-0 z-10'>
-          {/* <div className='flex justify-center items-end p-4 min-h-full text-center sm:items-center sm:p-0'> */}
-          {/* <Transition.Child
+          <div className='flex justify-center items-end p-4 min-h-full text-center sm:items-center sm:p-0'>
+            <Transition.Child
               as={Fragment}
               enter='ease-out duration-300'
               enterFrom='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
@@ -60,25 +60,9 @@ export function DeleteEventDialog({
               leave='ease-in duration-200'
               leaveFrom='opacity-100 translate-y-0 sm:scale-100'
               leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'
-            > */}
-          <Dialog.Panel className='overflow-hidden relative text-left bg-white rounded-lg shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg'>
-            <div className='modal'>
-              <div className='modal-box'>
-                <h3 className='text-lg font-bold'>
-                  Congratulations random Interner user!
-                </h3>
-                <p className='py-4'>
-                  You've been selected for a chance to get one year of
-                  subscription to use Wikipedia for free!
-                </p>
-                <div className='modal-action'>
-                  <label htmlFor='my-modal' className='btn'>
-                    Yay!
-                  </label>
-                </div>
-              </div>
-            </div>
-            {/* <div className='px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4'>
+            >
+              <Dialog.Panel className='overflow-hidden relative text-left bg-white rounded-lg shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg'>
+                <div className='px-4 pt-5 pb-4 bg-white sm:p-6 sm:pb-4'>
                   <div className='sm:flex sm:items-start'>
                     {icon && (
                       <div className='flex shrink-0 justify-center items-center mx-auto w-12 h-12 bg-red-100 rounded-full sm:mx-0 sm:mr-4 sm:w-10 sm:h-10'>
@@ -101,8 +85,8 @@ export function DeleteEventDialog({
                       )}
                     </div>
                   </div>
-                </div> */}
-            {/* <div className='py-3 px-4 bg-gray-50 sm:flex sm:flex-row-reverse sm:px-6'>
+                </div>
+                <div className='py-3 px-4 bg-gray-50 sm:flex sm:flex-row-reverse sm:px-6'>
                   {}
                   <button
                     form='delete-event'
@@ -120,11 +104,11 @@ export function DeleteEventDialog({
                   >
                     Cancel
                   </button>
-                </div> */}
-          </Dialog.Panel>
-          {/* </Transition.Child> */}
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
         </div>
-        {/* </div> */}
       </Dialog>
     </Transition.Root>
   )
