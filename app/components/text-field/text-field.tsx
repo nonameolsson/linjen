@@ -14,12 +14,12 @@ export const TextField = forwardRef(
         'TextField: name is required when autocomplete is true. Reference: https://developer.mozilla.org/en-US/docs/Web/HTML/Attributes/autocomplete'
       )
 
-    const classNames = cx('input input-bordered', {
+    const inputClassNames = cx('input input-bordered', {
       'input-error': !!props.errorMessage
     })
 
     return (
-      <div className='w-full form-control'>
+      <div className={`w-full form-control ${props.className}`}>
         {props.label && (
           <label htmlFor={props.id} className='label'>
             <span className='label-text'>{props.label}</span>
@@ -31,7 +31,7 @@ export const TextField = forwardRef(
           autoComplete={props.autoComplete}
           autoCapitalize={props.autoCapitalize}
           autoFocus={props.autoFocus}
-          className={classNames}
+          className={inputClassNames}
           defaultValue={props.defaultValue}
           disabled={props.disabled}
           id={props.id}

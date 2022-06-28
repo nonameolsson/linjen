@@ -25,48 +25,44 @@ export default function TimelinesPage() {
 
   return (
     <Page title='Your Timelines'>
-      <Link
-        to='/timeline/new'
-        className='btn btn-success btn-outline btn-gap-2'
-      >
-        <PlusIcon className='w-5 h-5' aria-hidden='true' />
-        New Timeline
-      </Link>
+      <div className='h-full'>
+        <Link to='/timeline/new' className='mb-4 btn btn-accent btn-gap-2'>
+          <PlusIcon className='w-5 h-5' aria-hidden='true' />
+          New Timeline
+        </Link>
 
-      {data.timelineListItems.length === 0 ? (
-        <p className='p-4'>No timelines yet</p>
-      ) : (
-        <ul className='grid grid-cols-1 gap-5 mt-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4'>
-          {data.timelineListItems.map(timeline => (
-            <Link
-              key={timeline.title}
-              to={`/timeline/${timeline.id}/events`}
-              className='font-medium text-gray-900 hover:text-gray-600'
-            >
-              <li className='flex col-span-1 rounded-md shadow-sm'>
+        {data.timelineListItems.length === 0 ? (
+          <p className='p-4'>No timelines yet</p>
+        ) : (
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+            {data.timelineListItems.map(timeline => (
+              <Link to={`/timeline/${timeline.id}/events`} key={timeline.id}>
                 <div
-                  className={classNames(
-                    // timeline.bgColor,
-                    'bg-pink-600',
-                    'flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white'
-                  )}
+                  key={timeline.id}
+                  className='shadow-lg hover:shadow-2xl hover:drop-shadow-2xl transition-shadow duration-150 ease-in-out card bg-base-100'
                 >
-                  {timeline.title.slice(0, 2)}
-                </div>
-                <div className='flex flex-1 justify-between items-center truncate bg-white rounded-r-md border-y border-r border-gray-200'>
-                  <div className='flex-1 py-2 px-4 text-sm truncate'>
-                    {timeline.title}
-
-                    <p className='text-gray-500'>
-                      {timeline._count.event} events
-                    </p>
+                  <figure>
+                    <img
+                      src='https://api.lorem.space/image/shoes?w=400&h=225'
+                      alt='Shoes'
+                    />
+                  </figure>
+                  <div className='card-body'>
+                    <h2 className='card-title'>{timeline.title}</h2>
+                    <p>{timeline.description}</p>
+                    <div className='justify-end card-actions'>
+                      <div className='badge badge-outline'>
+                        Events: {timeline._count.event}
+                      </div>
+                    </div>
+                    <div className='justify-end card-actions'></div>
                   </div>
                 </div>
-              </li>
-            </Link>
-          ))}
-        </ul>
-      )}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </Page>
   )
 }

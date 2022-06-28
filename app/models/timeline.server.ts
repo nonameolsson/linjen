@@ -41,15 +41,17 @@ export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
 export function createTimeline({
   description,
   title,
-  userId
-}: Pick<Timeline, 'description' | 'title'> & {
+  userId,
+  imageUrl
+}: Pick<Timeline, 'description' | 'title'> & Partial<Pick<Timeline, 'imageUrl'>> & {
   userId: User['id']
 }) {
   return prisma.timeline.create({
     data: {
       title,
       description,
-      userId: userId
+      userId: userId,
+      imageUrl
     }
   })
 }

@@ -1,17 +1,21 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline'
+import cx from 'classnames'
 import { forwardRef } from 'react'
 
 interface TextAreaProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   errorMessage?: string
-
   label?: string
 }
 
 export const TextArea = forwardRef(
   (props: TextAreaProps, ref: React.Ref<HTMLTextAreaElement>) => {
+    const wrapperClassNames = cx(`form-control ${props.className}`)
+    const textAreaClassNames = cx('textarea textarea-bordered', {
+      'textarea-error': props.errorMessage
+    })
+
     return (
-      <>
+      <div className={wrapperClassNames}>
         {props.label && (
           <label
             htmlFor={props.id}
@@ -27,7 +31,7 @@ export const TextArea = forwardRef(
           autoCapitalize={props.autoCapitalize}
           defaultValue={props.defaultValue}
           autoFocus={props.autoFocus}
-          className='block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 shadow-sm sm:text-sm'
+          className={textAreaClassNames}
           disabled={props.disabled}
           id={props.id}
           name={props.name}
@@ -36,19 +40,11 @@ export const TextArea = forwardRef(
           required={props.required}
         />
         {props.errorMessage && (
-          <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
-            <ExclamationCircleIcon
-              className='w-5 h-5 text-red-500'
-              aria-hidden='true'
-            />
-          </div>
+          <label className='label'>
+            <span className='label-text-alt'>{props.errorMessage}</span>
+          </label>
         )}
-        {props.errorMessage && (
-          <div className='pt-1 text-red-700' id={`${props.id}-error`}>
-            {props.errorMessage}
-          </div>
-        )}
-      </>
+      </div>
     )
   }
 )

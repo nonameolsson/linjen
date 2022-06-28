@@ -12,6 +12,7 @@ type ActionData = {
   errors?: {
     title?: string
     description?: string
+    imageUrl?: string
   }
 }
 
@@ -21,6 +22,7 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const title = formData.get('title')
   const description = formData.get('description')
+  const imageUrl = formData.get('imageUrl')
 
   if (typeof title !== 'string' || title.length === 0) {
     return json<ActionData>(
@@ -36,7 +38,12 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
-  const timeline = await createTimeline({ title, description, userId })
+  const timeline = await createTimeline({
+    title,
+    description,
+    userId,
+    imageUrl
+  })
 
   return redirect(`/timeline/${timeline.id}/events`)
 }
@@ -45,12 +52,15 @@ export default function NewTimelinePage() {
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
   const descriptionRef = React.useRef<HTMLTextAreaElement>(null)
+  const imageUrlRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
       titleRef.current?.focus()
     } else if (actionData?.errors?.description) {
       descriptionRef.current?.focus()
+    } else if (actionData?.errors?.imageUrl) {
+      imageUrlRef.current?.focus()
     }
   }, [actionData])
 
@@ -66,33 +76,37 @@ export default function NewTimelinePage() {
           width: '100%'
         }}
       >
-        <div>
-          <div className='mt-1'>
-            <TextField
-              id='title'
-              label='Title'
-              ref={titleRef}
-              name='title'
-              errorMessage={actionData?.errors?.title}
-              placeholder='My awesome timeline'
-              defaultValue=''
-              aria-describedby='email-error'
-            />
-          </div>
-        </div>
-        <div>
-          <div className='mt-1'>
-            <TextArea
-              rows={4}
-              name='description'
-              ref={descriptionRef}
-              label='Description'
-              defaultValue={''}
-              aria-invalid={actionData?.errors?.description ? true : undefined}
-              errorMessage={actionData?.errors?.description}
-            />
-          </div>
-        </div>
+        <TextField
+          autoFocus
+          id='title'
+          label='Title'
+          ref={titleRef}
+          name='title'
+          errorMessage={actionData?.errors?.title}
+          placeholder='My awesome timeline'
+          defaultValue=''
+        />
+
+        <TextArea
+          className='mt-2'
+          rows={4}
+          name='description'
+          ref={descriptionRef}
+          label='Description'
+          defaultValue={''}
+          errorMessage={actionData?.errors?.description}
+        />
+
+        <TextField
+          className='mt-2'
+          id='imageUrl'
+          label='Cover image (Optional)'
+          ref={titleRef}
+          name='imageUrl'
+          errorMessage={actionData?.errors?.title}
+          placeholder='https://myurl.com/image.png'
+          defaultValue=''
+        />
 
         <div className='text-right'>
           <Button type='submit'>Save</Button>
