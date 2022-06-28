@@ -1,32 +1,13 @@
-import type { Timeline } from '@prisma/client'
-import type { ActionFunction, LoaderFunction } from '@remix-run/node'
+import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { Form, useActionData } from '@remix-run/react'
 import * as React from 'react'
-import invariant from 'tiny-invariant'
+import { Button, TextArea, TextField } from '~/components'
 
-import { Button, Page, TextArea, TextField } from '~/components'
-import { getTimeline, updateTimeline } from '~/models/timeline.server'
+import { Page } from '~/components/page'
+import { createTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-type LoaderData = {
-  timeline: Timeline
-}
-
-export const loader: LoaderFunction = async ({ request, params }) => {
-  const userId = await requireUserId(request)
-  invariant(params.timelineId, 'timelineId not found')
-
-  const timeline = await getTimeline({
-    userId,
-    id: params.timelineId
-  })
-  if (!timeline) {
-    throw new Response('Not Found', { status: 404 })
-  }
-
-  return json<LoaderData>({ timeline })
-}
 type ActionData = {
   errors?: {
     title?: string
@@ -41,7 +22,6 @@ export const action: ActionFunction = async ({ request }) => {
   const formData = await request.formData()
   const title = formData.get('title')
   const description = formData.get('description')
-  const id = formData.get('timelineId')
   const imageUrl = formData.get('imageUrl')
 
   if (typeof title !== 'string' || title.length === 0) {
@@ -58,33 +38,24 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
-  if (typeof id !== 'string' || id.length === 0) {
-    return json<ActionData>(
-      { errors: { description: 'id is required' } },
-      { status: 400 }
-    )
-  }
-
   if (typeof imageUrl !== 'string') {
     return json<ActionData>(
-      { errors: { imageUrl: 'imageUrl is not a string' } },
+      { errors: { description: 'ImageURL must be a string' } },
       { status: 400 }
     )
   }
 
-  const timeline = await updateTimeline({
+  const timeline = await createTimeline({
     title,
     description,
     userId,
-    id,
     imageUrl
   })
 
   return redirect(`/timeline/${timeline.id}/events`)
 }
 
-export default function EditTimelinePage() {
-  const data = useLoaderData<LoaderData>()
+export default function NewTimelinePage() {
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
   const descriptionRef = React.useRef<HTMLTextAreaElement>(null)
@@ -95,11 +66,13 @@ export default function EditTimelinePage() {
       titleRef.current?.focus()
     } else if (actionData?.errors?.description) {
       descriptionRef.current?.focus()
+    } else if (actionData?.errors?.imageUrl) {
+      imageUrlRef.current?.focus()
     }
   }, [actionData])
 
   return (
-    <Page title='Edit Timeline' showBackButton>
+    <Page title='New Timeline'>
       <Form
         replace
         method='post'
@@ -110,25 +83,24 @@ export default function EditTimelinePage() {
           width: '100%'
         }}
       >
-        <input type='hidden' name='timelineId' value={data.timeline.id} />
-
         <TextField
-          className='mt-1'
+          autoFocus
           id='title'
           label='Title'
           ref={titleRef}
           name='title'
           errorMessage={actionData?.errors?.title}
-          defaultValue={data.timeline.title}
+          placeholder='My awesome timeline'
+          defaultValue=''
         />
 
         <TextArea
-          rows={4}
           className='mt-2'
-          label='Description'
+          rows={4}
           name='description'
           ref={descriptionRef}
-          defaultValue={data.timeline.description}
+          label='Description'
+          defaultValue={''}
           errorMessage={actionData?.errors?.description}
         />
 
@@ -136,12 +108,13 @@ export default function EditTimelinePage() {
           className='mt-2'
           id='imageUrl'
           label='Cover image (Optional)'
-          ref={imageUrlRef}
+          ref={titleRef}
           name='imageUrl'
           errorMessage={actionData?.errors?.title}
           placeholder='https://myurl.com/image.png'
-          defaultValue={data.timeline.imageUrl || ''}
+          defaultValue=''
         />
+
         <div className='text-right'>
           <Button type='submit'>Save</Button>
         </div>

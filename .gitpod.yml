@@ -46,3 +46,11 @@ vscode:
     - esbenp.prettier-vscode
     - dbaeumer.vscode-eslint
     - bradlc.vscode-tailwindcss
+    - Trunk.io
+    - donjayamanne.git-extension-pack
+    - afzalsayed96.heroicons
+    - kavod-io.vscode-jest-test-adapter
+    - Orta.vscode-jest
+    - Prisma.prisma
+    - austenc.tailwind-docs
+    - hbenl.vscode-test-explorer
