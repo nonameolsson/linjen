@@ -41,6 +41,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const referencedEvents: Event[] = [
     ...data.event.referencedBy,
     ...data.event.referencing
