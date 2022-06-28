@@ -6,10 +6,6 @@ import { Page } from '~/components/page'
 import { getTimelineListItems } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ')
-}
-
 type LoaderData = {
   timelineListItems: Awaited<ReturnType<typeof getTimelineListItems>>
 }
@@ -25,48 +21,56 @@ export default function TimelinesPage() {
 
   return (
     <Page title='Your Timelines'>
-      <Link
-        to='/timelines/new'
-        className='inline-flex items-center py-2 px-4 text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 shadow-sm'
-      >
-        <PlusIcon className='mr-2 -ml-1 w-5 h-5' aria-hidden='true' />
-        New Timeline
-      </Link>
+      <div className='h-full'>
+        <Link
+          to='/timeline/new'
+          className='fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl btn btn-primary btn-circle btn-xl'
+        >
+          <PlusIcon className='w-5 h-5' aria-hidden='true' />
+        </Link>
 
-      {data.timelineListItems.length === 0 ? (
-        <p className='p-4'>No timelines yet</p>
-      ) : (
-        <ul className='grid grid-cols-1 gap-5 mt-3 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4'>
-          {data.timelineListItems.map(timeline => (
-            <Link
-              key={timeline.title}
-              to={`/timeline/${timeline.id}/events`}
-              className='font-medium text-gray-900 hover:text-gray-600'
-            >
-              <li className='flex col-span-1 rounded-md shadow-sm'>
+        {data.timelineListItems.length === 0 ? (
+          <p className='p-4'>No timelines yet</p>
+        ) : (
+          <div className='flex overflow-x-auto gap-6 px-16 pb-16 w-full h-min snap-x snap-mandatory'>
+            {data.timelineListItems.map(timeline => (
+              <Link
+                to={`/timeline/${timeline.id}/events`}
+                key={timeline.id}
+                className='h-min snap-center snap-always'
+              >
                 <div
-                  className={classNames(
-                    // timeline.bgColor,
-                    'bg-pink-600',
-                    'flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white'
-                  )}
+                  key={timeline.id}
+                  className='w-60 shadow hover:shadow-xl hover:drop-shadow-xl transition-shadow duration-150 ease-in-out card bg-base-100'
                 >
-                  {timeline.title.slice(0, 2)}
-                </div>
-                <div className='flex flex-1 justify-between items-center truncate bg-white rounded-r-md border-y border-r border-gray-200'>
-                  <div className='flex-1 py-2 px-4 text-sm truncate'>
-                    {timeline.title}
-
-                    <p className='text-gray-500'>
-                      {timeline._count.event} events
-                    </p>
+                  {timeline.imageUrl ? (
+                    <figure>
+                      <img
+                        src={timeline.imageUrl}
+                        className='aspect-video object-cover w-full'
+                        alt='Shoes'
+                      />
+                    </figure>
+                  ) : (
+                    <span className='aspect-video flex object-cover justify-center items-center w-full text-4xl text-center bg-info text-info-content'>
+                      {timeline.title.slice(0, 2)}
+                    </span>
+                  )}
+                  <div className='card-body'>
+                    <h2 className='card-title'>{timeline.title}</h2>
+                    <p className='line-clamp-3'>{timeline.description}</p>
+                    <div className='justify-end card-actions'>
+                      <div className='badge badge-outline'>
+                        Events: {timeline._count.event}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </li>
-            </Link>
-          ))}
-        </ul>
-      )}
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </Page>
   )
 }

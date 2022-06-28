@@ -11,17 +11,20 @@ const mockEvents: Omit<
   {
     title: 'My first event',
     content: 'The biggest event ever',
-    startDate: new Date('2020-01-05')
+    startDate: new Date('2020-01-05'),
+    userId: '1'
   },
   {
     title: 'The journey begins',
     content: 'I am so excited',
-    startDate: new Date('2020-01-05')
+    startDate: new Date('2020-01-05'),
+    userId: '1'
   },
   {
     title: 'I am on my way',
     content: '',
-    startDate: new Date('2020-01-08')
+    startDate: new Date('2020-01-08'),
+    userId: '1'
   }
 ]
 
@@ -94,8 +97,13 @@ async function seed() {
     await prisma.event.create({
       data: {
         startDate: event.startDate,
+        userId: user1.id,
         title: event.title,
-        timelineId: timeline1.id
+        timelines: {
+          connect: {
+            id: timeline1.id
+          }
+        }
       }
     })
   })
@@ -111,6 +119,26 @@ async function seed() {
     data: {
       title: 'Malmö',
       userId: user2.id
+    }
+  })
+
+  await prisma.event.create({
+    data: {
+      title: 'Jag föds',
+      userId: user1.id,
+      startDate: new Date('2020-01-01'),
+      timelines: {
+        connect: {
+          id: timeline1.id
+        }
+      }
+    }
+  })
+
+  await prisma.location.create({
+    data: {
+      title: 'Vimmerby',
+      userId: user1.id
     }
   })
 

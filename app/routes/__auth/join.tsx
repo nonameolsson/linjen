@@ -7,8 +7,9 @@ import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
 
-import { getUserId, createUserSession } from '~/session.server'
+import { createUserSession, getUserId } from '~/session.server'
 
+import { TextField } from '~/components'
 import { createUser, getUserByEmail } from '~/models/user.server'
 import { safeRedirect, validateEmail } from '~/utils'
 
@@ -92,85 +93,72 @@ export default function Join() {
   }, [actionData])
 
   return (
-    <div className='flex flex-col justify-center min-h-full'>
-      <div className='px-8 mx-auto w-full max-w-md'>
-        <Form method='post' className='space-y-6'>
+    <div className='flex min-h-full'>
+      <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
+        <div className='mx-auto w-full max-w-sm lg:w-96'>
           <div>
-            <label
-              htmlFor='email'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Email address
-            </label>
-            <div className='mt-1'>
-              <input
-                ref={emailRef}
-                id='email'
-                required
-                autoFocus={true}
-                name='email'
-                type='email'
-                autoComplete='email'
-                aria-invalid={actionData?.errors?.email ? true : undefined}
-                aria-describedby='email-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
-              />
-              {actionData?.errors?.email && (
-                <div className='pt-1 text-red-700' id='email-error'>
-                  {actionData.errors.email}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div>
-            <label
-              htmlFor='password'
-              className='block text-sm font-medium text-gray-700'
-            >
-              Password
-            </label>
-            <div className='mt-1'>
-              <input
-                id='password'
-                ref={passwordRef}
-                name='password'
-                type='password'
-                autoComplete='new-password'
-                aria-invalid={actionData?.errors?.password ? true : undefined}
-                aria-describedby='password-error'
-                className='py-1 px-2 w-full text-lg rounded border border-gray-500'
-              />
-              {actionData?.errors?.password && (
-                <div className='pt-1 text-red-700' id='password-error'>
-                  {actionData.errors.password}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <input type='hidden' name='redirectTo' value={redirectTo} />
-          <button
-            type='submit'
-            className='py-2 px-4 w-full  text-white bg-blue-500 hover:bg-blue-600 focus:bg-blue-400 rounded'
-          >
-            Create Account
-          </button>
-          <div className='flex justify-center items-center'>
-            <div className='text-sm text-center text-gray-500'>
-              Already have an account?{' '}
+            <img
+              className='w-auto h-12'
+              src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
+              alt='Workflow'
+            />
+            <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
+              Create a new account
+            </h2>
+            <p className='mt-2 text-sm text-gray-600'>
+              Or{' '}
               <Link
-                className='text-blue-500 underline'
+                className='link link-primary'
                 to={{
                   pathname: '/login',
                   search: searchParams.toString()
                 }}
               >
-                Log in
+                log in with an existing account
               </Link>
-            </div>
+            </p>
           </div>
-        </Form>
+
+          <div className='mt-8'>
+            <Form method='post'>
+              <div className='space-y-4'>
+                <TextField
+                  ref={emailRef}
+                  id='email'
+                  label='Email'
+                  required
+                  autoFocus={true}
+                  name='email'
+                  type='email'
+                  autoComplete='email'
+                  errorMessage={actionData?.errors?.email}
+                />
+
+                <TextField
+                  id='password'
+                  ref={passwordRef}
+                  name='password'
+                  type='password'
+                  label='Password'
+                  autoComplete='new-password'
+                  errorMessage={actionData?.errors?.password}
+                />
+              </div>
+              <input type='hidden' name='redirectTo' value={redirectTo} />
+
+              <button className='mt-8 btn btn-block' type='submit'>
+                Create account
+              </button>
+            </Form>
+          </div>
+        </div>
+      </div>
+      <div className='hidden flex-1 items-center bg-white lg:flex'>
+        <img
+          className='relative'
+          src='images/landing.jpg'
+          alt='Timelines and events'
+        />
       </div>
     </div>
   )

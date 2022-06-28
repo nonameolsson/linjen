@@ -1,44 +1,27 @@
-import { Navbar } from './navbar'
-
 export function Content({
   children,
   actions,
-  description,
-  setMobileMenuOpen,
   title
 }: {
   children?: React.ReactNode
   actions?: JSX.Element
-  description?: string
-  setMobileMenuOpen: (open: boolean) => void
   title: string
 }): JSX.Element {
   return (
-    <div className='flex overflow-hidden flex-col flex-1'>
-      <Navbar setMobileMenuOpen={setMobileMenuOpen} />
+    <main className='grid grid-cols-1 gap-4 items-start h-full lg:grid-cols-4 lg:gap-8'>
+      <section
+        aria-labelledby='primary-heading'
+        className='col-span-4 col-start-1 lg:col-span-2 lg:col-start-2'
+      >
+        <h1 id='primary-heading' className='sr-only'>
+          {title}
+        </h1>
 
-      {/* Main content */}
-      <div className='flex overflow-hidden flex-1 items-stretch'>
-        <main className='overflow-y-auto flex-1 p-4'>
-          <section
-            aria-labelledby='primary-heading'
-            className='flex flex-col flex-1 min-w-0 h-full lg:order-last'
-          >
-            <h1 id='primary-heading' className='sr-only'>
-              {title}
-            </h1>
-
-            <div className='flex justify-between'>
-              <div className='flex flex-col'>
-                <h1 className='text-3xl font-bold'>{title}</h1>
-                <h3>{description}</h3>
-              </div>
-              <div className='flex items-start'>{actions}</div>
-            </div>
-            <div className='mt-4'>{children}</div>
-          </section>
-        </main>
-      </div>
-    </div>
+        <div className='flex justify-between'>
+          <div className='flex items-start'>{actions}</div>
+        </div>
+        <div className='mt-4 h-full'>{children}</div>
+      </section>
+    </main>
   )
 }

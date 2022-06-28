@@ -1,11 +1,38 @@
-import type { Event, Timeline } from '@prisma/client'
+import type { Event, Timeline, User } from '@prisma/client'
 import { prisma } from '~/db.server'
 
 export type { Event } from '@prisma/client'
 
-export function getEventsList(timelineId: Timeline['id']) {
+export async function getAllEventsForUser(userId: User['id']) {
+  const events = await prisma.event.findMany({
+    where: {
+      userId
+    },
+    include: {
+      timelines: {
+        select: {
+          title: true
+        }
+      }
+    },
+    orderBy: {
+      title: 'asc'
+    }
+  })
+
+  console.log('events prisma')
+  return events
+}
+
+export function getEventListForTimeline(timelineId: Timeline['id']) {
   return prisma.event.findMany({
-    where: { timelineId },
+    where: {
+      timelines: {
+        every: {
+          id: timelineId
+        }
+      }
+    },
     orderBy: { title: 'desc' },
     include: {
       _count: true,
@@ -22,18 +49,26 @@ export function getEvent(id: Event['id']) {
   return prisma.event.findFirst({
     where: { id },
     include: {
+      referencedBy: true,
+      referencing: true,
       location: true
     }
   })
 }
 
-export function getEventListItems({
+export function getEventListItemsForTimeline({
   timelineId
 }: {
   timelineId: Timeline['id']
 }) {
   return prisma.event.findMany({
-    where: { timelineId },
+    where: {
+      timelines: {
+        every: {
+          id: timelineId
+        }
+      }
+    },
     orderBy: { startDate: 'desc' },
     include: {
       location: true
@@ -43,25 +78,35 @@ export function getEventListItems({
 
 export async function createEvent({
   data,
-  timelineId
+  timelineId,
+  userId
 }: {
   data: {
     title: Event['title']
     content: Event['content']
     startDate: Event['startDate']
   }
-  timelineId: Timeline['id']
+  timelineId: Timeline['id'] | null
+  userId: User['id']
 }) {
+  let connectTimeline = undefined
+  if (timelineId) {
+    connectTimeline = {
+      timelines: {
+        connect: {
+          id: timelineId
+        }
+      }
+    }
+  }
+
   return await prisma.event.create({
     data: {
       startDate: data.startDate,
       title: data.title,
       content: data.content,
-      timeline: {
-        connect: {
-          id: timelineId
-        }
-      }
+      userId: userId,
+      ...connectTimeline
     }
   })
 }
@@ -85,9 +130,12 @@ export function updateEvent(
 }
 
 export function deleteEvent(id: Event['id']) {
-  return prisma.event.delete({
+  prisma.event.delete({
     where: {
       id
+    },
+    include: {
+      _count: true
     }
   })
 }
