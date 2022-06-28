@@ -43,9 +43,10 @@ export function createTimeline({
   title,
   userId,
   imageUrl
-}: Pick<Timeline, 'description' | 'title'> & Partial<Pick<Timeline, 'imageUrl'>> & {
-  userId: User['id']
-}) {
+}: Pick<Timeline, 'description' | 'title'> &
+  Partial<Pick<Timeline, 'imageUrl'>> & {
+    userId: User['id']
+  }) {
   return prisma.timeline.create({
     data: {
       title,
@@ -59,18 +60,21 @@ export function createTimeline({
 export function updateTimeline({
   id,
   description,
-  title
+  title,
+  imageUrl
 }: // userId //TODO: Verify that the current user is the owner of the timeline
-Pick<Timeline, 'id' | 'description' | 'title'> & {
-  userId: User['id']
-}) {
+Pick<Timeline, 'id' | 'description' | 'title'> &
+  Partial<Pick<Timeline, 'imageUrl'>> & {
+    userId: User['id']
+  }) {
   return prisma.timeline.update({
     where: {
       id
     },
     data: {
       description,
-      title
+      title,
+      imageUrl
     }
   })
 }

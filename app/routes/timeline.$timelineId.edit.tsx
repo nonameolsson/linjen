@@ -31,6 +31,7 @@ type ActionData = {
   errors?: {
     title?: string
     description?: string
+    imageUrl?: string
   }
 }
 
@@ -41,6 +42,7 @@ export const action: ActionFunction = async ({ request }) => {
   const title = formData.get('title')
   const description = formData.get('description')
   const id = formData.get('timelineId')
+  const imageUrl = formData.get('imageUrl')
 
   if (typeof title !== 'string' || title.length === 0) {
     return json<ActionData>(
@@ -63,7 +65,20 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
-  const timeline = await updateTimeline({ title, description, userId, id })
+  if (typeof imageUrl !== 'string') {
+    return json<ActionData>(
+      { errors: { imageUrl: 'imageUrl is not a string' } },
+      { status: 400 }
+    )
+  }
+
+  const timeline = await updateTimeline({
+    title,
+    description,
+    userId,
+    id,
+    imageUrl
+  })
 
   return redirect(`/timeline/${timeline.id}/events`)
 }
@@ -73,6 +88,7 @@ export default function EditTimelinePage() {
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
   const descriptionRef = React.useRef<HTMLTextAreaElement>(null)
+  const imageUrlRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
     if (actionData?.errors?.title) {
@@ -96,26 +112,36 @@ export default function EditTimelinePage() {
       >
         <input type='hidden' name='timelineId' value={data.timeline.id} />
 
-        <div className='mt-1'>
-          <TextField
-            id='title'
-            label='Title'
-            ref={titleRef}
-            name='title'
-            errorMessage={actionData?.errors?.title}
-            defaultValue={data.timeline.title}
-          />
-        </div>
-        <div className='mt-1'>
-          <TextArea
-            rows={4}
-            name='description'
-            ref={descriptionRef}
-            defaultValue={data.timeline.description}
-            errorMessage={actionData?.errors?.description}
-          />
-        </div>
+        <TextField
+          className='mt-1'
+          id='title'
+          label='Title'
+          ref={titleRef}
+          name='title'
+          errorMessage={actionData?.errors?.title}
+          defaultValue={data.timeline.title}
+        />
 
+        <TextArea
+          rows={4}
+          className='mt-2'
+          label='Description'
+          name='description'
+          ref={descriptionRef}
+          defaultValue={data.timeline.description}
+          errorMessage={actionData?.errors?.description}
+        />
+
+        <TextField
+          className='mt-2'
+          id='imageUrl'
+          label='Cover image (Optional)'
+          ref={imageUrlRef}
+          name='imageUrl'
+          errorMessage={actionData?.errors?.title}
+          placeholder='https://myurl.com/image.png'
+          defaultValue={data.timeline.imageUrl || ''}
+        />
         <div className='text-right'>
           <Button type='submit'>Save</Button>
         </div>

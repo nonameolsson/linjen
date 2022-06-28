@@ -2,9 +2,15 @@ import { Menu, Transition } from '@headlessui/react'
 import { Form, Link } from '@remix-run/react'
 import { Fragment } from 'react'
 
-export function Navbar({ title }: { title: string }): JSX.Element {
+export function Navbar({
+  description,
+  title
+}: {
+  description?: title
+  title: string
+}): JSX.Element {
   return (
-    <div className='w-full navbar bg-base-100'>
+    <div className='w-full shadow navbar bg-base-100'>
       <div className='navbar-start'>
         <label
           className='lg:hidden  btn btn-ghost btn-circle'
@@ -27,7 +33,10 @@ export function Navbar({ title }: { title: string }): JSX.Element {
         </label>
       </div>
       <div className='navbar-center'>
-        <span className='text-xl normal-case'>{title}</span>
+        <div className='flex flex-col text-center'>
+          <span className='text-xl normal-case'>{title}</span>
+          <span className='text-gray-500 normal-case'>{description}</span>
+        </div>
       </div>
       <div className='navbar-end'>
         <Menu as='div' className='dropdown dropdown-end'>
