@@ -1,7 +1,13 @@
 import { PencilIcon } from '@heroicons/react/outline'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Link, NavLink, Outlet, useCatch, useLoaderData } from '@remix-run/react'
+import {
+  Link,
+  NavLink,
+  Outlet,
+  useCatch,
+  useLoaderData
+} from '@remix-run/react'
 import cx from 'classnames'
 import invariant from 'tiny-invariant'
 import { Page } from '~/components/page'
