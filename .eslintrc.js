@@ -19,6 +19,6 @@ module.exports = {
     }
   },
   rules: {
-    'eslint/tailwindcss/no-custom-classname': 'off'
+    'tailwindcss/no-custom-classname': 'off'
   }
 }
