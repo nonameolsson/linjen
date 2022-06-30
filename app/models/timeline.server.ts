@@ -19,7 +19,7 @@ export function getTimeline({
 }
 
 export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
-  const timelines = await prisma.timeline.findMany({
+  return await prisma.timeline.findMany({
     where: { userId },
 
     include: {
@@ -32,10 +32,6 @@ export async function getTimelineListItems({ userId }: { userId: User['id'] }) {
 
     orderBy: { updatedAt: 'desc' }
   })
-
-  console.log(timelines)
-
-  return timelines
 }
 
 export function createTimeline({

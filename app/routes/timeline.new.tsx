@@ -72,7 +72,7 @@ export default function NewTimelinePage() {
   }, [actionData])
 
   return (
-    <Page title='New Timeline'>
+    <Page title='New Timeline' showBackButton>
       <Form
         replace
         method='post'
