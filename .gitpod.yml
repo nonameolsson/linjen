@@ -41,6 +41,9 @@ tasks:
     name: Install dependencies
     command: npm run setup && npm run dev
 
+  - init: tools/trunk
+    name: Install trunk
+
   - name: PlanetScale
     init: echo "Run `pscale login` to login to Planetscale"
 
