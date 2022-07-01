@@ -49,14 +49,13 @@ export default function TimelineDetailsPage() {
   return (
     <Page
       showBackButton
-      description={data.timeline.description}
       title={data.timeline.title}
       toolbarButtons={
         <Link
           to={`/timeline/${data.timeline.id}/edit`}
           className='btn btn-ghost btn-circle'
         >
-          <PencilIcon className='w-5 h-5' />
+          <PencilIcon className='h-5 w-5' />
         </Link>
       }
       // actions={

@@ -26,23 +26,20 @@ export function Page({
   children,
   actions,
   toolbarButtons,
-  description,
   showBackButton = false,
   title
 }: {
   children: React.ReactNode
   actions?: JSX.Element
-  description?: string
   showBackButton?: boolean
   toolbarButtons?: JSX.Element
   title: string
 }): JSX.Element {
   return (
-    <div className='drawer drawer-mobile'>
+    <div className='drawer-mobile drawer'>
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
-      <div className='flex flex-col drawer-content'>
+      <div className='drawer-content flex flex-col'>
         <Navbar
-          description={description}
           title={title}
           rightButtons={toolbarButtons}
           showBackButton={showBackButton}
@@ -52,9 +49,9 @@ export function Page({
         </Content>
       </div>
 
-      <div className='shadow drawer-side'>
+      <div className='drawer-side shadow'>
         <label htmlFor='my-drawer' className='drawer-overlay'></label>
-        <ul className='overflow-y-auto p-4 w-80 menu bg-base-100 text-base-content'>
+        <ul className='menu w-80 overflow-y-auto bg-base-100 p-4 text-base-content'>
           {sidebarNavigation.map(item => (
             <li key={item.name}>
               <NavLink to={item.to}>{item.name}</NavLink>
