@@ -50,6 +50,10 @@ tasks:
   - name: Trunk
     init: echo "Run `trunk login` to login to Trunk"
 
+github:
+  prebuilds:
+    addBadge: true
+
 vscode:
   extensions:
     - ms-azuretools.vscode-docker

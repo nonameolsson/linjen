@@ -5,6 +5,9 @@ FROM gitpod/workspace-full:2022-06-20-19-54-55
 #ENV FLYCTL_INSTALL="/home/gitpod/.fly"
 ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
 
+ENV PATH="/workspace/linjen/tools/trunk:$PATH"
+
+
 # Install GitHub CLI
 RUN brew install gh
 
