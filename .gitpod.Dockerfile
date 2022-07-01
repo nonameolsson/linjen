@@ -9,8 +9,6 @@ ENV PATH="$FLYCTL_INSTALL/bin:$PATH"
 RUN brew install gh
 
 # Install PlanetScale
-
-USER gitpod
 # trunk-ignore(hadolint/DL3004)
 RUN wget --progress=dot:giga https://github.com/planetscale/cli/releases/download/v0.101.0/pscale_0.101.0_linux_amd64.deb \
   && sudo dpkg -i pscale_0.101.0_linux_amd64.deb
