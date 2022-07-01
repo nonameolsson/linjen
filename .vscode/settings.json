@@ -1,6 +1,6 @@
 {
   "prisma.fileWatcher": true,
-  "diffEditor.ignoreTrimWhitespace": false,
+  "diffEditor.ignoreTrimWhitespace": true,
   "editor.codeActionsOnSave": [
     "source.addMissingImports",
     "source.fixAll",

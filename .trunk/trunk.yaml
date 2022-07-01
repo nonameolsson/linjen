@@ -2,13 +2,22 @@ version: 0.1
 cli:
   version: 0.14.1-beta
 lint:
+  ignore:
+    - linters: ["eslint"]
+      paths:
+        # Ignore generated files
+        - build/**
+        # Trunk
+        - .trunk/**
+        - .trunk/out/*.yaml
   enabled:
-    - actionlint@1.6.9
-    - eslint@8.10.0
-    - gitleaks@8.3.0
-    - hadolint@2.8.0
+    - actionlint@1.6.15
+    - eslint@8.18.0
+    - gitleaks@8.8.11
+    - hadolint@2.10.0
     - markdownlint@0.31.1
-    - prettier@2.5.1
+    - prettier@2.7.1
     - shellcheck@0.8.0
-    - shfmt@3.4.0
-    - taplo@release-cli-0.6.0
+    - shfmt@3.5.0
+    - svgo@2.8.0
+    - taplo@release-taplo-cli-0.6.8
