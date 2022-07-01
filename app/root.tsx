@@ -26,7 +26,8 @@ export const links: LinksFunction = () => {
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Linjen',
-  viewport: 'width=device-width,initial-scale=1'
+  viewport:
+    'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'
 })
 
 type LoaderData = {
@@ -51,11 +52,12 @@ export default function App() {
   return (
     <html
       lang='en'
-      className='h-full bg-gray-50 scroll-smooth'
+      className='h-full scroll-smooth bg-gray-50'
       data-theme='light'
     >
       <head>
         <Meta />
+        <link rel='manifest' href='/resources/manifest.json' />
         <Links />
       </head>
       <body className='h-full'>
