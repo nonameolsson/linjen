@@ -41,7 +41,11 @@ tasks:
     name: Install dependencies
     command: npm run setup && npm run dev
 
-  - command: echo "Run `pscale login`` to login to Planetscale"
+  - name: PlanetScale
+    init: echo "Run `pscale login` to login to Planetscale"
+
+  - name: Trunk
+    init: echo "Run `trunk login` to login to Trunk"
 
 vscode:
   extensions:

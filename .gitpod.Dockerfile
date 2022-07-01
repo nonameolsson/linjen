@@ -12,3 +12,8 @@ RUN brew install gh
 # trunk-ignore(hadolint/DL3004)
 RUN wget --progress=dot:giga https://github.com/planetscale/cli/releases/download/v0.101.0/pscale_0.101.0_linux_amd64.deb \
   && sudo dpkg -i pscale_0.101.0_linux_amd64.deb
+
+# Install Trunk.io
+# trunk-ignore(hadolint/DL4001)
+# trunk-ignore(hadolint/DL4006)
+RUN curl https://get.trunk.io -fsSL | bash
