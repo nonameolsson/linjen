@@ -1,25 +1,17 @@
 import {
-  HomeIcon,
-  PhotographIcon,
-  ViewGridIcon
-} from '@heroicons/react/outline'
-import { NavLink } from '@remix-run/react'
-
+  CalendarIcon,
+  PresentationChartBarIcon,
+  UserGroupIcon
+} from '@heroicons/react/solid'
 import { Content } from './content'
 import { Navbar } from './navbar'
+import type { SidebarNavigationItem } from './sidebar'
+import { Sidebar } from './sidebar'
 
-// TODO: Move to type file
-export type SidebarNavigationItem = {
-  name: string
-  to: string
-  icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element
-  current: boolean
-}
-
-const sidebarNavigation: SidebarNavigationItem[] = [
-  { name: 'Timelines', to: '/timelines', icon: HomeIcon, current: false },
-  { name: 'Events', to: '/events', icon: ViewGridIcon, current: false },
-  { name: 'People', to: '/people', icon: PhotographIcon, current: true }
+const sidebarItems: SidebarNavigationItem[] = [
+  { name: 'Timelines', to: '/timelines', icon: PresentationChartBarIcon },
+  { name: 'Events', to: '/events', icon: CalendarIcon },
+  { name: 'People', to: '/people', icon: UserGroupIcon }
 ]
 
 export function Page({
@@ -51,13 +43,7 @@ export function Page({
 
       <div className='drawer-side shadow'>
         <label htmlFor='my-drawer' className='drawer-overlay'></label>
-        <ul className='menu w-80 overflow-y-auto bg-base-100 p-4 text-base-content'>
-          {sidebarNavigation.map(item => (
-            <li key={item.name}>
-              <NavLink to={item.to}>{item.name}</NavLink>
-            </li>
-          ))}
-        </ul>
+        <Sidebar items={sidebarItems} />
       </div>
     </div>
   )
