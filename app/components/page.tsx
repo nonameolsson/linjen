@@ -19,10 +19,12 @@ export function Page({
   actions,
   toolbarButtons,
   showBackButton = false,
+  goBackTo,
   title
 }: {
   children: React.ReactNode
   actions?: JSX.Element
+  goBackTo?: string
   showBackButton?: boolean
   toolbarButtons?: JSX.Element
   title: string
@@ -33,6 +35,7 @@ export function Page({
       <div className='drawer-content flex flex-col'>
         <Navbar
           title={title}
+          goBackTo={goBackTo}
           rightButtons={toolbarButtons}
           showBackButton={showBackButton}
         />

@@ -4,14 +4,22 @@ import { useNavigate } from '@remix-run/react'
 export function Navbar({
   showBackButton,
   rightButtons,
+  goBackTo,
   title
 }: {
   rightButtons?: JSX.Element
+  goBackTo?: string
   showBackButton: boolean
   title: string
 }): JSX.Element {
   const navigate = useNavigate()
-  const goBack = () => navigate(-1)
+  const goBack = () => {
+    if (goBackTo) {
+      navigate(goBackTo)
+    } else {
+      navigate(-1)
+    }
+  }
 
   return (
     <div className='navbar w-screen bg-base-100 shadow lg:w-full'>
@@ -42,7 +50,7 @@ export function Navbar({
           </label>
         )}
       </div>
-      <div className='navbar-center w-full justify-center'>
+      <div className='navbar-center justify-center'>
         <div className='flex flex-col text-center'>
           <span className='text-xl normal-case'>{title}</span>
         </div>

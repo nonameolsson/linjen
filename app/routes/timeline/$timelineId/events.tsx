@@ -33,17 +33,17 @@ export default function EventsTab() {
 
   return (
     <>
-      <div className='flex overflow-hidden flex-1 items-stretch'>
-        <main className='overflow-y-auto flex-1 p-4'>
-          <section className='flex flex-col flex-1 min-w-0 h-full lg:order-last'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
             <Link
               to={`/event/new?timelineId=${params.timelineId}`}
-              className='fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl btn btn-primary btn-circle btn-xl'
+              className='btn-xl btn btn-primary btn-circle fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl'
             >
-              <PlusIcon className='w-5 h-5' aria-hidden='true' />
+              <PlusIcon className='h-5 w-5' aria-hidden='true' />
             </Link>
             {data.events.length > 0 ? (
-              <div className='overflow-hidden mt-4 bg-white shadow sm:rounded-md'>
+              <div className='mt-4 overflow-hidden bg-white shadow sm:rounded-md'>
                 <ul className='divide-y divide-gray-200'>
                   {data.events.map(event => (
                     <li key={event.title}>
@@ -52,13 +52,13 @@ export default function EventsTab() {
                         className='block hover:bg-gray-50'
                       >
                         <div className='flex items-center p-4 sm:px-6'>
-                          <div className='flex flex-1 items-center min-w-0'>
-                            <div className='flex-1 px-4 min-w-0 md:grid md:grid-cols-2 md:gap-4'>
+                          <div className='flex min-w-0 flex-1 items-center'>
+                            <div className='min-w-0 flex-1 px-4 md:grid md:grid-cols-2 md:gap-4'>
                               <div>
-                                <p className='text-sm font-medium text-indigo-600 truncate'>
+                                <p className='truncate text-sm font-medium text-indigo-600'>
                                   {event.title}
                                 </p>
-                                <p className='flex items-center mt-2 text-sm text-gray-500'>
+                                <p className='mt-2 flex items-center text-sm text-gray-500'>
                                   <span className='truncate'>
                                     {new Intl.DateTimeFormat('sv-SE').format(
                                       new Date(event.startDate)
@@ -77,7 +77,7 @@ export default function EventsTab() {
                           </div>
                           <div>
                             <ChevronRightIcon
-                              className='w-5 h-5 text-gray-400'
+                              className='h-5 w-5 text-gray-400'
                               aria-hidden='true'
                             />
                           </div>
