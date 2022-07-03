@@ -19,7 +19,7 @@ export const TextField = forwardRef(
     })
 
     return (
-      <div className={`w-full form-control ${props.className}`}>
+      <div className={`form-control w-full ${props.className}`}>
         {props.label && (
           <label htmlFor={props.id} className='label'>
             <span className='label-text'>{props.label}</span>
@@ -40,11 +40,12 @@ export const TextField = forwardRef(
           ref={ref}
           required={props.required}
           type={props.type}
+          onFocus={props.onFocus}
         />
         {props.errorMessage && (
-          <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
+          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3'>
             <ExclamationCircleIcon
-              className='w-5 h-5 text-red-500'
+              className='h-5 w-5 text-red-500'
               aria-hidden='true'
             />
           </div>

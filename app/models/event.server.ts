@@ -20,7 +20,6 @@ export async function getAllEventsForUser(userId: User['id']) {
     }
   })
 
-  console.log('events prisma')
   return events
 }
 

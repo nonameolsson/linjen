@@ -2,11 +2,15 @@ import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
-import * as React from 'react'
+import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 
-import { Button, Page, TextArea, TextField } from '~/components'
-import { getTimeline, updateTimeline } from '~/models/timeline.server'
+import { Page, TextArea, TextField } from '~/components'
+import {
+  deleteTimeline,
+  getTimeline,
+  updateTimeline
+} from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
@@ -35,62 +39,79 @@ type ActionData = {
   }
 }
 
-export const action: ActionFunction = async ({ request }) => {
+export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-
   const formData = await request.formData()
-  const title = formData.get('title')
-  const description = formData.get('description')
-  const id = formData.get('timelineId')
-  const imageUrl = formData.get('imageUrl')
+  let action = formData.get('action')
+  console.log('action', action)
 
-  if (typeof title !== 'string' || title.length === 0) {
-    return json<ActionData>(
-      { errors: { title: 'Title is required' } },
-      { status: 400 }
-    )
+  switch (action) {
+    case 'update': {
+      const title = formData.get('title')
+      const description = formData.get('description')
+      const id = formData.get('timelineId')
+      const imageUrl = formData.get('imageUrl')
+
+      if (typeof title !== 'string' || title.length === 0) {
+        return json<ActionData>(
+          { errors: { title: 'Title is required' } },
+          { status: 400 }
+        )
+      }
+
+      if (typeof description !== 'string' || description.length === 0) {
+        return json<ActionData>(
+          { errors: { description: 'Description is required' } },
+          { status: 400 }
+        )
+      }
+
+      if (typeof id !== 'string' || id.length === 0) {
+        return json<ActionData>(
+          { errors: { description: 'id is required' } },
+          { status: 400 }
+        )
+      }
+
+      if (typeof imageUrl !== 'string') {
+        return json<ActionData>(
+          { errors: { imageUrl: 'imageUrl is not a string' } },
+          { status: 400 }
+        )
+      }
+
+      const timeline = await updateTimeline({
+        title,
+        description,
+        userId,
+        id,
+        imageUrl
+      })
+
+      return redirect(`/timeline/${timeline.id}/events`)
+    }
+
+    case 'delete': {
+      invariant(params.timelineId, 'timelineId not found')
+
+      await deleteTimeline({ userId, id: params.timelineId })
+
+      return redirect('/timelines')
+    }
+    default: {
+      throw new Error('Unexpected action')
+    }
   }
-
-  if (typeof description !== 'string' || description.length === 0) {
-    return json<ActionData>(
-      { errors: { description: 'Description is required' } },
-      { status: 400 }
-    )
-  }
-
-  if (typeof id !== 'string' || id.length === 0) {
-    return json<ActionData>(
-      { errors: { description: 'id is required' } },
-      { status: 400 }
-    )
-  }
-
-  if (typeof imageUrl !== 'string') {
-    return json<ActionData>(
-      { errors: { imageUrl: 'imageUrl is not a string' } },
-      { status: 400 }
-    )
-  }
-
-  const timeline = await updateTimeline({
-    title,
-    description,
-    userId,
-    id,
-    imageUrl
-  })
-
-  return redirect(`/timeline/${timeline.id}/events`)
 }
 
 export default function EditTimelinePage() {
   const data = useLoaderData<LoaderData>()
   const actionData = useActionData() as ActionData
-  const titleRef = React.useRef<HTMLInputElement>(null)
-  const descriptionRef = React.useRef<HTMLTextAreaElement>(null)
-  const imageUrlRef = React.useRef<HTMLInputElement>(null)
+  const titleRef = useRef<HTMLInputElement>(null)
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  const imageUrlRef = useRef<HTMLInputElement>(null)
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (actionData?.errors?.title) {
       titleRef.current?.focus()
     } else if (actionData?.errors?.description) {
@@ -99,8 +120,23 @@ export default function EditTimelinePage() {
   }, [actionData])
 
   return (
-    <Page title='Edit Timeline' showBackButton>
+    <Page
+      title='Edit Timeline'
+      showBackButton
+      toolbarButtons={
+        <button
+          form='edit-timeline'
+          className='btn btn-ghost'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </button>
+      }
+    >
       <Form
+        id='edit-timeline'
         replace
         method='post'
         style={{
@@ -142,9 +178,17 @@ export default function EditTimelinePage() {
           placeholder='https://myurl.com/image.png'
           defaultValue={data.timeline.imageUrl || ''}
         />
-        <div className='text-right'>
-          <Button type='submit'>Save</Button>
-        </div>
+
+        <Form id='delete-timeline' method='post'>
+          <button
+            className='btn btn-error'
+            type='submit'
+            name='action'
+            value='delete'
+          >
+            Delete
+          </button>
+        </Form>
       </Form>
     </Page>
   )

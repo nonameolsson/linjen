@@ -2,7 +2,6 @@ FROM gitpod/workspace-full:2022-06-20-19-54-55
 
 ENV PATH="/workspace/linjen/tools/trunk:$PATH"
 
-
 # Install GitHub CLI
 RUN brew install gh
 
