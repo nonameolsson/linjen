@@ -5,7 +5,9 @@ image:
 
 ports:
   - port: 3000
-    onOpen: notify
+    name: Web App
+    description: The main application web server
+    onOpen: open-browser
 
 tasks:
   - name: Restore .env file
@@ -39,32 +41,19 @@ tasks:
 
   - init: npm install
     name: Install dependencies
-    command: npm run setup && npm run dev
+    command: npm run dev
 
   - init: tools/trunk
     name: Install trunk
 
   - name: PlanetScale
-    init: echo "Run `pscale login` to login to Planetscale"
+    init: pscale login
 
   - name: Trunk
-    init: echo "Run `trunk login` to login to Trunk"
+    init: trunk login
 
 github:
   prebuilds:
-    # enable for the default branch (defaults to true)
-    master: true
-    # enable for all branches in this repo (defaults to false)
-    branches: false
-    # enable for pull requests coming from this repo (defaults to true)
-    pullRequests: true
-    # enable for pull requests coming from forks (defaults to false)
-    pullRequestsFromForks: false
-    # add a check to pull requests (defaults to true)
-    addCheck: true
-    # add a "Review in Gitpod" button as a comment to pull requests (defaults to false)
-    addComment: false
-    # add a "Review in Gitpod" button to the pull request's description (defaults to false)
     addBadge: true
 
 vscode:
