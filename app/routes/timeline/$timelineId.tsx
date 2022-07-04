@@ -1,4 +1,4 @@
-import { Dialog, Menu, Transition } from '@headlessui/react'
+import { Menu, Transition } from '@headlessui/react'
 import { CalendarIcon } from '@heroicons/react/outline'
 import {
   DotsVerticalIcon,
@@ -18,95 +18,96 @@ import {
 } from '@remix-run/react'
 import { Fragment, useState } from 'react'
 import invariant from 'tiny-invariant'
+import { Modal } from '~/components'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-function DeleteModal({
-  isOpen,
-  closeModal
-}: {
-  isOpen: boolean
-  closeModal: () => void
-}) {
-  return (
-    <Transition appear show={isOpen} as={Fragment}>
-      <Dialog
-        as='div'
-        className='fixed inset-0 z-10 overflow-y-auto'
-        onClose={closeModal}
-      >
-        <div className='modal-open modal modal-bottom sm:modal-middle'>
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0'
-            enterTo='opacity-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100'
-            leaveTo='opacity-0'
-          >
-            <Dialog.Overlay className='fixed inset-0' />
-          </Transition.Child>
+// function DeleteModal({
+//   isOpen,
+//   closeModal
+// }: {
+//   isOpen: boolean
+//   closeModal: () => void
+// }) {
+//   return (
+//     <Transition appear show={isOpen} as={Fragment}>
+//       <Dialog
+//         as='div'
+//         className='fixed inset-0 z-10 overflow-y-auto'
+//         onClose={closeModal}
+//       >
+//         <div className='modal-open modal modal-bottom sm:modal-middle'>
+//           <Transition.Child
+//             as={Fragment}
+//             enter='ease-out duration-300'
+//             enterFrom='opacity-0'
+//             enterTo='opacity-100'
+//             leave='ease-in duration-200'
+//             leaveFrom='opacity-100'
+//             leaveTo='opacity-0'
+//           >
+//             <Dialog.Overlay className='fixed inset-0' />
+//           </Transition.Child>
 
-          <Transition.Child
-            as={Fragment}
-            enter='ease-out duration-300'
-            enterFrom='opacity-0 scale-95'
-            enterTo='opacity-100 scale-100'
-            leave='ease-in duration-200'
-            leaveFrom='opacity-100 scale-100'
-            leaveTo='opacity-0 scale-95'
-          >
-            <Dialog.Panel>
-              <div className='modal-box'>
-                <div className='sm:flex sm:items-start'>
-                  <div className='mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10'>
-                    <ExclamationIcon
-                      className='h-6 w-6 text-red-600'
-                      aria-hidden='true'
-                    />
-                  </div>
-                  <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
-                    <Dialog.Title
-                      as='h3'
-                      className="text-lg font-bold"
-                    >
-                      Delete timeline
-                    </Dialog.Title>
-                    <div className='mt-2'>
-                      <p>The events, places and people will not be deleted.</p>
-                    </div>
-                  </div>
-                </div>
+//           <Transition.Child
+//             as={Fragment}
+//             enter='ease-out duration-300'
+//             enterFrom='opacity-0 scale-95'
+//             enterTo='opacity-100 scale-100'
+//             leave='ease-in duration-200'
+//             leaveFrom='opacity-100 scale-100'
+//             leaveTo='opacity-0 scale-95'
+//           >
+//             <Dialog.Panel>
+//               <div className='modal-box'>
+//                 <div className='sm:flex sm:items-start'>
+//                   <div className='mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10'>
+//                     <ExclamationIcon
+//                       className='h-6 w-6 text-red-600'
+//                       aria-hidden='true'
+//                     />
+//                   </div>
+//                   <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
+//                     <Dialog.Title
+//                       as='h3'
+//                       className="text-lg font-bold"
+//                     >
+//                       Delete timeline
+//                     </Dialog.Title>
+//                     <div className='mt-2'>
+//                       <p>The events, places and people will not be deleted.</p>
+//                     </div>
+//                   </div>
+//                 </div>
 
-                <div className='modal-action'>
-                  <button
-                    type='button'
-                    className='btn-outline btn'
-                    onClick={closeModal}
-                  >
-                    Cancel
-                  </button>
-                  <Form replace method='post'>
-                    <button
-                      type='submit'
-                      className='btn btn-error'
-                      onClick={closeModal}
-                    >
-                      Delete
-                    </button>
-                  </Form>
-                </div>
-              </div>
-            </Dialog.Panel>
-          </Transition.Child>
-        </div>
-      </Dialog>
-    </Transition>
-  )
-}
+//                 <div className='modal-action'>
+//                   <button
+//                     type='button'
+//                     className='btn-outline btn'
+//                     onClick={closeModal}
+//                   >
+//                     Cancel
+//                   </button>
+//                   <Form replace method='post'>
+//                     <button
+//                       type='submit'
+//                       className='btn btn-error'
+//                       onClick={closeModal}
+//                     >
+//                       Delete
+//                     </button>
+//                   </Form>
+//                 </div>
+//               </div>
+//             </Dialog.Panel>
+//           </Transition.Child>
+//         </div>
+//       </Dialog>
+//     </Transition>
+//   )
+// }
 
 function OverflowButton({ onDeleteClick }: { onDeleteClick: () => void }) {
   return (
@@ -217,7 +218,38 @@ export default function TimelineDetailsPage() {
           <CalendarIcon className='h-5 w-5' />
           <span className='btm-nav-label'>People</span>
         </NavLink>
-        <DeleteModal isOpen={isOpen} closeModal={closeDeleteModal} />
+        <Modal
+          icon={
+            <ExclamationIcon
+              className='h-6 w-6 text-red-600'
+              aria-hidden='true'
+            />
+          }
+          isOpen={isOpen}
+          closeModal={closeDeleteModal}
+          title='Delete timeline'
+          description='The events, places and people will not be deleted.'
+          buttons={
+            <>
+              {' '}
+              <button
+                type='button'
+                className='btn-outline btn'
+                onClick={closeDeleteModal}
+              >
+                Cancel
+              </button>
+              <Form replace method='post'>
+                <button
+                  type='submit'
+                  className='btn btn-error'
+                >
+                  Delete
+                </button>
+              </Form>
+            </>
+          }
+        />
       </div>
     </Page>
   )
