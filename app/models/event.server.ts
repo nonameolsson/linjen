@@ -63,7 +63,7 @@ export function getEventListItemsForTimeline({
   return prisma.event.findMany({
     where: {
       timelines: {
-        every: {
+        some: {
           id: timelineId
         }
       }
@@ -129,12 +129,9 @@ export function updateEvent(
 }
 
 export function deleteEvent(id: Event['id']) {
-  prisma.event.delete({
+  return prisma.event.delete({
     where: {
       id
     },
-    include: {
-      _count: true
-    }
   })
 }
