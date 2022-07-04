@@ -1,12 +1,11 @@
 import { ExclamationIcon } from '@heroicons/react/outline'
-import { PencilIcon } from '@heroicons/react/solid'
 import type { Location } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, Link, useCatch, useLoaderData } from '@remix-run/react'
+import { Form, useCatch, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
-import { DeleteEventDialog, Page } from '~/components'
+import { Modal, OverflowButton, Page } from '~/components'
 import EventCard from '~/components/event-card'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
@@ -55,6 +54,14 @@ export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
 
+  function closeDeleteModal() {
+    setIsOpen(false)
+  }
+
+  function openDeleteModal() {
+    setIsOpen(true)
+  }
+
   const referencedEvents: Event[] = [
     ...data.event.referencedBy,
     ...data.event.referencing
@@ -64,55 +71,46 @@ export default function EventDetailsPage() {
     <Page
       title={data.event.title}
       showBackButton
-      toolbarButtons={
-        <Link
-          to={`/event/${data.event.id}/edit`}
-          className='btn btn-ghost btn-circle'
-        >
-          <PencilIcon className='w-5 h-5' />
-        </Link>
-      }
+      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <Form method='post' id='delete-event' replace>
-        <input type='hidden' defaultValue={data.redirectTo} name='redirectTo' />
+      <EventCard
+        id={data.event.id}
+        locations={data.event.location}
+        title={data.event.title}
+        events={referencedEvents}
+        content={data.event.content}
+        startDate={data.event.startDate}
+      />
 
-        <DeleteEventDialog
-          title='Delete event'
-          description='Are you sure you want to delete this event?'
-          isOpen={isOpen}
-          icon={
-            <ExclamationIcon
-              className='w-6 h-6 text-red-600'
-              aria-hidden='true'
-            />
-          }
-          onCloseClick={() => setIsOpen(false)}
-          leftButton={
+      <Modal
+        icon={
+          <ExclamationIcon
+            className='h-6 w-6 text-red-600'
+            aria-hidden='true'
+          />
+        }
+        isOpen={isOpen}
+        description="Do you really want to delete this event?"
+        closeModal={closeDeleteModal}
+        title='Delete event'
+        buttons={
+          <>
             <button
-              form='delete-event'
-              type='submit'
-              className='inline-flex justify-center py-2 px-4 w-full text-base font-medium text-white bg-red-600 hover:bg-red-700 rounded-md border border-transparent focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 shadow-sm sm:ml-3 sm:w-auto sm:text-sm'
+              type='button'
+              className='btn-outline btn'
+              onClick={closeDeleteModal}
             >
-              Delete
+              Cancel
             </button>
-          }
-          rightButton={
-            <button form='delete-event' type='submit'>
-              delete
-            </button>
-          }
-        />
-
-        <EventCard
-          id={data.event.id}
-          locations={data.event.location}
-          onDeleteClick={() => setIsOpen(true)}
-          title={data.event.title}
-          events={referencedEvents}
-          content={data.event.content}
-          startDate={data.event.startDate}
-        />
-      </Form>
+            <Form replace method='post'>
+            <input type='hidden' defaultValue={data.redirectTo} name='redirectTo' />
+              <button type='submit' className='btn btn-error'>
+                Delete
+              </button>
+            </Form>
+          </>
+        }
+      />
     </Page>
   )
 }
