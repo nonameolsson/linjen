@@ -10,7 +10,6 @@
     "dev": "run-p dev:*",
     "dev:css": "cross-env NODE_ENV=development npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development binode --require ./mocks -- @remix-run/dev:remix dev",
-    "dev:pscale": "pscale connect linjen main --port 3309",
     "format": "prettier --write .",
     "prisma:generate": "npx prisma generate",
     "generate:css": "tailwindcss -o ./app/styles/tailwind.css",

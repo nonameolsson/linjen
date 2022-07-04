@@ -22,15 +22,15 @@ export function Navbar({
   }
 
   return (
-    <div className='navbar w-screen bg-base-100 shadow lg:w-full'>
+    <div className='navbar bg-base-100 shadow'>
       <div className='navbar-start'>
         {showBackButton ? (
-          <button onClick={goBack} className='btn btn-ghost btn-circle'>
+          <button onClick={goBack} className='btn btn-ghost'>
             <ChevronLeftIcon className='h-5 w-5' />
           </button>
         ) : (
           <label
-            className='btn btn-ghost btn-circle lg:hidden'
+            className='btn btn-ghost lg:hidden'
             htmlFor='my-drawer'
           >
             <svg
@@ -55,7 +55,9 @@ export function Navbar({
           <span className='text-xl normal-case'>{title}</span>
         </div>
       </div>
-      <div className='navbar-end'>{rightButtons && rightButtons}</div>
-    </div>
+      <div className='navbar-end'>
+        {rightButtons && rightButtons}
+        </div>
+      </div>
   )
 }
