@@ -1,4 +1,3 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import cx from 'classnames'
 import { forwardRef } from 'react'
 
@@ -19,7 +18,7 @@ export const TextField = forwardRef(
     })
 
     return (
-      <div className={`w-full form-control ${props.className}`}>
+      <div className={`form-control w-full ${props.className}`}>
         {props.label && (
           <label htmlFor={props.id} className='label'>
             <span className='label-text'>{props.label}</span>
@@ -28,31 +27,24 @@ export const TextField = forwardRef(
         <input
           aria-describedby={`${props.id}-error`}
           aria-invalid={!!props.errorMessage}
-          autoComplete={props.autoComplete}
           autoCapitalize={props.autoCapitalize}
+          autoComplete={props.autoComplete}
           autoFocus={props.autoFocus}
           className={inputClassNames}
           defaultValue={props.defaultValue}
           disabled={props.disabled}
           id={props.id}
           name={props.name}
+          onFocus={props.onFocus}
           placeholder={props.placeholder}
           ref={ref}
           required={props.required}
           type={props.type}
         />
         {props.errorMessage && (
-          <div className='flex absolute inset-y-0 right-0 items-center pr-3 pointer-events-none'>
-            <ExclamationCircleIcon
-              className='w-5 h-5 text-red-500'
-              aria-hidden='true'
-            />
-          </div>
-        )}
-        {props.errorMessage && (
-          <div className='pt-1 text-red-700' id={`${props.id}-error`}>
-            {props.errorMessage}
-          </div>
+          <label className='label' id={`${props.id}-error`}>
+            <span className='label-text-alt'>{props.errorMessage}</span>
+          </label>
         )}
       </div>
     )

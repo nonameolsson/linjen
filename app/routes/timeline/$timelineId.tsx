@@ -1,15 +1,24 @@
-import { PencilIcon } from '@heroicons/react/outline'
+import { CalendarIcon } from '@heroicons/react/outline'
+
+import { ExclamationIcon } from '@heroicons/react/solid'
+
+import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
+
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Link,
+  Form,
   NavLink,
   Outlet,
   useCatch,
   useLoaderData
 } from '@remix-run/react'
 import cx from 'classnames'
+import { useState } from 'react'
 import invariant from 'tiny-invariant'
+
+import { Modal } from '~/components'
+import { OverflowButton } from '~/components/overflow-button'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
@@ -45,83 +54,95 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
+  const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  function closeDeleteModal() {
+    setIsOpen(false)
+  }
+
+  function openDeleteModal() {
+    setIsOpen(true)
+  }
 
   return (
     <Page
       showBackButton
-      description={data.timeline.description}
+      goBackTo='/timelines'
       title={data.timeline.title}
-      toolbarButtons={
-        <Link
-          to={`/timeline/${data.timeline.id}/edit`}
-          className='btn btn-ghost btn-circle'
-        >
-          <PencilIcon className='w-5 h-5' />
-        </Link>
-      }
-      // actions={
-      //   <Menu as='div' className='dropdown dropdown-end'>
-      //     <div>
-      //       <Menu.Button className='m-1 btn'>Options</Menu.Button>
-      //     </div>
-      //     <Transition
-      //       as={Fragment}
-      //       enter='transition ease-out duration-100'
-      //       enterFrom='transform opacity-0 scale-95'
-      //       enterTo='transform opacity-100 scale-100'
-      //       leave='transition ease-in duration-75'
-      //       leaveFrom='transform opacity-100 scale-100'
-      //       leaveTo='transform opacity-0 scale-95'
-      //     >
-      //       <Menu.Items
-      //         as='ul'
-      //         className='p-2 mt-3 w-52 shadow menu menu-compact dropdown-content bg-base-100 rounded-box'
-      //       >
-      //         <Menu.Item as='li'>
-      //           <Form method='post'>
-      //             <button type='submit'>Delete</button>
-      //           </Form>
-      //         </Menu.Item>
-      //         <Menu.Item as='li'>
-      //           <Link to='edit'>Edit</Link>
-      //         </Menu.Item>
-      //       </Menu.Items>
-      //     </Transition>
-      //   </Menu>
-      // }
+      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <div>
-        <div className='block'>
-          <div className='tabs' aria-label='Tabs'>
-            <NavLink
-              to='events'
-              className={({ isActive }) =>
-                cx('tab tab-bordered', { 'tab-active': isActive })
-              }
-            >
-              Events
-            </NavLink>
-            <NavLink
-              to='places'
-              className={({ isActive }) =>
-                cx('tab tab-bordered', { 'tab-active': isActive })
-              }
-            >
-              Places
-            </NavLink>
-            <NavLink
-              to='people'
-              className={({ isActive }) =>
-                cx('tab tab-bordered', { 'tab-active': isActive })
-              }
-            >
-              People
-            </NavLink>
-          </div>
-        </div>
-      </div>
+      <nav className='tabs tabs-boxed hidden lg:flex' aria-label='Tabs'>
+        <NavLink
+          to='events'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          <span>Events</span>
+        </NavLink>
+        <NavLink
+          to='places'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          Places
+        </NavLink>
+        <NavLink
+          to='people'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          People
+        </NavLink>
+      </nav>
 
       <Outlet />
+
+      <div className='btm-nav lg:hidden'>
+        <NavLink to='events'>
+          <CalendarIcon className='h-5 w-5' />
+          <span className='btm-nav-label'>Events</span>
+        </NavLink>
+        <NavLink to='places'>
+          <GlobeIcon className='h-5 w-5' />
+          <span className='btm-nav-label'>Places</span>
+        </NavLink>
+        <NavLink to='people'>
+          <UsersIcon className='h-5 w-5' />
+          <span className='btm-nav-label'>People</span>
+        </NavLink>
+
+        <Modal
+          icon={
+            <ExclamationIcon
+              className='h-6 w-6 text-red-600'
+              aria-hidden='true'
+            />
+          }
+          isOpen={isOpen}
+          closeModal={closeDeleteModal}
+          title='Delete timeline'
+          description='The events, places and people will not be deleted.'
+          buttons={
+            <>
+              <button
+                type='button'
+                className='btn-outline btn'
+                onClick={closeDeleteModal}
+              >
+                Cancel
+              </button>
+              <Form replace method='post'>
+                <button type='submit' className='btn btn-error'>
+                  Delete
+                </button>
+              </Form>
+            </>
+          }
+        />
+      </div>
     </Page>
   )
 }

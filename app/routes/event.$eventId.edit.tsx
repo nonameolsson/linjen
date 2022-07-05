@@ -113,53 +113,59 @@ export default function EditEvent() {
 
   return (
     <Page title='Edit event' showBackButton>
-      <Form
-        replace
-        method='post'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          width: '100%'
-        }}
-      >
-        <TextField
-          defaultValue={data.event.title}
-          label='Title'
-          ref={titleRef}
-          name='title'
-          errorMessage={actionData?.fieldErrors?.title}
-        />
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <Form
+              replace
+              method='post'
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                width: '100%'
+              }}
+            >
+              <TextField
+                defaultValue={data.event.title}
+                label='Title'
+                ref={titleRef}
+                name='title'
+                errorMessage={actionData?.fieldErrors?.title}
+              />
 
-        <TextArea
-          label='Content'
-          defaultValue={data.event.content || ''}
-          ref={contentRef}
-          name='content'
-          rows={4}
-          errorMessage={actionData?.fieldErrors?.content}
-        />
+              <TextArea
+                label='Content'
+                defaultValue={data.event.content || ''}
+                ref={contentRef}
+                name='content'
+                rows={4}
+                errorMessage={actionData?.fieldErrors?.content}
+              />
 
-        <TextField
-          label='Start Date'
-          ref={startDateRef}
-          type='date'
-          defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-            new Date(data.event.startDate)
-          )}
-          name='startDate'
-          errorMessage={actionData?.fieldErrors?.startDate}
-        />
+              <TextField
+                label='Start Date'
+                ref={startDateRef}
+                type='date'
+                defaultValue={new Intl.DateTimeFormat('sv-SV').format(
+                  new Date(data.event.startDate)
+                )}
+                name='startDate'
+                errorMessage={actionData?.fieldErrors?.startDate}
+              />
 
-        <div className='flex justify-between'>
-          <button className='btn btn-error' type='submit'>
-            Delete
-          </button>
-          <button className='btn btn-primary' type='submit'>
-            Save
-          </button>
-        </div>
-      </Form>
+              <div className='flex justify-between'>
+                <button className='btn btn-error' type='submit'>
+                  Delete
+                </button>
+                <button className='btn btn-primary' type='submit'>
+                  Save
+                </button>
+              </div>
+            </Form>
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }

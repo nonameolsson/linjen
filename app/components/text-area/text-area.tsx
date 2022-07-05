@@ -17,30 +17,28 @@ export const TextArea = forwardRef(
     return (
       <div className={wrapperClassNames}>
         {props.label && (
-          <label
-            htmlFor={props.id}
-            className='block text-sm font-medium text-gray-700'
-          >
-            {props.label}
+          <label htmlFor={props.id} className='label'>
+            <span className='label-text'>{props.label}</span>
           </label>
         )}
         <textarea
           aria-describedby={`${props.id}-error`}
           aria-invalid={!!props.errorMessage}
-          autoComplete={props.autoComplete}
           autoCapitalize={props.autoCapitalize}
-          defaultValue={props.defaultValue}
+          autoComplete={props.autoComplete}
           autoFocus={props.autoFocus}
           className={textAreaClassNames}
+          defaultValue={props.defaultValue}
           disabled={props.disabled}
           id={props.id}
           name={props.name}
+          onFocus={props.onFocus}
           placeholder={props.placeholder}
           ref={ref}
           required={props.required}
         />
         {props.errorMessage && (
-          <label className='label'>
+          <label className='label' id={`${props.id}-error`}>
             <span className='label-text-alt'>{props.errorMessage}</span>
           </label>
         )}

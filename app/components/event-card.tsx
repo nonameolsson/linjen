@@ -3,7 +3,6 @@ import type { Event, Location } from '@prisma/client'
 interface Props extends Pick<Event, 'startDate' | 'content' | 'title' | 'id'> {
   locations: Location[]
   events: Event[]
-  onDeleteClick?: () => void
 }
 
 export default function EventCard({
@@ -11,13 +10,11 @@ export default function EventCard({
   events,
   id,
   locations,
-  onDeleteClick,
   startDate,
   title
 }: Props) {
   return (
-    <>
-      <div className='p-4 bg-white'>
+      <div className='bg-white p-4'>
         <h3 className='mb-4 text-2xl font-bold'>{title}</h3>
         <p>{content}</p>
         <p>
@@ -45,16 +42,5 @@ export default function EventCard({
 
         <div className='divider' />
       </div>
-      {onDeleteClick && (
-        <button
-          disabled={!onDeleteClick}
-          onClick={() => onDeleteClick()}
-          type='button'
-          className='mt-8 btn btn-error btn-block'
-        >
-          Delete
-        </button>
-      )}
-    </>
   )
 }

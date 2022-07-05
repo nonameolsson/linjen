@@ -5,7 +5,9 @@ image:
 
 ports:
   - port: 3000
-    onOpen: notify
+    name: Web App
+    description: The main application web server
+    onOpen: open-browser
 
 tasks:
   - name: Restore .env file
@@ -23,11 +25,11 @@ tasks:
           # Default to the example .env
           echo "Setting example .env"
 
-          cp .env.example .env 
+          cp .env.example .env
         else
           # After making changes to .env, run this line to persist it to $ENV
           #   eval $(gp env -e ENV="$(base64 .env | tr -d '\n')")
-          # 
+          #
           # Environment variables set this way are shared between all your workspaces for this repo
           # The lines below will read $ENV and print a .env file
 
@@ -38,7 +40,21 @@ tasks:
       fi
 
   - init: npm install
-    command: npm run setup && npm run dev
+    name: Install dependencies
+    command: npm run dev
+
+  - init: tools/trunk
+    name: Install trunk
+
+  - name: PlanetScale
+    init: pscale login
+
+  - name: Trunk
+    init: trunk login
+
+github:
+  prebuilds:
+    addBadge: true
 
 vscode:
   extensions:
