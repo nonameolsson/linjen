@@ -1,11 +1,10 @@
 import { CalendarIcon } from '@heroicons/react/outline'
-import {
-  ExclamationIcon
-} from '@heroicons/react/solid'
+import { ExclamationIcon, GlobeIcon, UsersIcon } from '@heroicons/react/solid'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form, NavLink,
+  Form,
+  NavLink,
   Outlet,
   useCatch,
   useLoaderData
@@ -74,11 +73,11 @@ export default function TimelineDetailsPage() {
           <span className='btm-nav-label'>Events</span>
         </NavLink>
         <NavLink to='places'>
-          <CalendarIcon className='h-5 w-5' />
+          <GlobeIcon className='h-5 w-5' />
           <span className='btm-nav-label'>Places</span>
         </NavLink>
         <NavLink to='people'>
-          <CalendarIcon className='h-5 w-5' />
+          <UsersIcon className='h-5 w-5' />
           <span className='btm-nav-label'>People</span>
         </NavLink>
         <Modal
@@ -102,10 +101,7 @@ export default function TimelineDetailsPage() {
                 Cancel
               </button>
               <Form replace method='post'>
-                <button
-                  type='submit'
-                  className='btn btn-error'
-                >
+                <button type='submit' className='btn btn-error'>
                   Delete
                 </button>
               </Form>
