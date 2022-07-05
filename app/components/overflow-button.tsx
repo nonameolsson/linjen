@@ -7,7 +7,7 @@ export function OverflowButton({ onDeleteClick }: { onDeleteClick: () => void })
   return (
     <Menu as='div' className='flex items-stretch'>
       <div className='dropdown-end dropdown'>
-        <Menu.Button className='btn btn-ghost rounded-btn'>
+        <Menu.Button as="label" tabIndex={0} className='btn btn-ghost rounded-btn'>
           <span className='sr-only'>Open options</span>
           <DotsVerticalIcon className='h-5 w-5' aria-hidden='true' />
         </Menu.Button>
@@ -22,6 +22,7 @@ export function OverflowButton({ onDeleteClick }: { onDeleteClick: () => void })
           leaveTo='transform opacity-0 scale-95'
         >
           <Menu.Items
+            tabIndex={0}
             as='ul'
             className='dropdown-content menu rounded-box mt-4 w-52 bg-base-100 p-2 shadow'
           >
