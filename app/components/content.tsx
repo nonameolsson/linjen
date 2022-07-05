@@ -20,7 +20,7 @@ export function Content({
         <div className='flex justify-between'>
           <div className='flex items-start'>{actions}</div>
         </div>
-        <div className='mt-4 h-full'>{children}</div>
+        <div className='h-full'>{children}</div>
       </section>
     </main>
   )

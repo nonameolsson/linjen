@@ -80,6 +80,7 @@ export default function TimelineDetailsPage() {
           <UsersIcon className='h-5 w-5' />
           <span className='btm-nav-label'>People</span>
         </NavLink>
+
         <Modal
           icon={
             <ExclamationIcon

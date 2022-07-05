@@ -1,4 +1,3 @@
-import { ExclamationCircleIcon } from '@heroicons/react/outline'
 import cx from 'classnames'
 import { forwardRef } from 'react'
 
@@ -28,32 +27,24 @@ export const TextField = forwardRef(
         <input
           aria-describedby={`${props.id}-error`}
           aria-invalid={!!props.errorMessage}
-          autoComplete={props.autoComplete}
           autoCapitalize={props.autoCapitalize}
+          autoComplete={props.autoComplete}
           autoFocus={props.autoFocus}
           className={inputClassNames}
           defaultValue={props.defaultValue}
           disabled={props.disabled}
           id={props.id}
           name={props.name}
+          onFocus={props.onFocus}
           placeholder={props.placeholder}
           ref={ref}
           required={props.required}
           type={props.type}
-          onFocus={props.onFocus}
         />
         {props.errorMessage && (
-          <div className='pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3'>
-            <ExclamationCircleIcon
-              className='h-5 w-5 text-red-500'
-              aria-hidden='true'
-            />
-          </div>
-        )}
-        {props.errorMessage && (
-          <div className='pt-1 text-red-700' id={`${props.id}-error`}>
-            {props.errorMessage}
-          </div>
+          <label className='label' id={`${props.id}-error`}>
+            <span className='label-text-alt'>{props.errorMessage}</span>
+          </label>
         )}
       </div>
     )

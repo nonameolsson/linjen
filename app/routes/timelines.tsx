@@ -21,55 +21,59 @@ export default function TimelinesPage() {
 
   return (
     <Page title='Your Timelines'>
-      <div className='h-full'>
-        <Link
-          to='/timeline/new'
-          className='fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl btn btn-primary btn-circle btn-xl'
-        >
-          <PlusIcon className='w-5 h-5' aria-hidden='true' />
-        </Link>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='mt-4 flex-1 overflow-y-auto'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <Link
+              to='/timeline/new'
+              className='btn-xl btn btn-primary btn-circle fixed right-4 bottom-4 shadow-2xl drop-shadow-2xl'
+            >
+              <PlusIcon className='h-5 w-5' aria-hidden='true' />
+            </Link>
 
-        {data.timelineListItems.length === 0 ? (
-          <p className='p-4'>No timelines yet</p>
-        ) : (
-          <div className='flex overflow-x-auto gap-6 px-16 pb-16 w-full h-min snap-x snap-mandatory'>
-            {data.timelineListItems.map(timeline => (
-              <Link
-                to={`/timeline/${timeline.id}/events`}
-                key={timeline.id}
-                className='h-min snap-center snap-always'
-              >
-                <div
-                  key={timeline.id}
-                  className='w-60 shadow hover:shadow-xl hover:drop-shadow-xl transition-shadow duration-150 ease-in-out card bg-base-100'
-                >
-                  {timeline.imageUrl ? (
-                    <figure>
-                      <img
-                        src={timeline.imageUrl}
-                        className='aspect-video object-cover w-full'
-                        alt='Shoes'
-                      />
-                    </figure>
-                  ) : (
-                    <span className='aspect-video flex object-cover justify-center items-center w-full text-4xl text-center bg-info text-info-content'>
-                      {timeline.title.slice(0, 2)}
-                    </span>
-                  )}
-                  <div className='card-body'>
-                    <h2 className='card-title'>{timeline.title}</h2>
-                    <p className='line-clamp-3'>{timeline.description}</p>
-                    <div className='justify-end card-actions'>
-                      <div className='badge badge-outline'>
-                        Events: {timeline._count.event}
+            {data.timelineListItems.length === 0 ? (
+              <p className='p-4'>No timelines yet</p>
+            ) : (
+              <div className='flex h-min w-full snap-x snap-mandatory gap-6 overflow-x-auto px-16 pb-16'>
+                {data.timelineListItems.map(timeline => (
+                  <Link
+                    to={`/timeline/${timeline.id}/events`}
+                    key={timeline.id}
+                    className='h-min snap-center snap-always'
+                  >
+                    <div
+                      key={timeline.id}
+                      className='card w-60 bg-base-100 shadow transition-shadow duration-150 ease-in-out hover:shadow-xl hover:drop-shadow-xl'
+                    >
+                      {timeline.imageUrl ? (
+                        <figure>
+                          <img
+                            src={timeline.imageUrl}
+                            className='aspect-video w-full object-cover'
+                            alt='Shoes'
+                          />
+                        </figure>
+                      ) : (
+                        <span className='flex aspect-video w-full items-center justify-center bg-info object-cover text-center text-4xl text-info-content'>
+                          {timeline.title.slice(0, 2)}
+                        </span>
+                      )}
+                      <div className='card-body'>
+                        <h2 className='card-title'>{timeline.title}</h2>
+                        <p className='line-clamp-3'>{timeline.description}</p>
+                        <div className='card-actions justify-end'>
+                          <div className='badge badge-outline'>
+                            Events: {timeline._count.event}
+                          </div>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        </main>
       </div>
     </Page>
   )
