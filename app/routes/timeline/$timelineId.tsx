@@ -1,5 +1,9 @@
 import { CalendarIcon } from '@heroicons/react/outline'
+
 import { ExclamationIcon } from '@heroicons/react/solid'
+
+import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
+
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
@@ -102,11 +106,11 @@ export default function TimelineDetailsPage() {
           <span className='btm-nav-label'>Events</span>
         </NavLink>
         <NavLink to='places'>
-          <CalendarIcon className='h-5 w-5' />
+          <GlobeIcon className='h-5 w-5' />
           <span className='btm-nav-label'>Places</span>
         </NavLink>
         <NavLink to='people'>
-          <CalendarIcon className='h-5 w-5' />
+          <UsersIcon className='h-5 w-5' />
           <span className='btm-nav-label'>People</span>
         </NavLink>
 
