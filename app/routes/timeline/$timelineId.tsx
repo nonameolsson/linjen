@@ -1,17 +1,18 @@
 import { CalendarIcon } from '@heroicons/react/outline'
-import {
-  ExclamationIcon
-} from '@heroicons/react/solid'
+import { ExclamationIcon } from '@heroicons/react/solid'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form, NavLink,
+  Form,
+  NavLink,
   Outlet,
   useCatch,
   useLoaderData
 } from '@remix-run/react'
+import cx from 'classnames'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
+
 import { Modal } from '~/components'
 import { OverflowButton } from '~/components/overflow-button'
 import { Page } from '~/components/page'
@@ -66,9 +67,36 @@ export default function TimelineDetailsPage() {
       title={data.timeline.title}
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
+      <nav className='tabs tabs-boxed hidden lg:flex' aria-label='Tabs'>
+        <NavLink
+          to='events'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          <span>Events</span>
+        </NavLink>
+        <NavLink
+          to='places'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          Places
+        </NavLink>
+        <NavLink
+          to='people'
+          className={({ isActive }) =>
+            cx('tab tab-bordered', { 'tab-active': isActive })
+          }
+        >
+          People
+        </NavLink>
+      </nav>
+
       <Outlet />
 
-      <div className='btm-nav'>
+      <div className='btm-nav lg:hidden'>
         <NavLink to='events'>
           <CalendarIcon className='h-5 w-5' />
           <span className='btm-nav-label'>Events</span>
@@ -81,6 +109,7 @@ export default function TimelineDetailsPage() {
           <CalendarIcon className='h-5 w-5' />
           <span className='btm-nav-label'>People</span>
         </NavLink>
+
         <Modal
           icon={
             <ExclamationIcon
@@ -102,10 +131,7 @@ export default function TimelineDetailsPage() {
                 Cancel
               </button>
               <Form replace method='post'>
-                <button
-                  type='submit'
-                  className='btn btn-error'
-                >
+                <button type='submit' className='btn btn-error'>
                   Delete
                 </button>
               </Form>
