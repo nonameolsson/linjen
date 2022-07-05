@@ -76,7 +76,7 @@
     "cypress": "10.2.0",
     "daisyui": "^2.18.0",
     "dotenv": "16.0.1",
-    "esbuild": "0.14.47",
+    "esbuild": "0.14.48",
     "eslint": "8.18.0",
     "eslint-config-prettier": "8.5.0",
     "eslint-plugin-tailwindcss": "^3.6.0",
