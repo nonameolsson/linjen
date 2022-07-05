@@ -73,44 +73,54 @@ export default function EventDetailsPage() {
       showBackButton
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <EventCard
-        id={data.event.id}
-        locations={data.event.location}
-        title={data.event.title}
-        events={referencedEvents}
-        content={data.event.content}
-        startDate={data.event.startDate}
-      />
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <EventCard
+              id={data.event.id}
+              locations={data.event.location}
+              title={data.event.title}
+              events={referencedEvents}
+              content={data.event.content}
+              startDate={data.event.startDate}
+            />
 
-      <Modal
-        icon={
-          <ExclamationIcon
-            className='h-6 w-6 text-red-600'
-            aria-hidden='true'
-          />
-        }
-        isOpen={isOpen}
-        description="Do you really want to delete this event?"
-        closeModal={closeDeleteModal}
-        title='Delete event'
-        buttons={
-          <>
-            <button
-              type='button'
-              className='btn-outline btn'
-              onClick={closeDeleteModal}
-            >
-              Cancel
-            </button>
-            <Form replace method='post'>
-            <input type='hidden' defaultValue={data.redirectTo} name='redirectTo' />
-              <button type='submit' className='btn btn-error'>
-                Delete
-              </button>
-            </Form>
-          </>
-        }
-      />
+            <Modal
+              icon={
+                <ExclamationIcon
+                  className='h-6 w-6 text-red-600'
+                  aria-hidden='true'
+                />
+              }
+              isOpen={isOpen}
+              description='Do you really want to delete this event?'
+              closeModal={closeDeleteModal}
+              title='Delete event'
+              buttons={
+                <>
+                  <button
+                    type='button'
+                    className='btn-outline btn'
+                    onClick={closeDeleteModal}
+                  >
+                    Cancel
+                  </button>
+                  <Form replace method='post'>
+                    <input
+                      type='hidden'
+                      defaultValue={data.redirectTo}
+                      name='redirectTo'
+                    />
+                    <button type='submit' className='btn btn-error'>
+                      Delete
+                    </button>
+                  </Form>
+                </>
+              }
+            />
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }

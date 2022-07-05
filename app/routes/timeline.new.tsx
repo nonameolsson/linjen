@@ -73,52 +73,58 @@ export default function NewTimelinePage() {
 
   return (
     <Page title='New Timeline' showBackButton>
-      <Form
-        replace
-        method='post'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          width: '100%'
-        }}
-      >
-        <TextField
-          autoFocus
-          id='title'
-          label='Title'
-          ref={titleRef}
-          name='title'
-          errorMessage={actionData?.errors?.title}
-          placeholder='My awesome timeline'
-          defaultValue=''
-        />
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <Form
+              replace
+              method='post'
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                width: '100%'
+              }}
+            >
+              <TextField
+                autoFocus
+                id='title'
+                label='Title'
+                ref={titleRef}
+                name='title'
+                errorMessage={actionData?.errors?.title}
+                placeholder='My awesome timeline'
+                defaultValue=''
+              />
 
-        <TextArea
-          className='mt-2'
-          rows={4}
-          name='description'
-          ref={descriptionRef}
-          label='Description'
-          defaultValue={''}
-          errorMessage={actionData?.errors?.description}
-        />
+              <TextArea
+                className='mt-2'
+                rows={4}
+                name='description'
+                ref={descriptionRef}
+                label='Description'
+                defaultValue={''}
+                errorMessage={actionData?.errors?.description}
+              />
 
-        <TextField
-          className='mt-2'
-          id='imageUrl'
-          label='Cover image (Optional)'
-          ref={titleRef}
-          name='imageUrl'
-          errorMessage={actionData?.errors?.title}
-          placeholder='https://myurl.com/image.png'
-          defaultValue=''
-        />
+              <TextField
+                className='mt-2'
+                id='imageUrl'
+                label='Cover image (Optional)'
+                ref={titleRef}
+                name='imageUrl'
+                errorMessage={actionData?.errors?.title}
+                placeholder='https://myurl.com/image.png'
+                defaultValue=''
+              />
 
-        <div className='text-right'>
-          <Button type='submit'>Save</Button>
-        </div>
-      </Form>
+              <div className='text-right'>
+                <Button type='submit'>Save</Button>
+              </div>
+            </Form>
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }

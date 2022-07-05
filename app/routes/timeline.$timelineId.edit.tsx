@@ -115,50 +115,54 @@ export default function EditTimelinePage() {
         </button>
       }
     >
-      <Form
-        id='edit-timeline'
-        replace
-        method='post'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          width: '100%'
-        }}
-      >
-        <input type='hidden' name='timelineId' value={data.timeline.id} />
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <Form
+              id='edit-timeline'
+              replace
+              method='post'
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 8,
+                width: '100%'
+              }}
+            >
+              <input type='hidden' name='timelineId' value={data.timeline.id} />
 
-        <TextField
-          className='mt-1'
-          id='title'
-          label='Title'
-          ref={titleRef}
-          name='title'
-          errorMessage={actionData?.errors?.title}
-          defaultValue={data.timeline.title}
-        />
+              <TextField
+                id='title'
+                label='Title'
+                ref={titleRef}
+                name='title'
+                errorMessage={actionData?.errors?.title}
+                defaultValue={data.timeline.title}
+              />
 
-        <TextArea
-          rows={4}
-          className='mt-2'
-          label='Description'
-          name='description'
-          ref={descriptionRef}
-          defaultValue={data.timeline.description}
-          errorMessage={actionData?.errors?.description}
-        />
+              <TextArea
+                rows={4}
+                className='mt-2'
+                label='Description'
+                name='description'
+                ref={descriptionRef}
+                defaultValue={data.timeline.description}
+                errorMessage={actionData?.errors?.description}
+              />
 
-        <TextField
-          className='mt-2'
-          id='imageUrl'
-          label='Cover image (Optional)'
-          ref={imageUrlRef}
-          name='imageUrl'
-          errorMessage={actionData?.errors?.title}
-          placeholder='https://myurl.com/image.png'
-          defaultValue={data.timeline.imageUrl || ''}
-        />
-      </Form>
+              <TextField
+                id='imageUrl'
+                label='Cover image (Optional)'
+                ref={imageUrlRef}
+                name='imageUrl'
+                errorMessage={actionData?.errors?.title}
+                placeholder='https://myurl.com/image.png'
+                defaultValue={data.timeline.imageUrl || ''}
+              />
+            </Form>
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }
