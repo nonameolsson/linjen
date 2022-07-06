@@ -128,10 +128,13 @@ export function updateEvent(
   })
 }
 
-export function deleteEvent(id: Event['id']) {
-  return prisma.event.delete({
+export async function deleteEvent(id: Event['id']) {
+  console.log('id to delete:', id)
+  const deleted = await prisma.event.delete({
     where: {
       id
-    },
+    }
   })
+  console.log(deleted)
+  return deleted
 }
