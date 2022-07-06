@@ -1,5 +1,5 @@
 import { ExclamationIcon } from '@heroicons/react/outline'
-import type { Location } from '@prisma/client'
+import type { Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useCatch, useLoaderData } from '@remix-run/react'
@@ -17,12 +17,19 @@ type LoaderData = {
     referencedBy: Event[]
     referencing: Event[]
     location: Location[]
+    timelines: {
+      id: Timeline['id']
+      title: Timeline['title']
+    }[]
   }
 }
+
+const DEFAULT_REDIRECT = 'timelines'
 
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
   await requireUserId(request)
+
   invariant(params.eventId, 'eventId not found')
 
   const url = new URL(request.url)
@@ -43,10 +50,15 @@ export const action: ActionFunction = async ({ request, params }) => {
   deleteEvent(params.eventId)
 
   const formData = await request.formData()
-  let redirectTo = formData.get('redirectTo')
-  if (typeof redirectTo !== 'string') {
-    redirectTo = 'timelines'
+  let redirectTo: string | undefined = DEFAULT_REDIRECT
+  const optionalRedirect: string | undefined = formData
+    .get('redirectTo')
+    ?.toString()
+
+  if (typeof optionalRedirect === 'string' && optionalRedirect.length > 0) {
+    redirectTo = optionalRedirect
   }
+
   return redirect(redirectTo)
 }
 
@@ -81,6 +93,7 @@ export default function EventDetailsPage() {
               locations={data.event.location}
               title={data.event.title}
               events={referencedEvents}
+              timelines={data.event.timelines}
               content={data.event.content}
               startDate={data.event.startDate}
             />

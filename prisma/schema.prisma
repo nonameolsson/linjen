@@ -4,9 +4,11 @@ datasource db {
   referentialIntegrity = "prisma"
 }
 
-generator erd {
-  provider = "prisma-erd-generator"
-}
+// generator erd {
+//   provider = "prisma-erd-generator"
+//   output = "../ERD.svg"
+//   theme = "forest"
+// }
 
 generator client {
   provider        = "prisma-client-js"
@@ -36,7 +38,7 @@ model Password {
 model Timeline {
   id          String  @id @default(cuid())
   title       String
-  description String
+  description String?
   imageUrl    String?
 
   createdAt DateTime @default(now())

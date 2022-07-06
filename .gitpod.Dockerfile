@@ -9,3 +9,6 @@ RUN brew install gh
 # trunk-ignore(hadolint/DL3004)
 RUN wget --progress=dot:giga https://github.com/planetscale/cli/releases/download/v0.101.0/pscale_0.101.0_linux_amd64.deb \
   && sudo dpkg -i pscale_0.101.0_linux_amd64.deb
+
+# Install Vercel
+RUN npm i -g vercel

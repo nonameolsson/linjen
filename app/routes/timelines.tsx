@@ -18,6 +18,7 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function TimelinesPage() {
   const data = useLoaderData<LoaderData>()
+  console.log(data.timelineListItems)
 
   return (
     <Page title='Your Timelines'>
