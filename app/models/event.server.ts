@@ -11,7 +11,8 @@ export async function getAllEventsForUser(userId: User['id']) {
     include: {
       timelines: {
         select: {
-          title: true
+          title: true,
+          id: true
         }
       }
     },
@@ -35,6 +36,11 @@ export function getEventListForTimeline(timelineId: Timeline['id']) {
     orderBy: { title: 'desc' },
     include: {
       _count: true,
+      timelines: {
+        select: {
+          title: true
+        }
+      },
       location: {
         select: {
           title: true
@@ -50,7 +56,13 @@ export function getEvent(id: Event['id']) {
     include: {
       referencedBy: true,
       referencing: true,
-      location: true
+      location: true,
+      timelines: {
+        select: {
+          title: true,
+          id: true
+        }
+      }
     }
   })
 }
@@ -129,12 +141,22 @@ export function updateEvent(
 }
 
 export async function deleteEvent(id: Event['id']) {
-  console.log('id to delete:', id)
-  const deleted = await prisma.event.delete({
+  await prisma.event.update({
+    data: {
+      timelines: {
+        set: []
+      }
+    },
     where: {
       id
     }
   })
-  console.log(deleted)
-  return deleted
+
+  const deletedEvent = await prisma.event.delete({
+    where: {
+      id
+    }
+  })
+
+  return deletedEvent
 }

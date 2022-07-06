@@ -43,6 +43,9 @@ tasks:
     name: Install dependencies
     command: npm run dev
 
+  - init: npm i -g vercel
+    name: Install Vercel
+
   - init: tools/trunk
     name: Install trunk
     command: ./setup.sh
