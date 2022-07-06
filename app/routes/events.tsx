@@ -1,6 +1,6 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import type { Event, Timeline } from '@prisma/client'
-import { Link, Outlet, useLoaderData } from '@remix-run/react'
+import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 
@@ -9,7 +9,9 @@ import { getAllEventsForUser } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 type LoaderData = {
-  events: (Event & Timeline['title'])[]
+  events: (Event & {
+    timelines: { title: Timeline['title']; id: Timeline['id'] }[]
+  })[]
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -23,7 +25,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 export default function EventsPage() {
   const data = useLoaderData<LoaderData>()
-
+  const location = useLocation()
+  console.log(data.events[0].timelines)
   return (
     <Page title='Events'>
       <div className='flex flex-1 items-stretch overflow-hidden'>
@@ -41,28 +44,45 @@ export default function EventsPage() {
                   <tr>
                     <th>Title</th>
                     <th>Start Date</th>
+                    <th>Timelines</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.events.map(event => (
-                    <tr
-                      className='hover:hover hover:cursor-pointer'
-                      key={event.id}
-                    >
-                      <td className='p-0'>
-                        <Link className='flex p-4' to={`/event/${event.id}`}>
-                          {event.title}
-                        </Link>
-                      </td>
-                      <td className='p-0'>
-                        <Link className='flex p-4' to={`/event/${event.id}`}>
-                          {new Intl.DateTimeFormat('sv-SE').format(
-                            new Date(event.startDate)
-                          )}
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {data.events.map(event => {
+                    const link = `/event/${event.id}?from=${location.pathname}`
+                    return (
+                      <tr
+                        className='hover:hover hover:cursor-pointer'
+                        key={event.id}
+                      >
+                        <td className='p-0'>
+                          <Link className='flex p-4' to={link}>
+                            {event.title}
+                          </Link>
+                        </td>
+                        <td className='p-0'>
+                          <Link className='flex p-4' to={link}>
+                            {new Intl.DateTimeFormat('sv-SE').format(
+                              new Date(event.startDate)
+                            )}
+                          </Link>
+                        </td>
+                        <td className='p-0'>
+                          <Link
+                            key={event.id}
+                            className='flex flex-col p-4'
+                            to={link}
+                          >
+                            {event.timelines.map(timeline => (
+                              <span key={timeline.id} className='flex'>
+                                {timeline.title}
+                              </span>
+                            ))}
+                          </Link>
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
             </div>

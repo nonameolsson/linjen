@@ -146,7 +146,7 @@ export default function EditTimelinePage() {
                 label='Description'
                 name='description'
                 ref={descriptionRef}
-                defaultValue={data.timeline.description}
+                defaultValue={data.timeline.description || ''}
                 errorMessage={actionData?.errors?.description}
               />
 

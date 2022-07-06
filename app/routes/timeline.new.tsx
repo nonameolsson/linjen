@@ -31,7 +31,7 @@ export const action: ActionFunction = async ({ request }) => {
     )
   }
 
-  if (typeof description !== 'string' || description.length === 0) {
+  if (typeof description !== 'string') {
     return json<ActionData>(
       { errors: { description: 'Description is required' } },
       { status: 400 }
@@ -95,6 +95,7 @@ export default function NewTimelinePage() {
                 errorMessage={actionData?.errors?.title}
                 placeholder='My awesome timeline'
                 defaultValue=''
+                required
               />
 
               <TextArea
