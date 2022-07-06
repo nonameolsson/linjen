@@ -45,6 +45,7 @@ tasks:
 
   - init: tools/trunk
     name: Install trunk
+    command: ./setup.sh
 
   - name: PlanetScale
     init: pscale login

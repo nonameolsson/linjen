@@ -3,6 +3,12 @@ cli:
   version: 0.14.1-beta
 lint:
   ignore:
+    - linters: [ALL]
+      paths:
+        - prisma/**
+        - .eslintrc.js
+        - prettier.config.js
+        - tailwind.config.js
     - linters: ["eslint"]
       paths:
         # Ignore generated files
