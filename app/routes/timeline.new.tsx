@@ -1,49 +1,38 @@
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
-import * as React from 'react'
+import { useRef } from 'react'
+import { getParams } from 'remix-params-helper'
+import { z } from 'zod'
+
 import { Button, TextArea, TextField } from '~/components'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-type ActionData = {
-  errors?: {
-    title?: string
-    description?: string
-    imageUrl?: string
-  }
-}
+const ActionSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }),
+  description: z.string().optional(),
+  imageUrl: z.string().optional() // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
+})
+
+// type ActionType = z.infer<typeof ActionSchema> // Infer the schema from Zod
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
+  let formData = await request.formData()
+  const result = getParams(formData, ActionSchema)
 
-  const formData = await request.formData()
-  const title = formData.get('title')
-  const description = formData.get('description')
-  const imageUrl = formData.get('imageUrl')
-
-  if (typeof title !== 'string' || title.length === 0) {
-    return json<ActionData>(
-      { errors: { title: 'Title is required' } },
-      { status: 400 }
-    )
+  if (!result.success) {
+    const err = json(result.errors, { status: 400 })
+    return err
   }
 
-  if (typeof description !== 'string') {
-    return json<ActionData>(
-      { errors: { description: 'Description is required' } },
-      { status: 400 }
-    )
-  }
-
-  if (typeof imageUrl !== 'string') {
-    return json<ActionData>(
-      { errors: { description: 'ImageURL must be a string' } },
-      { status: 400 }
-    )
-  }
+  // these variables will be typed and valid
+  const { title, description, imageUrl } = result.data
 
   const timeline = await createTimeline({
     title,
@@ -56,20 +45,12 @@ export const action: ActionFunction = async ({ request }) => {
 }
 
 export default function NewTimelinePage() {
-  const actionData = useActionData() as ActionData
-  const titleRef = React.useRef<HTMLInputElement>(null)
-  const descriptionRef = React.useRef<HTMLTextAreaElement>(null)
-  const imageUrlRef = React.useRef<HTMLInputElement>(null)
-
-  React.useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus()
-    } else if (actionData?.errors?.description) {
-      descriptionRef.current?.focus()
-    } else if (actionData?.errors?.imageUrl) {
-      imageUrlRef.current?.focus()
-    }
-  }, [actionData])
+  let actionData = useActionData<{
+    title?: string
+    description?: string
+    imageUrl?: string
+  }>()
+  let focusRef = useRef<HTMLInputElement>(null)
 
   return (
     <Page title='New Timeline' showBackButton>
@@ -87,34 +68,36 @@ export default function NewTimelinePage() {
               }}
             >
               <TextField
+                ref={focusRef}
                 autoFocus
                 id='title'
                 label='Title'
-                ref={titleRef}
                 name='title'
-                errorMessage={actionData?.errors?.title}
+                errorMessage={actionData?.title}
                 placeholder='My awesome timeline'
-                defaultValue=''
                 required
+                // defaultValue={actionData?.formPayload?.title}
+                // key={actionData?.formPayload?.title}
               />
 
               <TextArea
                 className='mt-2'
                 rows={4}
                 name='description'
-                ref={descriptionRef}
+                // ref={descriptionRef}
                 label='Description'
                 defaultValue={''}
-                errorMessage={actionData?.errors?.description}
+                errorMessage={actionData?.description}
               />
 
               <TextField
                 className='mt-2'
                 id='imageUrl'
                 label='Cover image (Optional)'
-                ref={titleRef}
+                // ref={titleRef}
                 name='imageUrl'
-                errorMessage={actionData?.errors?.title}
+                type='url'
+                errorMessage={actionData?.imageUrl}
                 placeholder='https://myurl.com/image.png'
                 defaultValue=''
               />

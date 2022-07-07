@@ -39,22 +39,21 @@ tasks:
         fi
       fi
 
-  - init: npm install
-    name: Install dependencies
+  - name: Install dependencies
+    init: npm install
     command: npm run dev
 
-  - init: npm i -g vercel
-    name: Install Vercel
-
-  - init: tools/trunk
-    name: Install trunk
-    command: ./setup.sh
-
-  - name: PlanetScale
-    init: pscale login
+  - name: Vercel
+    init: npm i -g vercel
 
   - name: Trunk
-    init: trunk login
+    init: |
+      PATH="/workspace/linjen/tools/trunk:$PATH"
+      source ~/.bashrc
+    command: trunk login
+
+  - name: PlanetScale
+    command: pscale login
 
 github:
   prebuilds:

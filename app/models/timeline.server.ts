@@ -39,8 +39,8 @@ export function createTimeline({
   title,
   userId,
   imageUrl
-}: Pick<Timeline, 'description' | 'title'> &
-  Partial<Pick<Timeline, 'imageUrl'>> & {
+}: Pick<Timeline, 'title'> &
+  Partial<Pick<Timeline, 'description' | 'imageUrl'>> & {
     userId: User['id']
   }) {
   return prisma.timeline.create({
