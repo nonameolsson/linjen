@@ -1,9 +1,10 @@
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { json, redirect } from '@remix-run/node'
+import { json } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
-import invariant from 'tiny-invariant'
+import { getParams, useFormInputProps } from 'remix-params-helper'
+import { z } from 'zod'
 
 import { Page, TextArea, TextField } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
@@ -13,91 +14,88 @@ type LoaderData = {
   timeline: Timeline
 }
 
+const ParamsSchema = z.object({
+  timelineId: z.string()
+})
+// type ParamsType = z.infer<typeof ParamsSchema>
+
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-  invariant(params.timelineId, 'timelineId not found')
 
+  const paramsResult = getParams(params, ParamsSchema)
+  if (!paramsResult.success) {
+    // Sometimes your code just blows up and you never anticipated it. Remix will
+    // automatically catch it and send the UI to the error boundary.
+    throw json(paramsResult.errors, {
+      status: 400
+    })
+  }
+
+  const { timelineId } = paramsResult.data
   const timeline = await getTimeline({
     userId,
-    id: params.timelineId
+    id: timelineId
   })
+
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }
 
   return json<LoaderData>({ timeline })
 }
-type ActionData = {
-  errors?: {
-    title?: string
-    description?: string
-    imageUrl?: string
-  }
-}
+
+const ActionSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }),
+  description: z.string().optional(),
+  imageUrl: z.string().optional() // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
+})
+type ActionType = z.infer<typeof ActionSchema> // Infer the schema from Zod
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-  const formData = await request.formData()
-  {
-    const title = formData.get('title')
-    const description = formData.get('description')
-    const id = formData.get('timelineId')
-    const imageUrl = formData.get('imageUrl')
+  let formData = await request.formData()
+  const paramsData = getParams(params, ParamsSchema)
+  const requestData = getParams(formData, ActionSchema)
 
-    if (typeof title !== 'string' || title.length === 0) {
-      return json<ActionData>(
-        { errors: { title: 'Title is required' } },
-        { status: 400 }
-      )
-    }
-
-    if (typeof description !== 'string' || description.length === 0) {
-      return json<ActionData>(
-        { errors: { description: 'Description is required' } },
-        { status: 400 }
-      )
-    }
-
-    if (typeof id !== 'string' || id.length === 0) {
-      return json<ActionData>(
-        { errors: { description: 'id is required' } },
-        { status: 400 }
-      )
-    }
-
-    if (typeof imageUrl !== 'string') {
-      return json<ActionData>(
-        { errors: { imageUrl: 'imageUrl is not a string' } },
-        { status: 400 }
-      )
-    }
-
-    const timeline = await updateTimeline({
-      title,
-      description,
-      userId,
-      id,
-      imageUrl
+  if (!paramsData.success) {
+    throw json(paramsData.errors, {
+      status: 400
     })
-
-    return redirect(`/timeline/${timeline.id}/events`)
   }
+
+  if (!requestData.success) {
+    return json(requestData.errors, {
+      status: 400
+    })
+  }
+
+  // these variables will be typed and valid
+  const { title, description, imageUrl } = requestData.data
+
+  const timeline = await updateTimeline({
+    description,
+    title,
+    userId,
+    imageUrl,
+    id: paramsData.data.timelineId
+  })
+
+  return redirect(`/timeline/${timeline.id}/events`)
 }
 
 export default function EditTimelinePage() {
-  const data = useLoaderData<LoaderData>()
-  const actionData = useActionData() as ActionData
-  const titleRef = useRef<HTMLInputElement>(null)
-  const descriptionRef = useRef<HTMLTextAreaElement>(null)
-  const imageUrlRef = useRef<HTMLInputElement>(null)
+  const loaderData = useLoaderData<LoaderData>()
+  const actionMessage = useActionData<ActionType>()
+  let focusRef = useRef<HTMLInputElement>(null)
+  const inputProps = useFormInputProps(ActionSchema)
 
   useEffect(() => {
-    if (actionData?.errors?.title) {
-      titleRef.current?.focus()
-    } else if (actionData?.errors?.description) {
-      descriptionRef.current?.focus()
+    if (actionMessage && focusRef.current) {
+      focusRef.current.select()
     }
-  }, [actionData])
+  }, [actionMessage])
 
   return (
     <Page
@@ -129,35 +127,42 @@ export default function EditTimelinePage() {
                 width: '100%'
               }}
             >
-              <input type='hidden' name='timelineId' value={data.timeline.id} />
+              <input
+                type='hidden'
+                name='timelineId'
+                value={loaderData.timeline.id}
+              />
 
               <TextField
+                {...inputProps('title')}
                 id='title'
                 label='Title'
-                ref={titleRef}
-                name='title'
-                errorMessage={actionData?.errors?.title}
-                defaultValue={data.timeline.title}
+                ref={focusRef}
+                errorMessage={actionMessage?.title}
+                defaultValue={loaderData.timeline.title}
+                key={loaderData?.timeline.title}
               />
 
               <TextArea
+                {...inputProps('description', { required: false })}
                 rows={4}
                 className='mt-2'
                 label='Description'
-                name='description'
-                ref={descriptionRef}
-                defaultValue={data.timeline.description || ''}
-                errorMessage={actionData?.errors?.description}
+                defaultValue={loaderData.timeline.description || ''}
+                errorMessage={actionMessage?.description}
+                required={false}
+                key={loaderData?.timeline.description}
               />
 
               <TextField
+                {...inputProps('imageUrl')}
                 id='imageUrl'
                 label='Cover image (Optional)'
-                ref={imageUrlRef}
-                name='imageUrl'
-                errorMessage={actionData?.errors?.title}
+                errorMessage={actionMessage?.imageUrl}
                 placeholder='https://myurl.com/image.png'
-                defaultValue={data.timeline.imageUrl || ''}
+                defaultValue={loaderData.timeline.imageUrl || ''}
+                required={false}
+                key={loaderData?.timeline.imageUrl}
               />
             </Form>
           </section>
