@@ -18,7 +18,7 @@ const formSchema = z.object({
   description: z.string().optional(),
   imageUrl: z.string().url({ message: 'Not a valid URL' }).or(z.string().max(0)) // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
 })
-type FormSchema = z.infer<typeof formSchema> // Infer the schema from Zod
+type FormSchema = z.infer<typeof formSchema>
 
 type ActionData = {
   formPayload?: FormSchema
