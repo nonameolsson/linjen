@@ -1,5 +1,6 @@
 export * from './button'
 export * from './event-card'
+export * from './fab'
 export * from './modal'
 export * from './overflow-button'
 export * from './page'

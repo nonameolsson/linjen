@@ -60,7 +60,7 @@ export default function App() {
         <link rel='manifest' href='/resources/manifest.json' />
         <Links />
       </head>
-      <body className='h-full'>
+      <body className='h-full overflow-hidden'>
         <Outlet />
         <ScrollRestoration />
         <script

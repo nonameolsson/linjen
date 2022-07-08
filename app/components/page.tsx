@@ -3,7 +3,7 @@ import {
   PresentationChartBarIcon,
   UserGroupIcon
 } from '@heroicons/react/solid'
-import { Content } from './content'
+import { Fab } from './fab'
 import { Navbar } from './navbar'
 import type { SidebarNavigationItem } from './sidebar'
 import { Sidebar } from './sidebar'
@@ -20,6 +20,7 @@ export function Page({
   toolbarButtons,
   showBackButton = false,
   goBackTo,
+  fab,
   title
 }: {
   children: React.ReactNode
@@ -27,21 +28,27 @@ export function Page({
   goBackTo?: string
   showBackButton?: boolean
   toolbarButtons?: JSX.Element
+  fab?: {
+    offset: boolean
+    icon: JSX.Element
+    to: string
+  }
   title: string
 }): JSX.Element {
   return (
     <div className='drawer-mobile drawer'>
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
-      <div className='drawer-content flex flex-col'>
+      <div className='drawer-content'>
         <Navbar
           title={title}
           goBackTo={goBackTo}
           rightButtons={toolbarButtons}
           showBackButton={showBackButton}
         />
-        <Content title={title} actions={actions}>
-          {children}
-        </Content>
+
+        {fab && <Fab offset={fab.offset} link={fab.to} icon={fab.icon} />}
+
+        {children}
       </div>
 
       <div className='drawer-side shadow'>

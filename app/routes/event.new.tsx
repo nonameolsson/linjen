@@ -1,10 +1,11 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { Form, useActionData, useCatch, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 
 import { Page, TextArea, TextField } from '~/components'
+import { Alert } from '~/components/alert'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -155,6 +156,38 @@ export default function NewEventPage() {
           defaultValue={loaderData.timelineId}
         />
       </Form>
+    </Page>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <Page title={`${caught.status} ${caught.statusText}`}>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={`${caught.status} ${caught.statusText}`} />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Page title='Uh-oh!'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={error.message} />
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }
