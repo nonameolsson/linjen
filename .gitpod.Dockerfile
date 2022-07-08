@@ -10,3 +10,8 @@ RUN wget --progress=dot:giga https://github.com/planetscale/cli/releases/downloa
 
 # Install Vercel
 RUN npm i -g vercel
+
+# Install Trunk
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# trunk-ignore(hadolint/DL4001)
+RUN curl https://get.trunk.io -fsSL | bash

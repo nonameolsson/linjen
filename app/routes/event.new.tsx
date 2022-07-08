@@ -7,7 +7,7 @@ import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
 function validateEventTitle(title: string) {
-  if (title.length === 0) {
+  if (title.length < 5) {
     return 'You must add a title'
   }
 }
@@ -51,7 +51,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 
 const badRequest = (data: ActionData) => json(data, { status: 400 })
 
-export const action: ActionFunction = async ({ request, params }) => {
+export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
   const formData = await request.formData()
 
@@ -98,7 +98,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function NewEventPage() {
   const data = useLoaderData<LoaderData>()
   const actionData = useActionData<ActionData | undefined>()
-
   const titleRef = React.useRef<HTMLInputElement>(null)
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const startDateRef = React.useRef<HTMLInputElement>(null)

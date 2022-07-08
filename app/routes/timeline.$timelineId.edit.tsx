@@ -1,6 +1,6 @@
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
-import { json } from '@remix-run/node'
+import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import { getParams, useFormInputProps } from 'remix-params-helper'

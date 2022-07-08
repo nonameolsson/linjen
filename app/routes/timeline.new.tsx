@@ -1,8 +1,8 @@
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
-import { useRef } from 'react'
-import { getParams } from 'remix-params-helper'
+import { useEffect, useRef } from 'react'
+import type { ZodError } from 'zod'
 import { z } from 'zod'
 
 import { Button, TextArea, TextField } from '~/components'
@@ -11,46 +11,62 @@ import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 
-const ActionSchema = z.object({
+const formSchema = z.object({
   title: z
     .string()
-    .min(5, { message: 'Title must be at least 5 characters long' }),
+    .min(5, { message: 'Title must be at least 5 characters long' }), // TODO: Add translation
   description: z.string().optional(),
-  imageUrl: z.string().optional() // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
+  imageUrl: z.string().url({ message: 'Not a valid URL' }).or(z.string().max(0)) // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
 })
+type FormSchema = z.infer<typeof formSchema> // Infer the schema from Zod
 
-// type ActionType = z.infer<typeof ActionSchema> // Infer the schema from Zod
+type ActionData = {
+  formPayload?: FormSchema
+  error?: any
+}
+
+const badRequest = (formPayload: FormSchema, error: ZodError) =>
+  json({ formPayload, error: error.format() }, { status: 400 })
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
-  let formData = await request.formData()
-  const result = getParams(formData, ActionSchema)
+  const formPayload = Object.fromEntries(await request.formData()) as FormSchema
 
-  if (!result.success) {
-    const err = json(result.errors, { status: 400 })
-    return err
+  try {
+    const result = formSchema.parse(formPayload)
+
+    const { title, description, imageUrl } = result
+    const timeline = await createTimeline({
+      title,
+      description,
+      userId,
+      imageUrl
+    })
+
+    return redirect(`/timeline/${timeline.id}/events`)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequest(formPayload, error)
+    }
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
-
-  // these variables will be typed and valid
-  const { title, description, imageUrl } = result.data
-
-  const timeline = await createTimeline({
-    title,
-    description,
-    userId,
-    imageUrl
-  })
-
-  return redirect(`/timeline/${timeline.id}/events`)
 }
 
 export default function NewTimelinePage() {
-  let actionData = useActionData<{
-    title?: string
-    description?: string
-    imageUrl?: string
-  }>()
-  let focusRef = useRef<HTMLInputElement>(null)
+  const actionData = useActionData<ActionData>()
+  const titleRef = useRef<HTMLInputElement>(null)
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  const imageUrlRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (actionData?.error?.title) {
+      titleRef.current?.focus()
+    } else if (actionData?.error?.description) {
+      descriptionRef.current?.focus()
+    } else if (actionData?.error?.imageUrl) {
+      imageUrlRef.current?.focus()
+    }
+  }, [actionData])
 
   return (
     <Page title='New Timeline' showBackButton>
@@ -68,38 +84,38 @@ export default function NewTimelinePage() {
               }}
             >
               <TextField
-                ref={focusRef}
+                ref={titleRef}
                 autoFocus
+                name='title'
                 id='title'
                 label='Title'
-                name='title'
-                errorMessage={actionData?.title}
+                errorMessage={actionData?.error?.title?._errors[0]}
                 placeholder='My awesome timeline'
                 required
-                // defaultValue={actionData?.formPayload?.title}
-                // key={actionData?.formPayload?.title}
+                defaultValue={actionData?.formPayload?.title}
+                key={actionData?.formPayload?.title}
               />
 
               <TextArea
+                name='description'
                 className='mt-2'
                 rows={4}
-                name='description'
-                // ref={descriptionRef}
+                ref={descriptionRef}
                 label='Description'
-                defaultValue={''}
-                errorMessage={actionData?.description}
+                defaultValue={actionData?.formPayload?.description}
+                errorMessage={actionData?.error?.description?._errors[0]}
               />
 
               <TextField
+                name='imageUrl'
+                ref={imageUrlRef}
                 className='mt-2'
                 id='imageUrl'
                 label='Cover image (Optional)'
-                // ref={titleRef}
-                name='imageUrl'
                 type='url'
-                errorMessage={actionData?.imageUrl}
+                errorMessage={actionData?.error?.imageUrl?._errors[0]}
                 placeholder='https://myurl.com/image.png'
-                defaultValue=''
+                defaultValue={actionData?.formPayload?.imageUrl}
               />
 
               <div className='text-right'>

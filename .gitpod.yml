@@ -70,6 +70,8 @@ vscode:
     - afzalsayed96.heroicons
     - kavod-io.vscode-jest-test-adapter
     - Orta.vscode-jest
+    - GitHub.copilot
+    - ZixuanChen.vitest-explorer
     - Prisma.prisma
     - austenc.tailwind-docs
     - hbenl.vscode-test-explorer
