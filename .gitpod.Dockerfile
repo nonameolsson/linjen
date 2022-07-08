@@ -1,7 +1,5 @@
 FROM gitpod/workspace-full:2022-06-20-19-54-55
 
-ENV PATH="/workspace/linjen/tools/trunk:$PATH"
-
 # Install GitHub CLI
 RUN brew install gh
 
@@ -12,3 +10,8 @@ RUN wget --progress=dot:giga https://github.com/planetscale/cli/releases/downloa
 
 # Install Vercel
 RUN npm i -g vercel
+
+# Install Trunk
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# trunk-ignore(hadolint/DL4001)
+RUN curl https://get.trunk.io -fsSL | bash

@@ -6,11 +6,14 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
+import { z } from 'zod'
 import { TextField } from '~/components'
+import { Alert } from '~/components/alert'
 
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
-import { safeRedirect, validateEmail } from '~/utils'
+import { safeRedirect } from '~/utils'
+import { badRequestWithError } from '~/utils/index'
 
 export const loader: LoaderFunction = async ({ request }) => {
   const userId = await getUserId(request)
@@ -18,56 +21,54 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json({})
 }
 
-interface ActionData {
-  errors?: {
-    email?: string
-    password?: string
-  }
+const formSchema = z.object({
+  email: z.string().email(),
+  password: z.string(),
+  remember: z.enum(['on', 'off']).optional(),
+  redirectTo: z.string().optional()
+})
+type FormSchema = z.infer<typeof formSchema>
+
+type ActionData = {
+  formPayload?: FormSchema
+  formError?: any
+  error?: any
 }
 
 export const action: ActionFunction = async ({ request }) => {
-  const formData = await request.formData()
-  const email = formData.get('email')
-  const password = formData.get('password')
-  const redirectTo = safeRedirect(formData.get('redirectTo'), '/timelines')
-  const remember = formData.get('remember')
+  const formPayload = Object.fromEntries(await request.formData())
 
-  if (!validateEmail(email)) {
-    return json<ActionData>(
-      { errors: { email: 'Email is invalid' } },
-      { status: 400 }
-    )
+  try {
+    const result = formSchema.parse(formPayload)
+    const { email, password, remember, redirectTo } = result
+
+    const user = await verifyLogin(email, password)
+    const redirectURL = safeRedirect(redirectTo, '/timelines')
+
+    if (!user) {
+      return json<ActionData>(
+        { formError: 'Invalid email or password' },
+        { status: 400 }
+      )
+    }
+
+    return createUserSession({
+      request,
+      userId: user.id,
+      remember: remember === 'on' ? true : false,
+      redirectTo: redirectURL
+    })
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequestWithError({
+        error,
+        formPayload,
+        status: 400
+      })
+    }
+
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
-
-  if (typeof password !== 'string' || password.length === 0) {
-    return json<ActionData>(
-      { errors: { password: 'Password is required' } },
-      { status: 400 }
-    )
-  }
-
-  if (password.length < 8) {
-    return json<ActionData>(
-      { errors: { password: 'Password is too short' } },
-      { status: 400 }
-    )
-  }
-
-  const user = await verifyLogin(email, password)
-
-  if (!user) {
-    return json<ActionData>(
-      { errors: { email: 'Invalid email or password' } },
-      { status: 400 }
-    )
-  }
-
-  return createUserSession({
-    request,
-    userId: user.id,
-    remember: remember === 'on' ? true : false,
-    redirectTo
-  })
 }
 
 export const meta: MetaFunction = () => {
@@ -79,14 +80,15 @@ export const meta: MetaFunction = () => {
 export default function LoginPage() {
   const [searchParams] = useSearchParams()
   const redirectTo = searchParams.get('redirectTo') || '/timelines'
-  const actionData = useActionData() as ActionData
+  const actionData = useActionData<ActionData>()
+
   const emailRef = React.useRef<HTMLInputElement>(null)
   const passwordRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    if (actionData?.errors?.email) {
+    if (actionData?.error?.email) {
       emailRef.current?.focus()
-    } else if (actionData?.errors?.password) {
+    } else if (actionData?.error?.password) {
       passwordRef.current?.focus()
     }
   }, [actionData])
@@ -96,11 +98,6 @@ export default function LoginPage() {
       <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
         <div className='mx-auto w-full max-w-sm lg:w-96'>
           <div>
-            <img
-              className='w-auto h-12'
-              src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
-              alt='Workflow'
-            />
             <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
               Log in to your account
             </h2>
@@ -130,7 +127,7 @@ export default function LoginPage() {
                   name='email'
                   type='email'
                   autoComplete='email'
-                  errorMessage={actionData?.errors?.email}
+                  errorMessage={actionData?.error?.email?._errors[0]}
                 />
 
                 <TextField
@@ -140,7 +137,7 @@ export default function LoginPage() {
                   type='password'
                   label='Password'
                   autoComplete='current-password'
-                  errorMessage={actionData?.errors?.password}
+                  errorMessage={actionData?.error?.password?._errors[0]}
                 />
 
                 <div className='flex justify-between items-center'>
@@ -161,6 +158,7 @@ export default function LoginPage() {
                 <button className='btn btn-block' type='submit'>
                   Log in
                 </button>
+                {actionData?.formError && <Alert text={actionData.formError} />}
               </Form>
             </div>
           </div>
