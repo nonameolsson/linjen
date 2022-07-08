@@ -89,9 +89,24 @@ export default function NewEventPage() {
   }, [actionData])
 
   return (
-    <Page title='Add event' showBackButton>
+    <Page
+      title='Add event'
+      showBackButton
+      toolbarButtons={
+        <button
+          form='new-event'
+          className='btn btn-ghost'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </button>
+      }
+    >
       <Form
         replace
+        id='new-event'
         method='post'
         style={{
           display: 'flex',
@@ -139,12 +154,6 @@ export default function NewEventPage() {
           name='timelineId'
           defaultValue={loaderData.timelineId}
         />
-
-        <div className='text-right'>
-          <button type='submit' className='btn btn-primary'>
-            Save
-          </button>
-        </div>
       </Form>
     </Page>
   )

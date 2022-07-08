@@ -4,7 +4,7 @@ import { Form, useActionData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import { z } from 'zod'
 
-import { Button, TextArea, TextField } from '~/components'
+import { TextArea, TextField } from '~/components'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
@@ -71,11 +71,26 @@ export default function NewTimelinePage() {
   }, [actionData])
 
   return (
-    <Page title='New Timeline' showBackButton>
+    <Page
+      title='New Timeline'
+      showBackButton
+      toolbarButtons={
+        <button
+          form='new-timeline'
+          className='btn btn-ghost'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </button>
+      }
+    >
       <div className='flex flex-1 items-stretch overflow-hidden'>
         <main className='flex-1 overflow-y-auto p-4'>
           <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
             <Form
+              id='new-timeline'
               replace
               method='post'
               style={{
@@ -119,10 +134,6 @@ export default function NewTimelinePage() {
                 placeholder='https://myurl.com/image.png'
                 defaultValue={actionData?.formPayload?.imageUrl}
               />
-
-              <div className='text-right'>
-                <Button type='submit'>Save</Button>
-              </div>
             </Form>
           </section>
         </main>

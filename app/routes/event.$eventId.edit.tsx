@@ -100,13 +100,28 @@ export default function EditEvent() {
   }, [actionData])
 
   return (
-    <Page title='Edit event' showBackButton>
+    <Page
+      title='Edit event'
+      showBackButton
+      toolbarButtons={
+        <button
+          form='edit-event'
+          className='btn btn-ghost'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </button>
+      }
+    >
       <div className='flex flex-1 items-stretch overflow-hidden'>
         <main className='flex-1 overflow-y-auto p-4'>
           <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
             <Form
               replace
               method='post'
+              id='edit-event'
               style={{
                 display: 'flex',
                 flexDirection: 'column',
@@ -141,15 +156,6 @@ export default function EditEvent() {
                 name='startDate'
                 errorMessage={actionData?.error?.startDate?._errors[0]}
               />
-
-              <div className='flex justify-between'>
-                <button className='btn btn-error' type='submit'>
-                  Delete
-                </button>
-                <button className='btn btn-primary' type='submit'>
-                  Save
-                </button>
-              </div>
             </Form>
           </section>
         </main>
