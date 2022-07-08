@@ -115,7 +115,7 @@ export default function NewEventPage() {
           defaultValue={actionData?.formPayload?.content}
           name='content'
           rows={4}
-          errorMessage={actionData?.error?.formPayload?._errors[0]}
+          errorMessage={actionData?.error?.formPayload?.content._errors[0]}
         />
 
         <TextField
@@ -125,7 +125,7 @@ export default function NewEventPage() {
           defaultValue={
             actionData?.formPayload?.startDate
               ? new Intl.DateTimeFormat('sv-SE').format(
-                  actionData?.formPayload?.startDate
+                  new Date(actionData?.formPayload?.startDate)
                 )
               : new Intl.DateTimeFormat('sv-SE').format(new Date())
           }

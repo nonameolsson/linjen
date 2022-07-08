@@ -4,6 +4,8 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
+
 import { Page, TextArea, TextField } from '~/components'
 import {
   getEvent,
@@ -11,28 +13,27 @@ import {
   updateEvent
 } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
+
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }), // TODO: Add translation
+  content: z.string().optional(),
+  startDate: z.preprocess(arg => {
+    if (typeof arg == 'string' || arg instanceof Date) return new Date(arg)
+  }, z.date())
+})
+type FormSchema = z.infer<typeof formSchema> // Infer the schema from Zod
+
+type ActionData = {
+  formPayload?: FormSchema
+  error?: any
+}
 
 type LoaderData = {
   event: Event
   availableEvents: Pick<Event, 'id' | 'title'>[]
-}
-
-function validateEventTitle(title: string) {
-  if (title.length === 0) {
-    return 'You must add a title'
-  }
-}
-
-function validateEventContent(content: string) {
-  if (typeof content !== 'string') {
-    return 'Content must be a string'
-  }
-}
-
-function validateEventStartDate(startDate: string) {
-  if (startDate.length === 0) {
-    return 'You must select a start date'
-  }
 }
 
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -50,66 +51,53 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json<LoaderData>({ event, availableEvents })
 }
 
-type ActionData = {
-  formError?: string
-  fieldErrors?: {
-    title: string | undefined
-    content: string | undefined
-    startDate: string | undefined
-  }
-  fields?: {
-    title: string
-    content: string
-    startDate: string
-  }
-}
-
-const badRequest = (data: ActionData) => json(data, { status: 400 })
-
 export const action: ActionFunction = async ({ request, params }) => {
   await requireUserId(request)
-  const formData = await request.formData()
+  const formPayload = Object.fromEntries(await request.formData())
 
   const eventId = params.eventId
   invariant(eventId, 'Event ID is required')
 
-  const title = formData.get('title')
-  const content = formData.get('content')
-  const startDate = formData.get('startDate')
+  try {
+    const result = formSchema.parse(formPayload)
 
-  if (
-    typeof title !== 'string' ||
-    typeof content !== 'string' ||
-    typeof startDate !== 'string'
-  ) {
-    return badRequest({
-      formError: `Form not submitted correctly.`
-    })
+    const { title, startDate, content } = result
+
+    await updateEvent(
+      { content, startDate: new Date(startDate), title },
+      eventId
+    )
+
+    return redirect(`/event/${params.eventId}`)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequestWithError({
+        error,
+        formPayload,
+        status: 400
+      })
+    }
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
-
-  const fieldErrors = {
-    title: validateEventTitle(title),
-    content: validateEventContent(content),
-    startDate: validateEventStartDate(startDate)
-  }
-
-  const fields = { title, content, startDate }
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return badRequest({ fieldErrors, fields })
-  }
-
-  await updateEvent({ content, startDate: new Date(startDate), title }, eventId)
-
-  return redirect(`/event/${params.eventId}`)
 }
 
 export default function EditEvent() {
-  const data = useLoaderData<LoaderData>()
+  const loaderData = useLoaderData<LoaderData>()
 
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const startDateRef = React.useRef<HTMLInputElement>(null)
+
+  React.useEffect(() => {
+    if (actionData?.error?.title) {
+      titleRef.current?.focus()
+    } else if (actionData?.error?.content) {
+      contentRef.current?.focus()
+    } else if (actionData?.error?.startDate) {
+      startDateRef.current?.focus()
+    }
+  }, [actionData])
 
   return (
     <Page title='Edit event' showBackButton>
@@ -127,20 +115,20 @@ export default function EditEvent() {
               }}
             >
               <TextField
-                defaultValue={data.event.title}
+                defaultValue={loaderData.event.title}
                 label='Title'
                 ref={titleRef}
                 name='title'
-                errorMessage={actionData?.fieldErrors?.title}
+                errorMessage={actionData?.error?.title?._errors[0]}
               />
 
               <TextArea
                 label='Content'
-                defaultValue={data.event.content || ''}
+                defaultValue={loaderData.event.content || ''}
                 ref={contentRef}
                 name='content'
                 rows={4}
-                errorMessage={actionData?.fieldErrors?.content}
+                errorMessage={actionData?.error?.content?._errors[0]}
               />
 
               <TextField
@@ -148,10 +136,10 @@ export default function EditEvent() {
                 ref={startDateRef}
                 type='date'
                 defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-                  new Date(data.event.startDate)
+                  new Date(loaderData.event.startDate)
                 )}
                 name='startDate'
-                errorMessage={actionData?.fieldErrors?.startDate}
+                errorMessage={actionData?.error?.startDate?._errors[0]}
               />
 
               <div className='flex justify-between'>
