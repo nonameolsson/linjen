@@ -3,38 +3,25 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
-import { getParams, useFormInputProps } from 'remix-params-helper'
+import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 import { Page, TextArea, TextField } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
 
 type LoaderData = {
   timeline: Timeline
 }
 
-const ParamsSchema = z.object({
-  timelineId: z.string()
-})
-// type ParamsType = z.infer<typeof ParamsSchema>
-
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
+  invariant(params.timelineId, 'timelineId is required')
 
-  const paramsResult = getParams(params, ParamsSchema)
-  if (!paramsResult.success) {
-    // Sometimes your code just blows up and you never anticipated it. Remix will
-    // automatically catch it and send the UI to the error boundary.
-    throw json(paramsResult.errors, {
-      status: 400
-    })
-  }
-
-  const { timelineId } = paramsResult.data
   const timeline = await getTimeline({
     userId,
-    id: timelineId
+    id: params.timelineId
   })
 
   if (!timeline) {
@@ -44,58 +31,67 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json<LoaderData>({ timeline })
 }
 
-const ActionSchema = z.object({
+const formSchema = z.object({
   title: z
     .string()
     .min(5, { message: 'Title must be at least 5 characters long' }),
   description: z.string().optional(),
   imageUrl: z.string().optional() // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
 })
-type ActionType = z.infer<typeof ActionSchema> // Infer the schema from Zod
+type FormSchema = z.infer<typeof formSchema>
+
+type ActionData = {
+  formPayload?: FormSchema
+  error?: any
+}
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-  let formData = await request.formData()
-  const paramsData = getParams(params, ParamsSchema)
-  const requestData = getParams(formData, ActionSchema)
+  const formPayload = Object.fromEntries(await request.formData()) as FormSchema
+  invariant(params.timelineId, 'timelineId is required')
 
-  if (!paramsData.success) {
-    throw json(paramsData.errors, {
-      status: 400
+  try {
+    const result = formSchema.parse(formPayload)
+
+    const { title, description, imageUrl } = result
+    const timeline = await updateTimeline({
+      description,
+      title,
+      userId,
+      imageUrl,
+      id: params.timelineId
     })
+
+    return redirect(`/timeline/${timeline.id}/events`)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequestWithError<FormSchema>({
+        error,
+        formPayload,
+        status: 400
+      })
+    }
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
-
-  if (!requestData.success) {
-    return json(requestData.errors, {
-      status: 400
-    })
-  }
-
-  // these variables will be typed and valid
-  const { title, description, imageUrl } = requestData.data
-
-  const timeline = await updateTimeline({
-    description,
-    title,
-    userId,
-    imageUrl,
-    id: paramsData.data.timelineId
-  })
-
-  return redirect(`/timeline/${timeline.id}/events`)
 }
 
 export default function EditTimelinePage() {
   const loaderData = useLoaderData<LoaderData>()
-  const actionMessage = useActionData<ActionType>()
-  let focusRef = useRef<HTMLInputElement>(null)
-  const inputProps = useFormInputProps(ActionSchema)
+  const actionData = useActionData<ActionData>()
+
+  const titleRef = useRef<HTMLInputElement>(null)
+  const descriptionRef = useRef<HTMLTextAreaElement>(null)
+  const imageUrlRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (actionMessage && focusRef.current) {
-      focusRef.current.select()
+    if (actionData?.error?.title) {
+      titleRef.current?.focus()
+    } else if (actionData?.error?.description) {
+      descriptionRef.current?.focus()
+    } else if (actionData?.error?.imageUrl) {
+      imageUrlRef.current?.focus()
     }
-  }, [actionMessage])
+  }, [actionData])
 
   return (
     <Page
@@ -127,42 +123,36 @@ export default function EditTimelinePage() {
                 width: '100%'
               }}
             >
-              <input
-                type='hidden'
-                name='timelineId'
-                value={loaderData.timeline.id}
-              />
-
               <TextField
-                {...inputProps('title')}
+                name='title'
                 id='title'
                 label='Title'
-                ref={focusRef}
-                errorMessage={actionMessage?.title}
+                ref={titleRef}
+                errorMessage={actionData?.error?.title?._errors[0]}
                 defaultValue={loaderData.timeline.title}
-                key={loaderData?.timeline.title}
               />
 
               <TextArea
-                {...inputProps('description', { required: false })}
+                name='description'
+                ref={descriptionRef}
                 rows={4}
                 className='mt-2'
                 label='Description'
                 defaultValue={loaderData.timeline.description || ''}
-                errorMessage={actionMessage?.description}
+                errorMessage={actionData?.error?.description?._errors[0]}
                 required={false}
-                key={loaderData?.timeline.description}
               />
 
               <TextField
-                {...inputProps('imageUrl')}
+                name='imageUrl'
+                ref={imageUrlRef}
                 id='imageUrl'
+                type='url'
                 label='Cover image (Optional)'
-                errorMessage={actionMessage?.imageUrl}
+                errorMessage={actionData?.error?.imageUrl?._errors[0]}
                 placeholder='https://myurl.com/image.png'
                 defaultValue={loaderData.timeline.imageUrl || ''}
                 required={false}
-                key={loaderData?.timeline.imageUrl}
               />
             </Form>
           </section>

@@ -2,7 +2,6 @@ import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
-import type { ZodError } from 'zod'
 import { z } from 'zod'
 
 import { Button, TextArea, TextField } from '~/components'
@@ -10,6 +9,7 @@ import { Button, TextArea, TextField } from '~/components'
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
 
 const formSchema = z.object({
   title: z
@@ -24,9 +24,6 @@ type ActionData = {
   formPayload?: FormSchema
   error?: any
 }
-
-const badRequest = (formPayload: FormSchema, error: ZodError) =>
-  json({ formPayload, error: error.format() }, { status: 400 })
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
@@ -46,7 +43,11 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect(`/timeline/${timeline.id}/events`)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return badRequest(formPayload, error)
+      return badRequestWithError<FormSchema>({
+        error,
+        formPayload,
+        status: 400
+      })
     }
     throw json(error, { status: 400 }) // Unknown error, should not happen
   }
