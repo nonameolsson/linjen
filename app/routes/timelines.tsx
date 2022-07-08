@@ -1,7 +1,8 @@
 import { PlusIcon } from '@heroicons/react/outline'
 import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, useLoaderData } from '@remix-run/react'
+import { Link, useCatch, useLoaderData } from '@remix-run/react'
+import { Alert } from '~/components/alert'
 import { Page } from '~/components/page'
 import { getTimelineListItems } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -73,6 +74,38 @@ export default function TimelinesPage() {
                 ))}
               </div>
             )}
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <Page title={`${caught.status} ${caught.statusText}`}>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={`${caught.status} ${caught.statusText}`} />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Page title='Uh-oh!'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={error.message} />
           </section>
         </main>
       </div>

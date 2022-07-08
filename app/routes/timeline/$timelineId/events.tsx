@@ -1,9 +1,17 @@
 import { ChevronRightIcon } from '@heroicons/react/outline'
 import { PlusIcon } from '@heroicons/react/solid'
-import { Link, useLoaderData, useLocation, useParams } from '@remix-run/react'
+import {
+  Link,
+  useCatch,
+  useLoaderData,
+  useLocation,
+  useParams
+} from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
+import { Page } from '~/components'
+import { Alert } from '~/components/alert'
 
 import type { Event } from '~/models/event.server'
 import { getEventListItemsForTimeline } from '~/models/event.server'
@@ -97,5 +105,37 @@ export default function EventsTab() {
           <Outlet />
         </aside> */}
     </div>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <Page title={`${caught.status} ${caught.statusText}`}>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={`${caught.status} ${caught.statusText}`} />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Page title='Uh-oh!'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={error.message} />
+          </section>
+        </main>
+      </div>
+    </Page>
   )
 }

@@ -1,8 +1,15 @@
 import { PlusIcon } from '@heroicons/react/solid'
 import type { Event, Timeline } from '@prisma/client'
-import { Link, Outlet, useLoaderData, useLocation } from '@remix-run/react'
+import {
+  Link,
+  Outlet,
+  useCatch,
+  useLoaderData,
+  useLocation
+} from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
+import { Alert } from '~/components/alert'
 
 import { Page } from '~/components/page'
 import { getAllEventsForUser } from '~/models/event.server'
@@ -26,7 +33,7 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export default function EventsPage() {
   const data = useLoaderData<LoaderData>()
   const location = useLocation()
-  console.log(data.events[0].timelines)
+  console.log(data.events[0].content)
   return (
     <Page title='Events'>
       <div className='flex flex-1 items-stretch overflow-hidden'>
@@ -87,6 +94,38 @@ export default function EventsPage() {
               </table>
             </div>
             <Outlet />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <Page title={`${caught.status} ${caught.statusText}`}>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={`${caught.status} ${caught.statusText}`} />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Page title='Uh-oh!'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={error.message} />
           </section>
         </main>
       </div>
