@@ -1,4 +1,3 @@
-import { InformationCircleIcon } from '@heroicons/react/solid'
 import type {
   ActionFunction,
   LoaderFunction,
@@ -9,6 +8,7 @@ import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
 import { z } from 'zod'
 import { TextField } from '~/components'
+import { Alert } from '~/components/alert'
 
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
@@ -98,11 +98,6 @@ export default function LoginPage() {
       <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
         <div className='mx-auto w-full max-w-sm lg:w-96'>
           <div>
-            <img
-              className='w-auto h-12'
-              src='https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg'
-              alt='Workflow'
-            />
             <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
               Log in to your account
             </h2>
@@ -163,21 +158,7 @@ export default function LoginPage() {
                 <button className='btn btn-block' type='submit'>
                   Log in
                 </button>
-                {actionData?.formError && (
-                  <div className='rounded-md bg-error p-4'>
-                    <div className='flex'>
-                      <div className='flex-shrink-0'>
-                        <InformationCircleIcon
-                          className='h-5 w-5 text-error-content'
-                          aria-hidden='true'
-                        />
-                      </div>
-                      <p className='text-sm ml-3 text-error-content'>
-                        {actionData.formError}
-                      </p>
-                    </div>
-                  </div>
-                )}
+                {actionData?.formError && <Alert text={actionData.formError} />}
               </Form>
             </div>
           </div>
