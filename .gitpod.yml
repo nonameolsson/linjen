@@ -48,8 +48,7 @@ tasks:
 
   - name: Trunk
     init: |
-      PATH="/workspace/linjen/tools/trunk:$PATH"
-      source ~/.bashrc
+      curl https://get.trunk.io -fsSL | bash
     command: trunk login
 
   - name: PlanetScale
