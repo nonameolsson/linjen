@@ -27,7 +27,7 @@ type ActionData = {
 
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
-  const formPayload = Object.fromEntries(await request.formData()) as FormSchema
+  const formPayload = Object.fromEntries(await request.formData())
 
   try {
     const result = formSchema.parse(formPayload)
@@ -43,7 +43,7 @@ export const action: ActionFunction = async ({ request }) => {
     return redirect(`/timeline/${timeline.id}/events`)
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return badRequestWithError<FormSchema>({
+      return badRequestWithError({
         error,
         formPayload,
         status: 400
@@ -55,6 +55,7 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function NewTimelinePage() {
   const actionData = useActionData<ActionData>()
+
   const titleRef = useRef<HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const imageUrlRef = useRef<HTMLInputElement>(null)

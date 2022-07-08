@@ -92,11 +92,7 @@ export async function createEvent({
   timelineId,
   userId
 }: {
-  data: {
-    title: Event['title']
-    content: Event['content']
-    startDate: Event['startDate']
-  }
+  data: Pick<Event, 'title' | 'startDate'> & Partial<Pick<Event, 'content'>>
   timelineId: Timeline['id'] | null
   userId: User['id']
 }) {

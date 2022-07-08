@@ -2,40 +2,28 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import React from 'react'
+import { z } from 'zod'
+
 import { Page, TextArea, TextField } from '~/components'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
 
-function validateEventTitle(title: string) {
-  if (title.length < 5) {
-    return 'You must add a title'
-  }
-}
-
-function validateEventContent(content: string) {
-  if (typeof content !== 'string') {
-    return 'Content must be a string'
-  }
-}
-
-function validateEventStartDate(startDate: string) {
-  if (startDate.length === 0) {
-    return 'You must select a start date'
-  }
-}
+const formSchema = z.object({
+  timelineId: z.string(),
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }), // TODO: Add translation
+  content: z.string().optional(),
+  startDate: z.preprocess(arg => {
+    if (typeof arg == 'string' || arg instanceof Date) return new Date(arg)
+  }, z.date())
+})
+type FormSchema = z.infer<typeof formSchema> // Infer the schema from Zod
 
 type ActionData = {
-  formError?: string
-  fieldErrors?: {
-    title: string | undefined
-    content: string | undefined
-    startDate: string | undefined
-  }
-  fields?: {
-    title: string
-    content: string
-    startDate: string
-  }
+  formPayload?: FormSchema
+  error?: any
 }
 
 type LoaderData = {
@@ -49,66 +37,53 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   return json({ timelineId })
 }
 
-const badRequest = (data: ActionData) => json(data, { status: 400 })
-
 export const action: ActionFunction = async ({ request }) => {
   const userId = await requireUserId(request)
-  const formData = await request.formData()
+  const formPayload = Object.fromEntries(await request.formData())
 
-  const title = formData.get('title')
-  const content = formData.get('content')
-  const startDate = formData.get('startDate')
-  const timelineId = formData.get('timelineId')
+  try {
+    const result = formSchema.parse(formPayload)
 
-  if (
-    typeof title !== 'string' ||
-    typeof content !== 'string' ||
-    typeof startDate !== 'string' ||
-    typeof timelineId !== 'string'
-  ) {
-    return badRequest({
-      formError: `Form not submitted correctly.`
+    const { title, startDate, timelineId, content } = result
+
+    const event = await createEvent({
+      data: {
+        title,
+        content,
+        startDate: new Date(startDate)
+      },
+      timelineId,
+      userId
     })
+
+    return redirect(`/event/${event.id}`)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequestWithError({
+        error,
+        formPayload,
+        status: 400
+      })
+    }
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
-
-  const fieldErrors = {
-    title: validateEventTitle(title),
-    content: validateEventContent(content),
-    startDate: validateEventStartDate(startDate)
-  }
-
-  const fields = { title, content, startDate }
-  if (Object.values(fieldErrors).some(Boolean)) {
-    return badRequest({ fieldErrors, fields })
-  }
-
-  const event = await createEvent({
-    data: {
-      title,
-      content,
-      startDate: new Date(startDate)
-    },
-    timelineId,
-    userId
-  })
-
-  return redirect(`/event/${event.id}`)
 }
 
 export default function NewEventPage() {
-  const data = useLoaderData<LoaderData>()
-  const actionData = useActionData<ActionData | undefined>()
+  const loaderData = useLoaderData<LoaderData>()
+  const actionData = useActionData<ActionData>()
+
   const titleRef = React.useRef<HTMLInputElement>(null)
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
   const startDateRef = React.useRef<HTMLInputElement>(null)
   const timelineIdRef = React.useRef<HTMLInputElement>(null)
 
   React.useEffect(() => {
-    if (actionData?.fieldErrors?.title) {
+    if (actionData?.error?.title) {
       titleRef.current?.focus()
-    } else if (actionData?.fieldErrors?.content) {
+    } else if (actionData?.error?.content) {
       contentRef.current?.focus()
-    } else if (actionData?.fieldErrors?.startDate) {
+    } else if (actionData?.error?.startDate) {
       startDateRef.current?.focus()
     }
   }, [actionData])
@@ -129,18 +104,18 @@ export default function NewEventPage() {
           autoFocus
           ref={titleRef}
           label='Title'
-          defaultValue={actionData?.fields?.title}
+          defaultValue={actionData?.formPayload?.title}
           name='title'
-          errorMessage={actionData?.fieldErrors?.title}
+          errorMessage={actionData?.error?.title?._errors[0]}
         />
 
         <TextArea
           ref={contentRef}
           label='Content'
-          defaultValue={actionData?.fields?.content}
+          defaultValue={actionData?.formPayload?.content}
           name='content'
           rows={4}
-          errorMessage={actionData?.fieldErrors?.content}
+          errorMessage={actionData?.error?.formPayload?._errors[0]}
         />
 
         <TextField
@@ -148,18 +123,21 @@ export default function NewEventPage() {
           ref={startDateRef}
           label='Start Date'
           defaultValue={
-            actionData?.fields?.startDate ||
-            new Intl.DateTimeFormat('sv-SE').format(new Date())
+            actionData?.formPayload?.startDate
+              ? new Intl.DateTimeFormat('sv-SE').format(
+                  actionData?.formPayload?.startDate
+                )
+              : new Intl.DateTimeFormat('sv-SE').format(new Date())
           }
           name='startDate'
-          errorMessage={actionData?.fieldErrors?.startDate}
+          errorMessage={actionData?.error?.startDate?._errors[0]}
         />
 
         <input
           type='hidden'
           ref={timelineIdRef}
           name='timelineId'
-          defaultValue={data.timelineId}
+          defaultValue={loaderData.timelineId}
         />
 
         <div className='text-right'>
