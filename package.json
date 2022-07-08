@@ -44,7 +44,10 @@
     "morgan": "1.10.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "tiny-invariant": "1.2.0"
+    "remix-params-helper": "^0.4.10",
+    "remix-validated-form": "^4.5.0",
+    "tiny-invariant": "1.2.0",
+    "zod": "^3.17.3"
   },
   "devDependencies": {
     "@faker-js/faker": "7.3.0",

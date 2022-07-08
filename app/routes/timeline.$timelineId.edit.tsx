@@ -4,10 +4,12 @@ import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
 
 import { Page, TextArea, TextField } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
 
 type LoaderData = {
   timeline: Timeline
@@ -15,87 +17,79 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-  invariant(params.timelineId, 'timelineId not found')
+  invariant(params.timelineId, 'timelineId is required')
 
   const timeline = await getTimeline({
     userId,
     id: params.timelineId
   })
+
   if (!timeline) {
     throw new Response('Not Found', { status: 404 })
   }
 
   return json<LoaderData>({ timeline })
 }
+
+const formSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }),
+  description: z.string().optional(),
+  imageUrl: z.string().optional() // TODO: Add validation for optional string URL. Meanwhile, client field validation is activated
+})
+type FormSchema = z.infer<typeof formSchema>
+
 type ActionData = {
-  errors?: {
-    title?: string
-    description?: string
-    imageUrl?: string
-  }
+  formPayload?: FormSchema
+  error?: any
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
-  const formData = await request.formData()
-  {
-    const title = formData.get('title')
-    const description = formData.get('description')
-    const id = formData.get('timelineId')
-    const imageUrl = formData.get('imageUrl')
+  const formPayload = Object.fromEntries(await request.formData()) as FormSchema
+  invariant(params.timelineId, 'timelineId is required')
 
-    if (typeof title !== 'string' || title.length === 0) {
-      return json<ActionData>(
-        { errors: { title: 'Title is required' } },
-        { status: 400 }
-      )
-    }
+  try {
+    const result = formSchema.parse(formPayload)
 
-    if (typeof description !== 'string' || description.length === 0) {
-      return json<ActionData>(
-        { errors: { description: 'Description is required' } },
-        { status: 400 }
-      )
-    }
-
-    if (typeof id !== 'string' || id.length === 0) {
-      return json<ActionData>(
-        { errors: { description: 'id is required' } },
-        { status: 400 }
-      )
-    }
-
-    if (typeof imageUrl !== 'string') {
-      return json<ActionData>(
-        { errors: { imageUrl: 'imageUrl is not a string' } },
-        { status: 400 }
-      )
-    }
-
+    const { title, description, imageUrl } = result
     const timeline = await updateTimeline({
-      title,
       description,
+      title,
       userId,
-      id,
-      imageUrl
+      imageUrl,
+      id: params.timelineId
     })
 
     return redirect(`/timeline/${timeline.id}/events`)
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return badRequestWithError<FormSchema>({
+        error,
+        formPayload,
+        status: 400
+      })
+    }
+    throw json(error, { status: 400 }) // Unknown error, should not happen
   }
 }
 
 export default function EditTimelinePage() {
-  const data = useLoaderData<LoaderData>()
-  const actionData = useActionData() as ActionData
+  const loaderData = useLoaderData<LoaderData>()
+  const actionData = useActionData<ActionData>()
+
   const titleRef = useRef<HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const imageUrlRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (actionData?.errors?.title) {
+    if (actionData?.error?.title) {
       titleRef.current?.focus()
-    } else if (actionData?.errors?.description) {
+    } else if (actionData?.error?.description) {
       descriptionRef.current?.focus()
+    } else if (actionData?.error?.imageUrl) {
+      imageUrlRef.current?.focus()
     }
   }, [actionData])
 
@@ -129,35 +123,36 @@ export default function EditTimelinePage() {
                 width: '100%'
               }}
             >
-              <input type='hidden' name='timelineId' value={data.timeline.id} />
-
               <TextField
+                name='title'
                 id='title'
                 label='Title'
                 ref={titleRef}
-                name='title'
-                errorMessage={actionData?.errors?.title}
-                defaultValue={data.timeline.title}
+                errorMessage={actionData?.error?.title?._errors[0]}
+                defaultValue={loaderData.timeline.title}
               />
 
               <TextArea
+                name='description'
+                ref={descriptionRef}
                 rows={4}
                 className='mt-2'
                 label='Description'
-                name='description'
-                ref={descriptionRef}
-                defaultValue={data.timeline.description || ''}
-                errorMessage={actionData?.errors?.description}
+                defaultValue={loaderData.timeline.description || ''}
+                errorMessage={actionData?.error?.description?._errors[0]}
+                required={false}
               />
 
               <TextField
-                id='imageUrl'
-                label='Cover image (Optional)'
-                ref={imageUrlRef}
                 name='imageUrl'
-                errorMessage={actionData?.errors?.title}
+                ref={imageUrlRef}
+                id='imageUrl'
+                type='url'
+                label='Cover image (Optional)'
+                errorMessage={actionData?.error?.imageUrl?._errors[0]}
                 placeholder='https://myurl.com/image.png'
-                defaultValue={data.timeline.imageUrl || ''}
+                defaultValue={loaderData.timeline.imageUrl || ''}
+                required={false}
               />
             </Form>
           </section>
