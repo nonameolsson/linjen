@@ -11,7 +11,7 @@ export function Fab({
   offset: boolean
 }) {
   const cx = classNames(
-    'btn-xl btn btn-primary btn-circle fixed right-4 shadow-2xl drop-shadow-2xl',
+    'btn-xl btn btn-primary btn-circle fixed right-4 shadow-2xl drop-shadow-lg hover:drop-shadow-xl active:drp-shadow-2xl',
     offset ? 'bottom-20 lg:bottom-4' : 'bottom-4'
   )
 

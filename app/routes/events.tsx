@@ -1,8 +1,5 @@
 import type { Event, Timeline } from '@prisma/client'
-import {
-  Link, useLoaderData,
-  useLocation
-} from '@remix-run/react'
+import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
 import { title } from 'process'
@@ -35,69 +32,66 @@ export default function EventsPage() {
   return (
     <Page title='Events'>
       <Content title={title}>
-          <section className='overflow-x-auto'>
-            <div className='bg-white shadow overflow-hidden sm:rounded-md'>
-              <ul className='divide-y divide-gray-200 lg:hidden'>
-                {data.events.map(event => (
-                  <li key={event.id} className='px-4 py-4 sm:px-6'>
-                    {event.title}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <section className='col-span-12'>
+          <ul className='divide-y divide-gray-200 bg-white lg:hidden'>
+            {data.events.map(event => (
+              <li key={event.id} className='px-4 py-4'>
+                {event.title}
+              </li>
+            ))}
+          </ul>
 
-            <table className='table w-full hidden lg:block'>
-              <thead>
-                <tr>
-                  <th>Title</th>
-                  <th>Start Date</th>
-                  <th>Timelines</th>
-                </tr>
-              </thead>
-              <tbody>
-                {data.events.map(event => {
-                  const link = `/event/${event.id}?from=${location.pathname}`
-                  return (
-                    <tr
-                      className='hover:hover hover:cursor-pointer'
-                      key={event.id}
-                    >
-                      <td className='p-0'>
-                        <Link className='flex p-4' to={link}>
-                          {event.title}
-                        </Link>
-                      </td>
-                      <td className='p-0'>
-                        <Link className='flex p-4' to={link}>
-                          {new Intl.DateTimeFormat('sv-SE').format(
-                            new Date(event.startDate)
-                          )}
-                        </Link>
-                      </td>
-                      <td className='p-0'>
-                        <Link
-                          key={event.id}
-                          className='flex flex-col p-4'
-                          to={link}
-                        >
-                          {event.timelines.map(timeline => (
-                            <span key={timeline.id} className='flex'>
-                              {timeline.title}
-                            </span>
-                          ))}
-                        </Link>
-                      </td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-          </section>
+          <table className='table w-full hidden lg:table'>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Start Date</th>
+                <th>Timelines</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.events.map(event => {
+                const link = `/event/${event.id}?from=${location.pathname}`
+                return (
+                  <tr
+                    className='hover:hover hover:cursor-pointer'
+                    key={event.id}
+                  >
+                    <td className='p-0'>
+                      <Link className='flex p-4' to={link}>
+                        {event.title}
+                      </Link>
+                    </td>
+                    <td className='p-0'>
+                      <Link className='flex p-4' to={link}>
+                        {new Intl.DateTimeFormat('sv-SE').format(
+                          new Date(event.startDate)
+                        )}
+                      </Link>
+                    </td>
+                    <td className='p-0'>
+                      <Link
+                        key={event.id}
+                        className='flex flex-col p-4'
+                        to={link}
+                      >
+                        {event.timelines.map(timeline => (
+                          <span key={timeline.id} className='flex'>
+                            {timeline.title}
+                          </span>
+                        ))}
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+        </section>
       </Content>
     </Page>
   )
 }
-
 
 export function ErrorBoundary({ error }: { error: Error }) {
   return (

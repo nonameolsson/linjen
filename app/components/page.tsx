@@ -38,7 +38,7 @@ export function Page({
   return (
     <div className='drawer-mobile drawer'>
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
-      <div className='drawer-content'>
+      <div className='drawer-content flex flex-col'>
         <Navbar
           title={title}
           goBackTo={goBackTo}
