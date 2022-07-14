@@ -45,7 +45,7 @@
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "remix-params-helper": "^0.4.10",
-    "remix-validated-form": "^4.5.0",
+    "remix-validated-form": "^4.5.1",
     "tiny-invariant": "1.2.0",
     "zod": "^3.17.3"
   },
