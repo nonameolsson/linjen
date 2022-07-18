@@ -47,7 +47,7 @@
     "remix-params-helper": "^0.4.10",
     "remix-validated-form": "^4.5.1",
     "tiny-invariant": "1.2.0",
-    "zod": "^3.17.3"
+    "zod": "^3.17.9"
   },
   "devDependencies": {
     "@faker-js/faker": "7.3.0",
@@ -61,7 +61,7 @@
     "@testing-library/dom": "8.16.0",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "12.1.5",
-    "@testing-library/user-event": "14.2.5",
+    "@testing-library/user-event": "14.2.6",
     "@types/bcryptjs": "2.4.2",
     "@types/compression": "1.7.2",
     "@types/eslint": "8.4.5",
