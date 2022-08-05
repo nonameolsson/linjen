@@ -19,11 +19,6 @@ import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 
-const attachments = [
-  { name: 'resume_front_end_developer.pdf', href: '#' },
-  { name: 'coverletter_front_end_developer.pdf', href: '#' }
-]
-
 type LoaderData = {
   redirectTo?: string
   event: Event & {
