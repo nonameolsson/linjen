@@ -32,7 +32,7 @@ export default function EventsPage() {
   return (
     <Page title='Events'>
       <Content title={title}>
-        <section className='col-span-12'>
+        <section className='col-span-8 col-start-3'>
           <ul className='divide-y divide-gray-200 bg-white lg:hidden'>
             {data.events.map(event => (
               <li key={event.id} className='px-4 py-4'>

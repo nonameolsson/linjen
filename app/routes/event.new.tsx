@@ -6,6 +6,7 @@ import { z } from 'zod'
 
 import { Page, TextArea, TextField } from '~/components'
 import { Alert } from '~/components/alert'
+import { Content } from '~/components/content'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -105,57 +106,60 @@ export default function NewEventPage() {
         </button>
       }
     >
-      <Form
-        replace
-        id='new-event'
-        method='post'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          width: '100%'
-        }}
-      >
-        <TextField
-          autoFocus
-          ref={titleRef}
-          label='Title'
-          defaultValue={actionData?.formPayload?.title}
-          name='title'
-          errorMessage={actionData?.error?.title?._errors[0]}
-        />
+      <Content title='New Event'>
+        <Form
+          className='col-start-4 col-span-6'
+          replace
+          id='new-event'
+          method='post'
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            width: '100%'
+          }}
+        >
+          <TextField
+            autoFocus
+            ref={titleRef}
+            label='Title'
+            defaultValue={actionData?.formPayload?.title}
+            name='title'
+            errorMessage={actionData?.error?.title?._errors[0]}
+          />
 
-        <TextArea
-          ref={contentRef}
-          label='Content'
-          defaultValue={actionData?.formPayload?.content}
-          name='content'
-          rows={4}
-          errorMessage={actionData?.error?.formPayload?.content._errors[0]}
-        />
+          <TextArea
+            ref={contentRef}
+            label='Content'
+            defaultValue={actionData?.formPayload?.content}
+            name='content'
+            rows={4}
+            errorMessage={actionData?.error?.formPayload?.content._errors[0]}
+          />
 
-        <TextField
-          type='date'
-          ref={startDateRef}
-          label='Start Date'
-          defaultValue={
-            actionData?.formPayload?.startDate
-              ? new Intl.DateTimeFormat('sv-SE').format(
-                  new Date(actionData?.formPayload?.startDate)
-                )
-              : new Intl.DateTimeFormat('sv-SE').format(new Date())
-          }
-          name='startDate'
-          errorMessage={actionData?.error?.startDate?._errors[0]}
-        />
+          <TextField
+            type='date'
+            ref={startDateRef}
+            label='Start Date'
+            defaultValue={
+              actionData?.formPayload?.startDate
+                ? new Intl.DateTimeFormat('sv-SE').format(
+                    new Date(actionData?.formPayload?.startDate)
+                  )
+                : new Intl.DateTimeFormat('sv-SE').format(new Date())
+            }
+            name='startDate'
+            errorMessage={actionData?.error?.startDate?._errors[0]}
+          />
 
-        <input
-          type='hidden'
-          ref={timelineIdRef}
-          name='timelineId'
-          defaultValue={loaderData.timelineId}
-        />
-      </Form>
+          <input
+            type='hidden'
+            ref={timelineIdRef}
+            name='timelineId'
+            defaultValue={loaderData.timelineId}
+          />
+        </Form>
+      </Content>
     </Page>
   )
 }

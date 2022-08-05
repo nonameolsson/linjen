@@ -31,8 +31,8 @@ export default function TimelinesPage() {
         offset: false
       }}
     >
-      <Content title='Title title' noPaddingMobile paddingY>
-        <section className='col-span-12'>
+      <Content title='Title title'>
+        <section className='col-span-12 lg:col-span-8 lg:col-start-2'>
           {data.timelineListItems.length === 0 ? (
             <p className='p-4'>No timelines yet</p>
           ) : (

@@ -14,8 +14,9 @@ export function Content({
   title: string
 }): JSX.Element {
   const classNames = cx(
-    'grid grid-cols-12 grid-rows-1 gap-4 overflow-y-scroll h-full',
-    className,
+    // 'gap-4 overflow-y-scroll h-full',
+    'grid grid-cols-12 gap-4 overflow-y-scroll h-full',
+    // 'grid h-full grid-cols-1 items-start gap-4 overflow-y-scroll lg:grid-cols-4 lg:gap-8',
     {
       'lg:m-4': !noPaddingDesktop,
       'lg:m-0': noPaddingDesktop,

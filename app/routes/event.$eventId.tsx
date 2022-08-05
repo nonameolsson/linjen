@@ -211,11 +211,8 @@ export default function EventDetailsPage() {
       showBackButton
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <Content
-        title={title}
-        // className='mx-auto max-w-3xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-12 lg:gap-8 lg:px-8'
-      >
-        <main className='lg:col-span-9 xl:col-span-6'>
+      <Content title={title}>
+        <main className='col-span-12'>
           {/* Page header */}
           <div className='mx-auto max-w-3xl px-4 sm:px-6 md:flex md:items-center md:justify-between md:space-x-5 lg:max-w-7xl lg:px-8'>
             <div className='flex items-center space-x-5'>
