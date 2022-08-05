@@ -41,7 +41,7 @@ export default function EventsTab() {
         offset={true}
         link={`/event/new?timelineId=${params.timelineId}`}
       />
-      <main className='overflow-hidden col-span-12 lg:col-span-4 lg:col-start-t lg:order-last'>
+      <main className='overflow-hidden col-span-12 lg:col-span-4 lg:col-start-5 lg:order-last'>
         {data.events.length > 0 ? (
           <div className='overflow-hidden bg-white shadow sm:rounded-md'>
             <ul className='divide-y divide-gray-200'>
