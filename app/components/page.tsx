@@ -40,6 +40,7 @@ export function Page({
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
       <div className='drawer-content flex flex-col'>
         <Navbar
+          className='lg:hidden'
           title={title}
           goBackTo={goBackTo}
           rightButtons={toolbarButtons}

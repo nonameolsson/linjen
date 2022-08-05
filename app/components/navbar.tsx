@@ -1,18 +1,22 @@
 import { ChevronLeftIcon } from '@heroicons/react/solid'
 import { useNavigate } from '@remix-run/react'
+import cx from 'classnames'
 
 export function Navbar({
+  className,
   showBackButton,
   rightButtons,
   goBackTo,
   title
 }: {
+  className?: string
   rightButtons?: JSX.Element
   goBackTo?: string
   showBackButton: boolean
   title: string
 }): JSX.Element {
   const navigate = useNavigate()
+
   const goBack = () => {
     if (goBackTo) {
       navigate(goBackTo)
@@ -22,7 +26,7 @@ export function Navbar({
   }
 
   return (
-    <div className='navbar bg-neutral text-neutral-content shadow'>
+    <div className={cx('navbar bg-neutral text-neutral-content', className)}>
       <div className='navbar-start'>
         {showBackButton ? (
           <button onClick={goBack} className='btn btn-ghost'>

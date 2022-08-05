@@ -1,4 +1,5 @@
 export * from './button'
+export * from './content-module'
 export * from './event-card'
 export * from './fab'
 export * from './link-list'
