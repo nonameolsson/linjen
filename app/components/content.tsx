@@ -27,12 +27,7 @@ export function Content({
 
   return (
     <>
-      {desktopNavbar && (
-        <div>
-          {/* <div className='bg-white sticky shadow top-0 hidden py-4 lg:block lg:col-span-12 z-10 mb-6'> */}
-          {desktopNavbar}
-        </div>
-      )}
+      {desktopNavbar}
       <div className='max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-y-0 lg:gap-8'>
         <main className={classNames}>{children}</main>
         {aside && (
