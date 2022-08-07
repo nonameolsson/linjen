@@ -31,7 +31,7 @@ export default function EventsPage() {
 
   return (
     <Page title='Events'>
-      <Content title={title}>
+      <Content title={title} aside={<p>hej</p>}>
         <section className='col-span-8 col-start-3'>
           <ul className='divide-y divide-gray-200 bg-white lg:hidden'>
             {data.events.map(event => (

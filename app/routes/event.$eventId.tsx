@@ -94,94 +94,10 @@ export default function EventDetailsPage() {
       showBackButton
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <Content title={data.event.title}>
-        <main className='col-span-12'>
-          <div className='hidden lg:flex'>
-            <PageHeader
-              title={data.event.title}
-              description='Last updated'
-              descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
-                new Date()
-              )}
-              actions={
-                <>
-                  <button onClick={openDeleteModal} className='btn btn-error'>
-                    Delete
-                  </button>
-                  <Link to='edit' className='btn btn-warning'>
-                    Edit
-                  </Link>
-                </>
-              }
-            />
-          </div>
-          <div className='mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-6 sm:px-6 lg:max-w-7xl lg:grid-flow-col-dense lg:grid-cols-3'>
-            <div className='space-y-6 lg:col-span-2 lg:col-start-1'>
-              <ContentModule title='Event Information'>
-                <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
-                  <div className='sm:col-span-1'>
-                    <dt className='text-sm font-medium text-gray-500'>
-                      Start Date
-                    </dt>
-                    <dd className='mt-1 text-sm text-gray-900'>
-                      {new Intl.DateTimeFormat('sv-SE').format(
-                        new Date(data.event.startDate)
-                      )}
-                    </dd>
-                  </div>
-                  <div className='sm:col-span-1'>
-                    <dt className='text-sm font-medium text-gray-500'>
-                      End Date
-                    </dt>
-                    <dd className='mt-1 text-sm text-gray-900'>
-                      END DATE HERE
-                    </dd>
-                  </div>
-                  <div className='sm:col-span-1'>
-                    <dt className='text-sm font-medium text-gray-500'>
-                      Salary expectation
-                    </dt>
-                    <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
-                  </div>
-                  <div className='sm:col-span-1'>
-                    <dt className='text-sm font-medium text-gray-500'>
-                      End Date
-                    </dt>
-                    <dd className='mt-1 text-sm text-gray-900'>
-                      END DATE HERE
-                    </dd>
-                  </div>
-                  <div className='sm:col-span-2'>
-                    <dt className='text-sm font-medium text-gray-500'>
-                      Description
-                    </dt>
-                    <dd className='mt-1 text-sm text-gray-900'>
-                      {data.event.content}
-                    </dd>
-                  </div>
-                  <div className='sm:col-span-2'>
-                    <LinkList
-                      title='Links'
-                      items={[
-                        {
-                          downloadable: false,
-                          id: '1',
-                          name: 'Jehovah',
-                          href: 'https://wol.jw.org'
-                        },
-                        {
-                          downloadable: true,
-                          id: '1',
-                          name: 'Jesus',
-                          href: 'https://wol.jw.org'
-                        }
-                      ]}
-                    />
-                  </div>
-                </dl>
-              </ContentModule>
-            </div>
-
+      <Content
+        title={data.event.title}
+        aside={
+          <div className='sticky top-4 space-y-4'>
             <SidebarWidget>
               <List
                 title='Timelines'
@@ -222,7 +138,78 @@ export default function EventDetailsPage() {
               />
             </SidebarWidget>
           </div>
-        </main>
+        }
+        desktopNavbar={
+          <PageHeader
+            title={data.event.title}
+            description='Last updated'
+            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
+              new Date()
+            )}
+            actions={
+              <>
+                <button onClick={openDeleteModal} className='btn btn-error'>
+                  Delete
+                </button>
+                <Link to='edit' className='btn btn-warning'>
+                  Edit
+                </Link>
+              </>
+            }
+          />
+        }
+      >
+        <ContentModule title='Event Information'>
+          <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>Start Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {new Intl.DateTimeFormat('sv-SE').format(
+                  new Date(data.event.startDate)
+                )}
+              </dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>
+                Salary expectation
+              </dt>
+              <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+            </div>
+            <div className='sm:col-span-2'>
+              <dt className='text-sm font-medium text-gray-500'>Description</dt>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {data.event.content}
+              </dd>
+            </div>
+            <div className='sm:col-span-2'>
+              <LinkList
+                title='Links'
+                items={[
+                  {
+                    downloadable: false,
+                    id: '1',
+                    name: 'Jehovah',
+                    href: 'https://wol.jw.org'
+                  },
+                  {
+                    downloadable: true,
+                    id: '1',
+                    name: 'Jesus',
+                    href: 'https://wol.jw.org'
+                  }
+                ]}
+              />
+            </div>
+          </dl>
+        </ContentModule>
 
         <Modal
           icon={

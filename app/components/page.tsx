@@ -36,7 +36,7 @@ export function Page({
   title: string
 }): JSX.Element {
   return (
-    <div className='drawer-mobile drawer'>
+    <div className='drawer-mobile drawer min-h-full'>
       <input id='my-drawer' type='checkbox' className='drawer-toggle' />
       <div className='drawer-content flex flex-col'>
         <Navbar
