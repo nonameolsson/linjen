@@ -8,16 +8,17 @@ import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
   Form,
+  Link,
   NavLink,
   Outlet,
   useCatch,
   useLoaderData
 } from '@remix-run/react'
-import cx from 'classnames'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
 
-import { Modal } from '~/components'
+import { DesktopTabs, Modal, PageHeader } from '~/components'
+import { Content } from '~/components/content'
 import { OverflowButton } from '~/components/overflow-button'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
@@ -71,78 +72,83 @@ export default function TimelineDetailsPage() {
       title={data.timeline.title}
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <nav className='tabs tabs-boxed hidden lg:flex' aria-label='Tabs'>
-        <NavLink
-          to='events'
-          className={({ isActive }) =>
-            cx('tab tab-bordered', { 'tab-active': isActive })
-          }
-        >
-          <span>Events</span>
-        </NavLink>
-        <NavLink
-          to='places'
-          className={({ isActive }) =>
-            cx('tab tab-bordered', { 'tab-active': isActive })
-          }
-        >
-          Places
-        </NavLink>
-        <NavLink
-          to='people'
-          className={({ isActive }) =>
-            cx('tab tab-bordered', { 'tab-active': isActive })
-          }
-        >
-          People
-        </NavLink>
-      </nav>
-
-      <Outlet />
-
-      <div className='btm-nav lg:hidden'>
-        <NavLink to='events'>
-          <CalendarIcon className='h-5 w-5' />
-          <span className='btm-nav-label'>Events</span>
-        </NavLink>
-        <NavLink to='places'>
-          <GlobeIcon className='h-5 w-5' />
-          <span className='btm-nav-label'>Places</span>
-        </NavLink>
-        <NavLink to='people'>
-          <UsersIcon className='h-5 w-5' />
-          <span className='btm-nav-label'>People</span>
-        </NavLink>
-
-        <Modal
-          icon={
-            <ExclamationIcon
-              className='h-6 w-6 text-red-600'
-              aria-hidden='true'
-            />
-          }
-          isOpen={isOpen}
-          closeModal={closeDeleteModal}
-          title='Delete timeline'
-          description='The events, places and people will not be deleted.'
-          buttons={
-            <>
-              <button
-                type='button'
-                className='btn-outline btn'
-                onClick={closeDeleteModal}
-              >
-                Cancel
-              </button>
-              <Form replace method='post'>
-                <button type='submit' className='btn btn-error'>
+      <Content
+        desktopNavbar={
+          <PageHeader
+            title={data.timeline.title}
+            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
+              new Date()
+            )}
+            actions={
+              <>
+                <button
+                  onClick={openDeleteModal}
+                  className='btn btn-error btn-outline'
+                >
                   Delete
                 </button>
-              </Form>
-            </>
-          }
+                <Link to='edit' className='btn btn-primary'>
+                  Edit
+                </Link>
+              </>
+            }
+          />
+        }
+      >
+        <DesktopTabs
+          tabs={[
+            { name: 'Events', linkTo: 'events' },
+            { name: 'Places', linkTo: 'places' },
+            { name: 'People', linkTo: 'people' }
+          ]}
         />
-      </div>
+
+        <Outlet />
+
+        <div className='btm-nav lg:hidden'>
+          <NavLink to='events'>
+            <CalendarIcon className='h-5 w-5' />
+            <span className='btm-nav-label'>Events</span>
+          </NavLink>
+          <NavLink to='places'>
+            <GlobeIcon className='h-5 w-5' />
+            <span className='btm-nav-label'>Places</span>
+          </NavLink>
+          <NavLink to='people'>
+            <UsersIcon className='h-5 w-5' />
+            <span className='btm-nav-label'>People</span>
+          </NavLink>
+
+          <Modal
+            icon={
+              <ExclamationIcon
+                className='h-6 w-6 text-red-600'
+                aria-hidden='true'
+              />
+            }
+            isOpen={isOpen}
+            closeModal={closeDeleteModal}
+            title='Delete timeline'
+            description='The events, places and people will not be deleted.'
+            buttons={
+              <>
+                <button
+                  type='button'
+                  className='btn-outline btn'
+                  onClick={closeDeleteModal}
+                >
+                  Cancel
+                </button>
+                <Form replace method='post'>
+                  <button type='submit' className='btn btn-error'>
+                    Delete
+                  </button>
+                </Form>
+              </>
+            }
+          />
+        </div>
+      </Content>
     </Page>
   )
 }

@@ -1,27 +1,38 @@
+import cx from 'classnames'
+
 export function Content({
+  aside,
   children,
-  actions,
-  title
+  paddingMobile = false,
+  noPaddingDesktop = true,
+  desktopNavbar
 }: {
   children?: React.ReactNode
-  actions?: JSX.Element
-  title: string
+  aside?: JSX.Element
+  desktopNavbar?: JSX.Element
+  className?: string
+  paddingMobile?: boolean
+  noPaddingDesktop?: boolean
 }): JSX.Element {
-  return (
-    <main className='grid h-full grid-cols-1 items-start gap-4 overflow-y-scroll lg:grid-cols-4 lg:gap-8'>
-      <section
-        aria-labelledby='primary-heading'
-        className='col-span-4 col-start-1 lg:col-span-2 lg:col-start-2'
-      >
-        <h1 id='primary-heading' className='sr-only'>
-          {title}
-        </h1>
+  const classNames = cx({
+    'col-span-12': !aside,
+    'lg:col-span-12 xl:col-span-8': aside,
+    'lg:m-4': !noPaddingDesktop,
+    'lg:m-0': noPaddingDesktop,
+    'm-4': paddingMobile
+  })
 
-        <div className='flex justify-between'>
-          <div className='flex items-start'>{actions}</div>
-        </div>
-        <div className='h-full'>{children}</div>
-      </section>
-    </main>
+  return (
+    <>
+      <div className='hidden lg:block lg:col-span-12 z-10 sticky top-0'>
+        {desktopNavbar}
+      </div>
+      <div className='max-w-3xl sm:px-6 mt-4 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-y-0 lg:gap-8'>
+        <main className={classNames}>{children}</main>
+        {aside && (
+          <aside className='hidden xl:block xl:col-span-4'>{aside}</aside>
+        )}
+      </div>
+    </>
   )
 }

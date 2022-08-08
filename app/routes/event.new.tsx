@@ -1,10 +1,12 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { Form, useActionData, useCatch, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 
-import { Page, TextArea, TextField } from '~/components'
+import { Page, PageHeader, TextArea, TextField } from '~/components'
+import { Alert } from '~/components/alert'
+import { Content } from '~/components/content'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -69,6 +71,20 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
+const NewEventButton = ({ className }: { className: string }) => (
+  <button
+    form='new-event'
+    className={className}
+    type='submit'
+    name='action'
+    value='update'
+  >
+    Save
+  </button>
+)
+
+const pageTitle = 'New event'
+
 export default function NewEventPage() {
   const loaderData = useLoaderData<LoaderData>()
   const actionData = useActionData<ActionData>()
@@ -90,71 +106,103 @@ export default function NewEventPage() {
 
   return (
     <Page
-      title='Add event'
+      title={pageTitle}
       showBackButton
-      toolbarButtons={
-        <button
-          form='new-event'
-          className='btn btn-ghost'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </button>
-      }
+      toolbarButtons={<NewEventButton className='btn btn-ghost' />}
     >
-      <Form
-        replace
-        id='new-event'
-        method='post'
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 8,
-          width: '100%'
-        }}
+      <Content
+        desktopNavbar={
+          <PageHeader
+            title={pageTitle}
+            actions={<NewEventButton className='btn btn-primary' />}
+          />
+        }
       >
-        <TextField
-          autoFocus
-          ref={titleRef}
-          label='Title'
-          defaultValue={actionData?.formPayload?.title}
-          name='title'
-          errorMessage={actionData?.error?.title?._errors[0]}
-        />
+        <Form
+          className='col-start-4 col-span-6'
+          replace
+          id='new-event'
+          method='post'
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            width: '100%'
+          }}
+        >
+          <TextField
+            autoFocus
+            ref={titleRef}
+            label='Title'
+            defaultValue={actionData?.formPayload?.title}
+            name='title'
+            errorMessage={actionData?.error?.title?._errors[0]}
+          />
 
-        <TextArea
-          ref={contentRef}
-          label='Content'
-          defaultValue={actionData?.formPayload?.content}
-          name='content'
-          rows={4}
-          errorMessage={actionData?.error?.formPayload?.content._errors[0]}
-        />
+          <TextArea
+            ref={contentRef}
+            label='Content'
+            defaultValue={actionData?.formPayload?.content}
+            name='content'
+            rows={4}
+            errorMessage={actionData?.error?.formPayload?.content._errors[0]}
+          />
 
-        <TextField
-          type='date'
-          ref={startDateRef}
-          label='Start Date'
-          defaultValue={
-            actionData?.formPayload?.startDate
-              ? new Intl.DateTimeFormat('sv-SE').format(
-                  new Date(actionData?.formPayload?.startDate)
-                )
-              : new Intl.DateTimeFormat('sv-SE').format(new Date())
-          }
-          name='startDate'
-          errorMessage={actionData?.error?.startDate?._errors[0]}
-        />
+          <TextField
+            type='date'
+            ref={startDateRef}
+            label='Start Date'
+            defaultValue={
+              actionData?.formPayload?.startDate
+                ? new Intl.DateTimeFormat('sv-SE').format(
+                    new Date(actionData?.formPayload?.startDate)
+                  )
+                : new Intl.DateTimeFormat('sv-SE').format(new Date())
+            }
+            name='startDate'
+            errorMessage={actionData?.error?.startDate?._errors[0]}
+          />
 
-        <input
-          type='hidden'
-          ref={timelineIdRef}
-          name='timelineId'
-          defaultValue={loaderData.timelineId}
-        />
-      </Form>
+          <input
+            type='hidden'
+            ref={timelineIdRef}
+            name='timelineId'
+            defaultValue={loaderData.timelineId}
+          />
+        </Form>
+      </Content>
+    </Page>
+  )
+}
+
+export function CatchBoundary() {
+  const caught = useCatch()
+
+  return (
+    <Page title={`${caught.status} ${caught.statusText}`}>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={`${caught.status} ${caught.statusText}`} />
+          </section>
+        </main>
+      </div>
+    </Page>
+  )
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+  return (
+    <Page title='Uh-oh!'>
+      <div className='flex flex-1 items-stretch overflow-hidden'>
+        <main className='flex-1 overflow-y-auto p-4'>
+          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+            <h1>App Error</h1>
+            <Alert text={error.message} />
+          </section>
+        </main>
+      </div>
     </Page>
   )
 }

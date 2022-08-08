@@ -6,7 +6,8 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
-import { Page, TextArea, TextField } from '~/components'
+import { Page, PageHeader, TextArea, TextField } from '~/components'
+import { Content } from '~/components/content'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -75,6 +76,20 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 }
 
+const pageTitle = 'Edit Timeline'
+
+const EditTimelineButton = ({ className }: { className: string }) => (
+  <button
+    form='edit-timeline'
+    className={className}
+    type='submit'
+    name='action'
+    value='update'
+  >
+    Save
+  </button>
+)
+
 export default function EditTimelinePage() {
   const loaderData = useLoaderData<LoaderData>()
   const actionData = useActionData<ActionData>()
@@ -95,69 +110,62 @@ export default function EditTimelinePage() {
 
   return (
     <Page
-      title='Edit Timeline'
+      title={pageTitle}
       showBackButton
-      toolbarButtons={
-        <button
-          form='edit-timeline'
-          className='btn btn-ghost'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </button>
-      }
+      toolbarButtons={<EditTimelineButton className='btn btn-ghost' />}
     >
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <Form
-              id='edit-timeline'
-              replace
-              method='post'
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                width: '100%'
-              }}
-            >
-              <TextField
-                name='title'
-                id='title'
-                label='Title'
-                ref={titleRef}
-                errorMessage={actionData?.error?.title?._errors[0]}
-                defaultValue={loaderData.timeline.title}
-              />
+      <Content
+        desktopNavbar={
+          <PageHeader
+            title={pageTitle}
+            actions={<EditTimelineButton className='btn btn-primary' />}
+          />
+        }
+      >
+        <Form
+          id='edit-timeline'
+          replace
+          method='post'
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            width: '100%'
+          }}
+        >
+          <TextField
+            name='title'
+            id='title'
+            label='Title'
+            ref={titleRef}
+            errorMessage={actionData?.error?.title?._errors[0]}
+            defaultValue={loaderData.timeline.title}
+          />
 
-              <TextArea
-                name='description'
-                ref={descriptionRef}
-                rows={4}
-                className='mt-2'
-                label='Description'
-                defaultValue={loaderData.timeline.description || ''}
-                errorMessage={actionData?.error?.description?._errors[0]}
-                required={false}
-              />
+          <TextArea
+            name='description'
+            ref={descriptionRef}
+            rows={4}
+            className='mt-2'
+            label='Description'
+            defaultValue={loaderData.timeline.description || ''}
+            errorMessage={actionData?.error?.description?._errors[0]}
+            required={false}
+          />
 
-              <TextField
-                name='imageUrl'
-                ref={imageUrlRef}
-                id='imageUrl'
-                type='url'
-                label='Cover image (Optional)'
-                errorMessage={actionData?.error?.imageUrl?._errors[0]}
-                placeholder='https://myurl.com/image.png'
-                defaultValue={loaderData.timeline.imageUrl || ''}
-                required={false}
-              />
-            </Form>
-          </section>
-        </main>
-      </div>
+          <TextField
+            name='imageUrl'
+            ref={imageUrlRef}
+            id='imageUrl'
+            type='url'
+            label='Cover image (Optional)'
+            errorMessage={actionData?.error?.imageUrl?._errors[0]}
+            placeholder='https://myurl.com/image.png'
+            defaultValue={loaderData.timeline.imageUrl || ''}
+            required={false}
+          />
+        </Form>
+      </Content>
     </Page>
   )
 }

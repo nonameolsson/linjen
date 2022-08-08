@@ -46,11 +46,6 @@ tasks:
   - name: Vercel
     init: npm i -g vercel
 
-  - name: Trunk
-    init: |
-      curl https://get.trunk.io -fsSL | bash
-    command: trunk login
-
   - name: PlanetScale
     command: pscale login
 

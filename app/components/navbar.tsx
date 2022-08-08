@@ -1,18 +1,22 @@
 import { ChevronLeftIcon } from '@heroicons/react/solid'
 import { useNavigate } from '@remix-run/react'
+import cx from 'classnames'
 
 export function Navbar({
+  className,
   showBackButton,
   rightButtons,
   goBackTo,
   title
 }: {
+  className?: string
   rightButtons?: JSX.Element
   goBackTo?: string
   showBackButton: boolean
   title: string
 }): JSX.Element {
   const navigate = useNavigate()
+
   const goBack = () => {
     if (goBackTo) {
       navigate(goBackTo)
@@ -22,17 +26,14 @@ export function Navbar({
   }
 
   return (
-    <div className='navbar bg-base-100 shadow'>
+    <div className={cx('navbar bg-neutral text-neutral-content', className)}>
       <div className='navbar-start'>
         {showBackButton ? (
           <button onClick={goBack} className='btn btn-ghost'>
             <ChevronLeftIcon className='h-5 w-5' />
           </button>
         ) : (
-          <label
-            className='btn btn-ghost lg:hidden'
-            htmlFor='my-drawer'
-          >
+          <label className='btn btn-ghost lg:hidden' htmlFor='my-drawer'>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               className='h-5 w-5'
@@ -55,9 +56,7 @@ export function Navbar({
           <span className='text-xl normal-case'>{title}</span>
         </div>
       </div>
-      <div className='navbar-end'>
-        {rightButtons && rightButtons}
-        </div>
-      </div>
+      <div className='navbar-end'>{rightButtons && rightButtons}</div>
+    </div>
   )
 }

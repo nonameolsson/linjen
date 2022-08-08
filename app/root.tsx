@@ -52,7 +52,7 @@ export default function App() {
   return (
     <html
       lang='en'
-      className='h-full scroll-smooth bg-gray-50'
+      className='h-screen scroll-smooth bg-gray-50'
       data-theme='light'
     >
       <head>
@@ -60,7 +60,7 @@ export default function App() {
         <link rel='manifest' href='/resources/manifest.json' />
         <Links />
       </head>
-      <body className='h-full'>
+      <body className='h-screen overflow-hidden'>
         <Outlet />
         <ScrollRestoration />
         <script

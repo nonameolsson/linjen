@@ -4,7 +4,8 @@ import { Form, useActionData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import { z } from 'zod'
 
-import { TextArea, TextField } from '~/components'
+import { PageHeader, TextArea, TextField } from '~/components'
+import { Content } from '~/components/content'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
@@ -53,6 +54,24 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
+const NewTimelineButton = ({
+  className
+}: {
+  className: string
+}): JSX.Element => (
+  <button
+    form='new-timeline'
+    className={className}
+    type='submit'
+    name='action'
+    value='update'
+  >
+    Save
+  </button>
+)
+
+const pageTitle = 'New Timeline'
+
 export default function NewTimelinePage() {
   const actionData = useActionData<ActionData>()
 
@@ -72,72 +91,71 @@ export default function NewTimelinePage() {
 
   return (
     <Page
-      title='New Timeline'
+      title={pageTitle}
       showBackButton
-      toolbarButtons={
-        <button
-          form='new-timeline'
-          className='btn btn-ghost'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </button>
-      }
+      toolbarButtons={<NewTimelineButton className='btn btn-ghost' />}
     >
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <Form
-              id='new-timeline'
-              replace
-              method='post'
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                width: '100%'
-              }}
-            >
-              <TextField
-                ref={titleRef}
-                autoFocus
-                name='title'
-                id='title'
-                label='Title'
-                errorMessage={actionData?.error?.title?._errors[0]}
-                placeholder='My awesome timeline'
-                required
-                defaultValue={actionData?.formPayload?.title}
-                key={actionData?.formPayload?.title}
-              />
+      <Content
+        desktopNavbar={
+          <PageHeader
+            title={pageTitle}
+            actions={<NewTimelineButton className='btn btn-primary' />}
+          />
+        }
+      >
+        <div className='flex flex-1 items-stretch overflow-hidden'>
+          <main className='flex-1 overflow-y-auto p-4'>
+            <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+              <Form
+                id='new-timeline'
+                replace
+                method='post'
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 8,
+                  width: '100%'
+                }}
+              >
+                <TextField
+                  ref={titleRef}
+                  autoFocus
+                  name='title'
+                  id='title'
+                  label='Title'
+                  errorMessage={actionData?.error?.title?._errors[0]}
+                  placeholder='My awesome timeline'
+                  required
+                  defaultValue={actionData?.formPayload?.title}
+                  key={actionData?.formPayload?.title}
+                />
 
-              <TextArea
-                name='description'
-                className='mt-2'
-                rows={4}
-                ref={descriptionRef}
-                label='Description'
-                defaultValue={actionData?.formPayload?.description}
-                errorMessage={actionData?.error?.description?._errors[0]}
-              />
+                <TextArea
+                  name='description'
+                  className='mt-2'
+                  rows={4}
+                  ref={descriptionRef}
+                  label='Description'
+                  defaultValue={actionData?.formPayload?.description}
+                  errorMessage={actionData?.error?.description?._errors[0]}
+                />
 
-              <TextField
-                name='imageUrl'
-                ref={imageUrlRef}
-                className='mt-2'
-                id='imageUrl'
-                label='Cover image (Optional)'
-                type='url'
-                errorMessage={actionData?.error?.imageUrl?._errors[0]}
-                placeholder='https://myurl.com/image.png'
-                defaultValue={actionData?.formPayload?.imageUrl}
-              />
-            </Form>
-          </section>
-        </main>
-      </div>
+                <TextField
+                  name='imageUrl'
+                  ref={imageUrlRef}
+                  className='mt-2'
+                  id='imageUrl'
+                  label='Cover image (Optional)'
+                  type='url'
+                  errorMessage={actionData?.error?.imageUrl?._errors[0]}
+                  placeholder='https://myurl.com/image.png'
+                  defaultValue={actionData?.formPayload?.imageUrl}
+                />
+              </Form>
+            </section>
+          </main>
+        </div>
+      </Content>
     </Page>
   )
 }

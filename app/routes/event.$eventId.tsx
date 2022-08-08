@@ -2,11 +2,20 @@ import { ExclamationIcon } from '@heroicons/react/outline'
 import type { Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, useCatch, useLoaderData } from '@remix-run/react'
+import { Form, Link, useCatch, useLoaderData } from '@remix-run/react'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
-import { Modal, OverflowButton, Page } from '~/components'
-import EventCard from '~/components/event-card'
+import {
+  ContentModule,
+  LinkList,
+  List,
+  Modal,
+  OverflowButton,
+  Page,
+  PageHeader
+} from '~/components'
+import { Content } from '~/components/content'
+import { SidebarWidget } from '~/components/sidebar-widget'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
@@ -85,55 +94,159 @@ export default function EventDetailsPage() {
       showBackButton
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <EventCard
-              id={data.event.id}
-              locations={data.event.location}
-              title={data.event.title}
-              events={referencedEvents}
-              timelines={data.event.timelines}
-              content={data.event.content}
-              startDate={data.event.startDate}
-            />
+      <Content
+        aside={
+          <div className='sticky top-4 space-y-4'>
+            <SidebarWidget>
+              <List
+                title='Timelines'
+                items={data.event.timelines.map(timeline => {
+                  return {
+                    linkTo: timeline.id,
+                    title: timeline.title,
+                    id: timeline.id
+                  }
+                })}
+              />
+            </SidebarWidget>
 
-            <Modal
-              icon={
-                <ExclamationIcon
-                  className='h-6 w-6 text-red-600'
-                  aria-hidden='true'
-                />
-              }
-              isOpen={isOpen}
-              description='Do you really want to delete this event?'
-              closeModal={closeDeleteModal}
-              title='Delete event'
-              buttons={
-                <>
-                  <button
-                    type='button'
-                    className='btn-outline btn'
-                    onClick={closeDeleteModal}
-                  >
-                    Cancel
-                  </button>
-                  <Form replace method='post'>
-                    <input
-                      type='hidden'
-                      defaultValue={data.redirectTo}
-                      name='redirectTo'
-                    />
-                    <button type='submit' className='btn btn-error'>
-                      Delete
-                    </button>
-                  </Form>
-                </>
-              }
+            <SidebarWidget>
+              <List
+                title='Events'
+                items={referencedEvents.map(event => {
+                  return {
+                    title: event.title,
+                    linkTo: event.id,
+                    description: event.content || undefined,
+                    id: event.id
+                  }
+                })}
+              />
+            </SidebarWidget>
+
+            <SidebarWidget>
+              <List
+                title='Locations'
+                items={data.event.location.map(location => {
+                  return {
+                    linkTo: `location/${location.id}`,
+                    title: location.title,
+                    id: location.id
+                  }
+                })}
+              />
+            </SidebarWidget>
+          </div>
+        }
+        desktopNavbar={
+          <PageHeader
+            title={data.event.title}
+            description='Last updated'
+            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
+              new Date()
+            )}
+            actions={
+              <>
+                <button
+                  onClick={openDeleteModal}
+                  className='btn btn-error btn-outline'
+                >
+                  Delete
+                </button>
+                <Link to='edit' className='btn btn-primary'>
+                  Edit
+                </Link>
+              </>
+            }
+          />
+        }
+      >
+        <ContentModule title='Event Information'>
+          <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>Start Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {new Intl.DateTimeFormat('sv-SE').format(
+                  new Date(data.event.startDate)
+                )}
+              </dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>
+                Salary expectation
+              </dt>
+              <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
+            </div>
+            <div className='sm:col-span-1'>
+              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+            </div>
+            <div className='sm:col-span-2'>
+              <dt className='text-sm font-medium text-gray-500'>Description</dt>
+              <dd className='mt-1 text-sm text-gray-900'>
+                {data.event.content}
+              </dd>
+            </div>
+            <div className='sm:col-span-2'>
+              <LinkList
+                title='Links'
+                items={[
+                  {
+                    downloadable: false,
+                    id: '1',
+                    name: 'Jehovah',
+                    href: 'https://wol.jw.org'
+                  },
+                  {
+                    downloadable: true,
+                    id: '1',
+                    name: 'Jesus',
+                    href: 'https://wol.jw.org'
+                  }
+                ]}
+              />
+            </div>
+          </dl>
+        </ContentModule>
+
+        <Modal
+          icon={
+            <ExclamationIcon
+              className='h-6 w-6 text-red-600'
+              aria-hidden='true'
             />
-          </section>
-        </main>
-      </div>
+          }
+          isOpen={isOpen}
+          description='Do you really want to delete this event?'
+          closeModal={closeDeleteModal}
+          title='Delete event'
+          buttons={
+            <>
+              <button
+                type='button'
+                className='btn btn-outline'
+                onClick={closeDeleteModal}
+              >
+                Cancel
+              </button>
+              <Form replace method='post'>
+                <input
+                  type='hidden'
+                  defaultValue={data.redirectTo}
+                  name='redirectTo'
+                />
+                <button type='submit' className='btn btn-error'>
+                  Delete
+                </button>
+              </Form>
+            </>
+          }
+        />
+      </Content>
     </Page>
   )
 }
