@@ -2,6 +2,7 @@ import { PlusIcon } from '@heroicons/react/outline'
 import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, useCatch, useLoaderData } from '@remix-run/react'
+import { PageHeader } from '~/components'
 import { Alert } from '~/components/alert'
 import { Content } from '~/components/content'
 import { Page } from '~/components/page'
@@ -18,20 +19,22 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json<LoaderData>({ timelineListItems })
 }
 
+const pageTitle = 'Your Timelines'
+
 export default function TimelinesPage() {
   const data = useLoaderData<LoaderData>()
   console.log(data.timelineListItems)
 
   return (
     <Page
-      title='Your Timelines'
+      title={pageTitle}
       fab={{
         to: '/timeline/new',
         icon: <PlusIcon className='h-5 w-5' aria-hidden='true' />,
         offset: false
       }}
     >
-      <Content title='Title title'>
+      <Content desktopNavbar={<PageHeader hideBackButton title={pageTitle} />}>
         <section className='col-span-12 lg:col-span-8 lg:col-start-2'>
           {data.timelineListItems.length === 0 ? (
             <p className='p-4'>No timelines yet</p>

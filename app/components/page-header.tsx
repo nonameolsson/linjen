@@ -7,10 +7,18 @@ export interface PageHeaderProps {
   descriptionExtra?: string
   actions?: JSX.Element
   goBackTo?: string
+  hideBackButton?: boolean
 }
 
 export function PageHeader(props: PageHeaderProps) {
-  const { actions, description, descriptionExtra, goBackTo, title } = props
+  const {
+    actions,
+    description,
+    descriptionExtra,
+    goBackTo,
+    hideBackButton = false,
+    title
+  } = props
   const navigate = useNavigate()
 
   const goBack = () => {
@@ -23,11 +31,13 @@ export function PageHeader(props: PageHeaderProps) {
 
   return (
     <div className='sticky z-10 top-0 bg-base-100 border-b border-l border-gray-200 px-4 py-4 sm:flex sm:items-center sm:justify-between sm:px-6 lg:px-8'>
-      <div className='flex-none'>
-        <button onClick={goBack} className='btn btn-square btn-ghost mr-4'>
-          <ArrowLeftIcon className='inline-block w-5 h-5' />
-        </button>
-      </div>
+      {!hideBackButton && (
+        <div className='flex-none'>
+          <button onClick={goBack} className='btn btn-square btn-ghost mr-4'>
+            <ArrowLeftIcon className='inline-block w-5 h-5' />
+          </button>
+        </div>
+      )}
       <div className='flex-1 min-w-0'>
         <h1 className='text-lg font-medium leading-6 text-gray-900 sm:truncate'>
           {title}

@@ -82,6 +82,8 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 }
 
+const pageTitle = 'Edit Event'
+
 export default function EditEvent() {
   const loaderData = useLoaderData<LoaderData>()
 
@@ -102,7 +104,7 @@ export default function EditEvent() {
 
   return (
     <Page
-      title='Edit event'
+      title={pageTitle}
       showBackButton
       toolbarButtons={
         <button
@@ -117,10 +119,9 @@ export default function EditEvent() {
       }
     >
       <Content
-        title='Edit event'
         desktopNavbar={
           <PageHeader
-            title='Edit event'
+            title={pageTitle}
             actions={
               <>
                 <button
