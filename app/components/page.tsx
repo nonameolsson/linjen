@@ -31,7 +31,8 @@ export function Page({
   fab?: {
     offset: boolean
     icon: JSX.Element
-    to: string
+    to?: string
+    onClick?: () => void
   }
   title: string
 }): JSX.Element {
@@ -47,7 +48,14 @@ export function Page({
           showBackButton={showBackButton}
         />
 
-        {fab && <Fab offset={fab.offset} link={fab.to} icon={fab.icon} />}
+        {fab && (
+          <Fab
+            onClick={fab.onClick}
+            offset={fab.offset}
+            link={fab.to}
+            icon={fab.icon}
+          />
+        )}
 
         {children}
       </div>

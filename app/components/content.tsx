@@ -1,4 +1,5 @@
 import cx from 'classnames'
+import { SlideOver } from './slide-over'
 
 export function Content({
   aside,
@@ -32,6 +33,7 @@ export function Content({
         {aside && (
           <aside className='hidden xl:block xl:col-span-4'>{aside}</aside>
         )}
+        {aside && <SlideOver title='Related information'>{aside}</SlideOver>}
       </div>
     </>
   )
