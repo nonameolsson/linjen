@@ -3,11 +3,9 @@ import cx from 'classnames'
 export function Content({
   aside,
   children,
-  className,
-  paddingMobile,
+  paddingMobile = false,
   noPaddingDesktop = true,
-  desktopNavbar,
-  title
+  desktopNavbar
 }: {
   children?: React.ReactNode
   aside?: JSX.Element
@@ -15,7 +13,6 @@ export function Content({
   className?: string
   paddingMobile?: boolean
   noPaddingDesktop?: boolean
-  title: string
 }): JSX.Element {
   const classNames = cx({
     'col-span-12': !aside,
@@ -27,8 +24,10 @@ export function Content({
 
   return (
     <>
-      {desktopNavbar}
-      <div className='max-w-3xl mx-auto sm:px-6 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-y-0 lg:gap-8'>
+      <div className='hidden lg:block lg:col-span-12 z-10 sticky top-0'>
+        {desktopNavbar}
+      </div>
+      <div className='max-w-3xl sm:px-6 mt-4 lg:max-w-7xl lg:px-8 lg:grid lg:grid-cols-12 lg:gap-y-0 lg:gap-8'>
         <main className={classNames}>{children}</main>
         {aside && (
           <aside className='hidden xl:block xl:col-span-4'>{aside}</aside>

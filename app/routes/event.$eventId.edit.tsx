@@ -6,7 +6,8 @@ import * as React from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
-import { Page, TextArea, TextField } from '~/components'
+import { Page, PageHeader, TextArea, TextField } from '~/components'
+import { Content } from '~/components/content'
 import {
   getEvent,
   getEventListForTimeline,
@@ -115,51 +116,69 @@ export default function EditEvent() {
         </button>
       }
     >
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <Form
-              replace
-              method='post'
-              id='edit-event'
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: 8,
-                width: '100%'
-              }}
-            >
-              <TextField
-                defaultValue={loaderData.event.title}
-                label='Title'
-                ref={titleRef}
-                name='title'
-                errorMessage={actionData?.error?.title?._errors[0]}
-              />
+      <Content
+        title='Edit event'
+        desktopNavbar={
+          <PageHeader
+            title='Edit event'
+            actions={
+              <>
+                <button
+                  form='edit-event'
+                  className='btn btn-primary'
+                  type='submit'
+                  name='action'
+                  value='update'
+                >
+                  Save
+                </button>
+              </>
+            }
+          />
+        }
+      >
+        <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
+          <Form
+            replace
+            method='post'
+            id='edit-event'
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 8,
+              width: '100%'
+            }}
+          >
+            <TextField
+              defaultValue={loaderData.event.title}
+              label='Title'
+              ref={titleRef}
+              name='title'
+              errorMessage={actionData?.error?.title?._errors[0]}
+            />
 
-              <TextArea
-                label='Content'
-                defaultValue={loaderData.event.content || ''}
-                ref={contentRef}
-                name='content'
-                rows={4}
-                errorMessage={actionData?.error?.content?._errors[0]}
-              />
+            <TextArea
+              label='Content'
+              defaultValue={loaderData.event.content || ''}
+              ref={contentRef}
+              name='content'
+              rows={4}
+              errorMessage={actionData?.error?.content?._errors[0]}
+            />
 
-              <TextField
-                label='Start Date'
-                ref={startDateRef}
-                type='date'
-                defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-                  new Date(loaderData.event.startDate)
-                )}
-                name='startDate'
-                errorMessage={actionData?.error?.startDate?._errors[0]}
-              />
-            </Form>
-          </section>
-        </main>
-      </div>
+            <TextField
+              label='Start Date'
+              ref={startDateRef}
+              type='date'
+              defaultValue={new Intl.DateTimeFormat('sv-SV').format(
+                new Date(loaderData.event.startDate)
+              )}
+              name='startDate'
+              errorMessage={actionData?.error?.startDate?._errors[0]}
+            />
+          </Form>
+        </section>
+      </Content>
     </Page>
   )
 }

@@ -4,7 +4,7 @@ import { Form, useActionData, useCatch, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 
-import { Page, TextArea, TextField } from '~/components'
+import { Page, PageHeader, TextArea, TextField } from '~/components'
 import { Alert } from '~/components/alert'
 import { Content } from '~/components/content'
 import { createEvent } from '~/models/event.server'
@@ -71,6 +71,20 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
+const NewEventButton = ({ className }: { className: string }) => (
+  <button
+    form='new-event'
+    className={className}
+    type='submit'
+    name='action'
+    value='update'
+  >
+    Save
+  </button>
+)
+
+const pageTitle = 'New event'
+
 export default function NewEventPage() {
   const loaderData = useLoaderData<LoaderData>()
   const actionData = useActionData<ActionData>()
@@ -92,21 +106,18 @@ export default function NewEventPage() {
 
   return (
     <Page
-      title='Add event'
+      title={pageTitle}
       showBackButton
-      toolbarButtons={
-        <button
-          form='new-event'
-          className='btn btn-ghost'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </button>
-      }
+      toolbarButtons={<NewEventButton className='btn btn-ghost' />}
     >
-      <Content title='New Event'>
+      <Content
+        desktopNavbar={
+          <PageHeader
+            title={pageTitle}
+            actions={<NewEventButton className='btn btn-primary' />}
+          />
+        }
+      >
         <Form
           className='col-start-4 col-span-6'
           replace

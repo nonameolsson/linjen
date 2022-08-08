@@ -148,10 +148,13 @@ export default function EventDetailsPage() {
             )}
             actions={
               <>
-                <button onClick={openDeleteModal} className='btn btn-error'>
+                <button
+                  onClick={openDeleteModal}
+                  className='btn btn-error btn-outline'
+                >
                   Delete
                 </button>
-                <Link to='edit' className='btn btn-warning'>
+                <Link to='edit' className='btn btn-primary'>
                   Edit
                 </Link>
               </>

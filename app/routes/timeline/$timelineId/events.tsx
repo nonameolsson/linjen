@@ -3,10 +3,8 @@ import { PlusIcon } from '@heroicons/react/solid'
 import { Link, useLoaderData, useLocation, useParams } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
-import { title } from 'process'
 import invariant from 'tiny-invariant'
 import { Fab } from '~/components'
-import { Content } from '~/components/content'
 
 import type { Event } from '~/models/event.server'
 import { getEventListItemsForTimeline } from '~/models/event.server'
@@ -35,7 +33,7 @@ export default function EventsTab() {
   const data = useLoaderData<LoaderData>()
 
   return (
-    <Content title={title}>
+    <>
       <Fab
         icon={<PlusIcon className='h-5 w-5' aria-hidden='true' />}
         offset={true}
@@ -91,6 +89,6 @@ export default function EventsTab() {
           <p>No events</p>
         )}
       </main>
-    </Content>
+    </>
   )
 }

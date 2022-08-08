@@ -2,7 +2,6 @@ import type { Event, Timeline } from '@prisma/client'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
-import { title } from 'process'
 import { Alert } from '~/components/alert'
 import { Content } from '~/components/content'
 
@@ -31,7 +30,7 @@ export default function EventsPage() {
 
   return (
     <Page title='Events'>
-      <Content title={title} aside={<p>hej</p>}>
+      <Content>
         <section className='col-span-8 col-start-3'>
           <ul className='divide-y divide-gray-200 bg-white lg:hidden'>
             {data.events.map(event => (
