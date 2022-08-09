@@ -111,6 +111,7 @@ export default function NewEventPage() {
       toolbarButtons={<NewEventButton className='btn btn-ghost' />}
     >
       <Content
+        paddingMobile={true}
         desktopNavbar={
           <PageHeader
             title={pageTitle}
