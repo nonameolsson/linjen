@@ -1,5 +1,5 @@
 import { ExclamationIcon } from '@heroicons/react/solid'
-import type { Location, Timeline } from '@prisma/client'
+import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useCatch, useLoaderData } from '@remix-run/react'
@@ -26,6 +26,7 @@ type LoaderData = {
     referencedBy: Event[]
     referencing: Event[]
     location: Location[]
+    externalLinks: ExternalLink[]
     timelines: {
       id: Timeline['id']
       title: Timeline['title']
@@ -194,20 +195,11 @@ export default function EventDetailsPage() {
             <div className='sm:col-span-2'>
               <LinkList
                 title='Links'
-                items={[
-                  {
-                    downloadable: false,
-                    id: '1',
-                    name: 'Jehovah',
-                    href: 'https://wol.jw.org'
-                  },
-                  {
-                    downloadable: true,
-                    id: '1',
-                    name: 'Jesus',
-                    href: 'https://wol.jw.org'
-                  }
-                ]}
+                items={data.event.externalLinks.map(link => ({
+                  title: link.title,
+                  url: link.url,
+                  id: link.id
+                }))}
               />
             </div>
           </dl>

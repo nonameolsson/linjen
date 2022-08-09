@@ -57,6 +57,7 @@ export function getEvent(id: Event['id']) {
       referencedBy: true,
       referencing: true,
       location: true,
+      externalLinks: true,
       timelines: {
         select: {
           title: true,
