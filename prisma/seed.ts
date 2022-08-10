@@ -28,20 +28,22 @@ const mockEvents: Omit<
   }
 ]
 
-const userData = [
-  {
-    email: 'demo@user.com',
-    password: 'demouser'
-  },
-  {
-    email: 'noname.olsson@gmail.com',
-    password: 'abc123abc123'
-  }
-]
 
 async function seed() {
+  const userData = [
+    {
+      email: 'demo@user.com',
+      password: 'demouser'
+    },
+    {
+      email: 'noname.olsson@gmail.com',
+      password: 'abc123abc123'
+    }
+  ]
+
   const hashedPassword1 = await bcrypt.hash(userData[0].password, 10)
   const hashedPassword2 = await bcrypt.hash(userData[1].password, 10)
+
 
   // cleanup the existing database
   await prisma.user

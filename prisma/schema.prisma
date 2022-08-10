@@ -10,6 +10,7 @@ datasource db {
 //   theme = "forest"
 // }
 
+
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["referentialIntegrity"]
@@ -62,10 +63,13 @@ model Event {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
 
   location Location[]
+
+  externalLinks ExternalLink[]
+
 
   referencedBy Event[] @relation("References")
   referencing  Event[] @relation("References")
@@ -82,4 +86,13 @@ model Location {
   userId String
 
   events Event[]
+}
+
+model ExternalLink {
+  id    String @id @default(cuid())
+  title String
+  url   String
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  eventId String
 }

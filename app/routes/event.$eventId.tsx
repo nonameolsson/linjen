@@ -1,10 +1,21 @@
+import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationIcon } from '@heroicons/react/solid'
-import type { Location, Timeline } from '@prisma/client'
+import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
-import { Form, Link, useCatch, useLoaderData } from '@remix-run/react'
-import { useState } from 'react'
+import {
+  Form,
+  Link,
+  useActionData,
+  useCatch,
+  useFetcher,
+  useLoaderData,
+  useTransition
+} from '@remix-run/react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
+import { z } from 'zod'
+
 import {
   ContentModule,
   LinkList,
@@ -12,13 +23,29 @@ import {
   Modal,
   OverflowButton,
   Page,
-  PageHeader
+  PageHeader,
+  TextField
 } from '~/components'
 import { Content } from '~/components/content'
 import { SidebarWidget } from '~/components/sidebar-widget'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
+import { createLink } from '~/models/externalLink'
 import { requireUserId } from '~/session.server'
+import { badRequestWithError } from '~/utils/index'
+
+const linkFormSchema = z.object({
+  title: z
+    .string()
+    .min(5, { message: 'Title must be at least 5 characters long' }), // TODO: Add translation
+  url: z.string().url()
+})
+type LinkFormSchema = z.infer<typeof linkFormSchema> // Infer the schema from Zod
+
+type ActionData = {
+  formPayload?: LinkFormSchema
+  error?: any
+}
 
 type LoaderData = {
   redirectTo?: string
@@ -26,6 +53,7 @@ type LoaderData = {
     referencedBy: Event[]
     referencing: Event[]
     location: Location[]
+    externalLinks: ExternalLink[]
     timelines: {
       id: Timeline['id']
       title: Timeline['title']
@@ -56,31 +84,177 @@ export const action: ActionFunction = async ({ request, params }) => {
   invariant(params.eventId, 'eventId not found')
   await requireUserId(request)
 
-  deleteEvent(params.eventId)
-
   const formData = await request.formData()
-  let redirectTo: string | undefined = DEFAULT_REDIRECT
-  const optionalRedirect: string | undefined = formData
-    .get('redirectTo')
-    ?.toString()
+  let action = formData.get('action')
 
-  if (typeof optionalRedirect === 'string' && optionalRedirect.length > 0) {
-    redirectTo = optionalRedirect
+  switch (action) {
+    case 'add-link': {
+      try {
+        const result = linkFormSchema.parse(Object.fromEntries(formData))
+        const { title, url } = result
+
+        await createLink({ data: { title, url }, eventId: params.eventId })
+        return json({ ok: true })
+      } catch (error) {
+        if (error instanceof z.ZodError) {
+          return badRequestWithError({
+            error,
+            formPayload: Object.fromEntries(formData),
+            status: 400
+          })
+        }
+        throw json(error, { status: 400 }) // Unknown error, should not happen
+      }
+    }
+
+    case 'delete-event': {
+      try {
+        await deleteEvent(params.eventId)
+
+        let redirectTo: string | undefined = DEFAULT_REDIRECT
+        const optionalRedirect: string | undefined = formData
+          .get('redirectTo')
+          ?.toString()
+
+        if (
+          typeof optionalRedirect === 'string' &&
+          optionalRedirect.length > 0
+        ) {
+          redirectTo = optionalRedirect
+        }
+
+        return redirect(redirectTo)
+      } catch (error) {
+        throw json(error, { status: 400 }) // Unknown error, should not happen
+      }
+    }
+    default: {
+      throw new Error('Unexpected action')
+    }
   }
+}
 
-  return redirect(redirectTo)
+function NewLinkDialog({
+  isOpen,
+  onClose
+}: {
+  isOpen: boolean
+  onClose: () => void
+}): JSX.Element {
+  const transition = useTransition()
+  const fetcher = useFetcher()
+  const actionData = useActionData<ActionData>()
+  const titleRef = useRef<HTMLInputElement>(null)
+  const urlRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (fetcher.type === 'done' && fetcher.data.ok) {
+      onClose()
+    }
+  }, [fetcher, onClose])
+
+  useEffect(() => {
+    if (actionData?.error?.title) {
+      titleRef.current?.focus()
+    } else if (actionData?.error?.content) {
+      urlRef.current?.focus()
+    }
+  }, [actionData])
+
+  return (
+    <>
+      <Transition appear show={isOpen} as={Fragment}>
+        <Dialog
+          as='div'
+          className='fixed inset-0 z-10 overflow-y-auto'
+          onClose={onClose}
+        >
+          <div className='modal-open modal modal-bottom sm:modal-middle'>
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0'
+              enterTo='opacity-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100'
+              leaveTo='opacity-0'
+            >
+              <Dialog.Overlay className='fixed inset-0' />
+            </Transition.Child>
+
+            <Transition.Child
+              as={Fragment}
+              enter='ease-out duration-300'
+              enterFrom='opacity-0 scale-95'
+              enterTo='opacity-100 scale-100'
+              leave='ease-in duration-200'
+              leaveFrom='opacity-100 scale-100'
+              leaveTo='opacity-0 scale-95'
+            >
+              <Dialog.Panel className='modal-box'>
+                <fetcher.Form id='new-link' method='post'>
+                  <div className='sm:flex sm:items-start'>
+                    <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
+                      <Dialog.Title as='h3' className='text-lg font-bold'>
+                        Add link
+                      </Dialog.Title>
+                      <div className='mt-2'>
+                        <TextField
+                          name='title'
+                          label='Title'
+                          ref={titleRef}
+                          errorMessage={actionData?.error?.title?._errors[0]}
+                        />
+                        <TextField
+                          name='url'
+                          type='url'
+                          label='URL'
+                          ref={urlRef}
+                          errorMessage={actionData?.error?.url?._errors[0]}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className='modal-action'>
+                    <button
+                      disabled={transition.state === 'submitting'}
+                      name='action'
+                      value='add-link'
+                      type='submit'
+                      className='btn primary'
+                    >
+                      Save
+                    </button>
+                  </div>
+                </fetcher.Form>
+              </Dialog.Panel>
+            </Transition.Child>
+          </div>
+        </Dialog>
+      </Transition>
+    </>
+  )
 }
 
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const [isOpenLinkDialog, setIsOpenLinkDialog] = useState<boolean>(false)
 
-  function closeDeleteModal() {
+  function closeDeleteModal(): void {
     setIsOpen(false)
   }
 
-  function openDeleteModal() {
+  function openDeleteModal(): void {
     setIsOpen(true)
+  }
+
+  function openLinkDialog(): void {
+    setIsOpenLinkDialog(true)
+  }
+
+  function closeLinkDialog(): void {
+    setIsOpenLinkDialog(false)
   }
 
   const referencedEvents: Event[] = [
@@ -94,6 +268,7 @@ export default function EventDetailsPage() {
       showBackButton
       toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
     >
+      <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
       <Content
         aside={
           <div className='sticky top-4 space-y-4'>
@@ -193,21 +368,13 @@ export default function EventDetailsPage() {
             </div>
             <div className='sm:col-span-2'>
               <LinkList
+                onNewClick={openLinkDialog}
                 title='Links'
-                items={[
-                  {
-                    downloadable: false,
-                    id: '1',
-                    name: 'Jehovah',
-                    href: 'https://wol.jw.org'
-                  },
-                  {
-                    downloadable: true,
-                    id: '1',
-                    name: 'Jesus',
-                    href: 'https://wol.jw.org'
-                  }
-                ]}
+                items={data.event.externalLinks.map(link => ({
+                  title: link.title,
+                  url: link.url,
+                  id: link.id
+                }))}
               />
             </div>
           </dl>
@@ -239,7 +406,12 @@ export default function EventDetailsPage() {
                   defaultValue={data.redirectTo}
                   name='redirectTo'
                 />
-                <button type='submit' className='btn btn-error'>
+                <button
+                  name='action'
+                  value='delete-event'
+                  type='submit'
+                  className='btn btn-error'
+                >
                   Delete
                 </button>
               </Form>
