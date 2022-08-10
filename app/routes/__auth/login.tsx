@@ -1,3 +1,13 @@
+import {
+  Button,
+  Checkbox,
+  Container,
+  Image,
+  PasswordInput,
+  Text,
+  TextInput,
+  Title
+} from '@mantine/core'
 import type {
   ActionFunction,
   LoaderFunction,
@@ -7,7 +17,7 @@ import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import * as React from 'react'
 import { z } from 'zod'
-import { TextField } from '~/components'
+
 import { Alert } from '~/components/alert'
 
 import { verifyLogin } from '~/models/user.server'
@@ -94,83 +104,55 @@ export default function LoginPage() {
   }, [actionData])
 
   return (
-    <div className='flex min-h-full'>
-      <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
-        <div className='mx-auto w-full max-w-sm lg:w-96'>
-          <div>
-            <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
-              Log in to your account
-            </h2>
-            <p className='mt-2 text-sm text-gray-600'>
-              Or{' '}
-              <Link
-                className='link link-primary'
-                to={{
-                  pathname: '/join',
-                  search: searchParams.toString()
-                }}
-              >
-                create a new account
-              </Link>
-            </p>
-          </div>
-
-          <div className='mt-8'>
-            <div className='mt-6'>
-              <Form method='post' className='space-y-6'>
-                <TextField
-                  ref={emailRef}
-                  id='email'
-                  label='Email'
-                  required
-                  autoFocus={true}
-                  name='email'
-                  type='email'
-                  autoComplete='email'
-                  errorMessage={actionData?.error?.email?._errors[0]}
-                />
-
-                <TextField
-                  id='password'
-                  ref={passwordRef}
-                  name='password'
-                  type='password'
-                  label='Password'
-                  autoComplete='current-password'
-                  errorMessage={actionData?.error?.password?._errors[0]}
-                />
-
-                <div className='flex justify-between items-center'>
-                  <div className='flex items-center form-control'>
-                    <label htmlFor='remember' className='cursor-pointer label'>
-                      <input
-                        id='remember'
-                        name='remember'
-                        type='checkbox'
-                        className='mr-2 checkbox'
-                      />
-                      <span className='label-text'>Remember me</span>
-                    </label>
-                  </div>
-                </div>
-
-                <input type='hidden' name='redirectTo' value={redirectTo} />
-                <button className='btn btn-block' type='submit'>
-                  Log in
-                </button>
-                {actionData?.formError && <Alert text={actionData.formError} />}
-              </Form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className='hidden flex-1 items-center bg-white lg:flex'>
-        <img
-          className='relative'
-          src='images/landing.jpg'
-          alt='Timelines and events'
+    <Container>
+      <Title order={1}>Log in to your account</Title>
+      <Image src='images/landing.jpg' alt='Timelines and events' />
+      <Form method='post'>
+        <TextInput
+          ref={emailRef}
+          id='email'
+          label='Email'
+          required
+          autoFocus={true}
+          name='email'
+          type='email'
+          autoComplete='email'
+          error={actionData?.error?.email?._errors[0]}
         />
-      </div>
-    </div>
+
+        <PasswordInput
+          id='password'
+          ref={passwordRef}
+          name='password'
+          label='Password'
+          autoComplete='current-password'
+          error={actionData?.error?.password?._errors[0]}
+        />
+
+        <Checkbox
+          label='I agree to sell my privacy'
+          id='remember'
+          name='remember'
+        />
+
+        <input type='hidden' name='redirectTo' value={redirectTo} />
+        <Button type='submit'>Log in</Button>
+        {actionData?.formError && <Alert text={actionData.formError} />}
+      </Form>
+
+      <Text>
+        Or{' '}
+        <Text
+          variant='link'
+          component={Link}
+          to={{
+            pathname: '/join',
+            search: searchParams.toString()
+          }}
+        >
+          create a new account
+        </Text>
+      </Text>
+    </Container>
   )
 }

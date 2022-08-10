@@ -1,8 +1,4 @@
-import type {
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction
-} from '@remix-run/node'
+import type { LoaderFunction, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Links,
@@ -17,11 +13,12 @@ import {
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
 
-import tailwindStylesheetUrl from './styles/tailwind.css'
+import { MantineProvider } from '@mantine/core'
+// import tailwindStylesheetUrl from './styles/tailwind.css'
 
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
-}
+// export const links: LinksFunction = () => {
+//   return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
+// }
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -50,27 +47,29 @@ export default function App() {
   const data = useLoaderData<LoaderData>()
 
   return (
-    <html
-      lang='en'
-      className='h-screen scroll-smooth bg-gray-50'
-      data-theme='light'
-    >
-      <head>
-        <Meta />
-        <link rel='manifest' href='/resources/manifest.json' />
-        <Links />
-      </head>
-      <body className='h-screen overflow-hidden'>
-        <Outlet />
-        <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
-          }}
-        />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      <html
+        lang='en'
+        className='h-screen scroll-smooth bg-gray-50'
+        data-theme='light'
+      >
+        <head>
+          <Meta />
+          <link rel='manifest' href='/resources/manifest.json' />
+          <Links />
+        </head>
+        <body className='h-screen overflow-hidden'>
+          <Outlet />
+          <ScrollRestoration />
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+            }}
+          />
+          <Scripts />
+          <LiveReload />
+        </body>
+      </html>
+    </MantineProvider>
   )
 }
