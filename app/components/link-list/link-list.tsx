@@ -21,7 +21,7 @@ function LinkItem({ link }: { link: Link }) {
         href={url}
         target='_blank'
         rel='noreferrer'
-        className='font-medium text-primary hover:text-primary-focus flex flex-1 py-3 pl-3 pr-4'
+        className='fontonNewClick-medium text-primary hover:text-primary-focus flex flex-1 py-3 pl-3 pr-4'
       >
         <div className='flex w-0 flex-1 items-center'>
           {icon ? (
@@ -51,7 +51,7 @@ function LinkItem({ link }: { link: Link }) {
 }
 
 export function LinkList(props: LinkListProps) {
-  const { items, title } = props
+  const { items, onNewClick, title } = props
 
   return (
     <>
@@ -61,7 +61,10 @@ export function LinkList(props: LinkListProps) {
           {items.map((item: Link) => (
             <LinkItem key={item.id} link={item} />
           ))}
-          <li className='flex items-center justify-between text-sm hover:bg-gray-50 py-3 pl-3 pr-4'>
+          <li
+            onClick={onNewClick}
+            className='flex items-center justify-between text-sm hover:bg-gray-50 hover:cursor-pointer py-3 pl-3 pr-4'
+          >
             <div className='flex w-0 flex-1 items-center'>
               <PlusIcon
                 className='h-5 w-5 flex-shrink-0 text-gray-400'
