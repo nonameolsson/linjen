@@ -4,8 +4,8 @@ import { Form, useActionData, useCatch, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 
+import { Alert } from '@mantine/core'
 import { Page, PageHeader, TextArea, TextField } from '~/components'
-import { Alert } from '~/components/alert'
 import { Content } from '~/components/content'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
@@ -185,7 +185,7 @@ export function CatchBoundary() {
         <main className='flex-1 overflow-y-auto p-4'>
           <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
             <h1>App Error</h1>
-            <Alert text={`${caught.status} ${caught.statusText}`} />
+            <Alert color='red'>{`${caught.status} ${caught.statusText}`}</Alert>
           </section>
         </main>
       </div>
@@ -200,7 +200,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
         <main className='flex-1 overflow-y-auto p-4'>
           <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
             <h1>App Error</h1>
-            <Alert text={error.message} />
+            <Alert color='red'>{error.message}</Alert>
           </section>
         </main>
       </div>

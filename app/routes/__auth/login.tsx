@@ -1,10 +1,12 @@
 import {
+  Alert,
+  Anchor,
   Button,
   Checkbox,
   Container,
   Image,
   PasswordInput,
-  Text,
+  Space,
   TextInput,
   Title
 } from '@mantine/core'
@@ -15,10 +17,9 @@ import type {
 } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
+import { IconAlertCircle } from '@tabler/icons'
 import * as React from 'react'
 import { z } from 'zod'
-
-import { Alert } from '~/components/alert'
 
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
@@ -104,9 +105,12 @@ export default function LoginPage() {
   }, [actionData])
 
   return (
-    <Container>
-      <Title order={1}>Log in to your account</Title>
-      <Image src='images/landing.jpg' alt='Timelines and events' />
+    <Container size='xs' px='xs'>
+      <Title align='center' order={1}>
+        Log in to your account
+      </Title>
+      <Image src='images/landing.jpg' alt='Timelines and events' mb='md' />
+
       <Form method='post'>
         <TextInput
           ref={emailRef}
@@ -119,6 +123,7 @@ export default function LoginPage() {
           autoComplete='email'
           error={actionData?.error?.email?._errors[0]}
         />
+        {console.log(actionData)}
 
         <PasswordInput
           id='password'
@@ -129,30 +134,32 @@ export default function LoginPage() {
           error={actionData?.error?.password?._errors[0]}
         />
 
-        <Checkbox
-          label='I agree to sell my privacy'
-          id='remember'
-          name='remember'
-        />
+        <Checkbox label='Remember me' id='remember' name='remember' mt='md' />
 
         <input type='hidden' name='redirectTo' value={redirectTo} />
-        <Button type='submit'>Log in</Button>
-        {actionData?.formError && <Alert text={actionData.formError} />}
+
+        {actionData?.formError && (
+          <Alert mt='md' color='red' icon={<IconAlertCircle size={16} />}>
+            {actionData.formError}
+          </Alert>
+        )}
+
+        <Button fullWidth mt='md' type='submit'>
+          Log in
+        </Button>
       </Form>
 
-      <Text>
-        Or{' '}
-        <Text
-          variant='link'
-          component={Link}
-          to={{
-            pathname: '/join',
-            search: searchParams.toString()
-          }}
-        >
-          create a new account
-        </Text>
-      </Text>
+      <Space mt='md' />
+
+      <Anchor
+        component={Link}
+        to={{
+          pathname: '/join',
+          search: searchParams.toString()
+        }}
+      >
+        Create a new account
+      </Anchor>
     </Container>
   )
 }

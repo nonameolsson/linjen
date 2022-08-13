@@ -46,6 +46,7 @@
     "@remix-run/serve": "1.6.3",
     "@remix-run/server-runtime": "1.6.4",
     "@remix-run/vercel": "1.6.4",
+    "@tabler/icons": "^1.82.0",
     "@vercel/node": "1.15.4",
     "bcryptjs": "2.4.3",
     "classnames": "^2.3.1",
