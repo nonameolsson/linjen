@@ -51,14 +51,14 @@ export default function App() {
       <html
         lang='en'
         className='h-screen scroll-smooth bg-gray-50'
-        data-theme='light'
+        style={{ height: '100vh' }}
       >
         <head>
           <Meta />
           <link rel='manifest' href='/resources/manifest.json' />
           <Links />
         </head>
-        <body className='h-screen overflow-hidden'>
+        <body style={{ height: '100vh', overflow: 'hidden' }}>
           <Outlet />
           <ScrollRestoration />
           <script
