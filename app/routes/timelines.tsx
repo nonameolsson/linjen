@@ -1,10 +1,9 @@
-import { PlusIcon } from '@heroicons/react/outline'
-import { Alert } from '@mantine/core'
+import { PlusIcon } from '@heroicons/react/solid'
+import { Alert, Badge, Card, Group, Image, Text } from '@mantine/core'
 import type { LoaderFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, useCatch, useLoaderData } from '@remix-run/react'
-import { PageHeader } from '~/components'
-import { Content } from '~/components/content'
+import { Aside } from '~/components'
 import { Page } from '~/components/page'
 import { getTimelineListItems } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -23,10 +22,10 @@ const pageTitle = 'Your Timelines'
 
 export default function TimelinesPage() {
   const data = useLoaderData<LoaderData>()
-  console.log(data.timelineListItems)
 
   return (
     <Page
+      aside={<Aside>Aside timelines</Aside>}
       title={pageTitle}
       fab={{
         to: '/timeline/new',
@@ -34,51 +33,44 @@ export default function TimelinesPage() {
         offset: false
       }}
     >
-      <Content desktopNavbar={<PageHeader hideBackButton title={pageTitle} />}>
-        <section className='col-span-12 lg:col-span-8 lg:col-start-2'>
-          {data.timelineListItems.length === 0 ? (
-            <p className='p-4'>No timelines yet</p>
-          ) : (
-            <div className='flex h-min w-full snap-x snap-mandatory gap-6 overflow-x-auto px-16 pb-16'>
-              {data.timelineListItems.map(timeline => (
-                <Link
-                  to={`/timeline/${timeline.id}/events`}
-                  key={timeline.id}
-                  className='h-min snap-center snap-always'
-                >
-                  <div
-                    key={timeline.id}
-                    className='card w-60 bg-base-100 shadow transition-shadow duration-150 ease-in-out hover:shadow-xl hover:drop-shadow-xl'
-                  >
-                    {timeline.imageUrl ? (
-                      <figure>
-                        <img
-                          src={timeline.imageUrl}
-                          className='aspect-video w-full object-cover'
-                          alt='Shoes'
-                        />
-                      </figure>
-                    ) : (
-                      <span className='flex aspect-video w-full items-center justify-center bg-info object-cover text-center text-4xl text-info-content'>
-                        {timeline.title.slice(0, 2)}
-                      </span>
-                    )}
-                    <div className='card-body'>
-                      <h2 className='card-title'>{timeline.title}</h2>
-                      <p className='line-clamp-3'>{timeline.description}</p>
-                      <div className='card-actions justify-end'>
-                        <div className='badge badge-outline'>
-                          Events: {timeline._count.event}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-      </Content>
+      <section>
+        {data.timelineListItems.length === 0 ? (
+          <p>No timelines yet</p>
+        ) : (
+          <div>
+            {data.timelineListItems.map(timeline => (
+              <Link to={`/timeline/${timeline.id}/events`} key={timeline.id}>
+                <Card shadow='sm' p='lg' radius='md' withBorder>
+                  <Card.Section>
+                    <Image
+                      src={timeline.imageUrl || undefined}
+                      height={160}
+                      alt='Norway'
+                    />
+                  </Card.Section>
+
+                  <Group position='apart' mt='md' mb='xs'>
+                    <Text weight={500}>{timeline.title.slice(0, 2)}</Text>
+                    <Badge color='pink' variant='light'>
+                      Events: {timeline._count.event}
+                    </Badge>
+                    <Badge color='pink' variant='light'>
+                      People: On Sale
+                    </Badge>
+                    <Badge color='pink' variant='light'>
+                      Locations
+                    </Badge>
+                  </Group>
+
+                  <Text size='sm' color='dimmed'>
+                    {timeline.description}
+                  </Text>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
     </Page>
   )
 }
