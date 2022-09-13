@@ -41,9 +41,11 @@ project set up
 ### Docker PostgreSQL
 
 #### 1. Start containers
+
 `docker compose up -d`
 
 #### 2. Connect from host
+
 `psql -h localhost -U postgres`
 
 #### 3. Create database with psql or pgAdmin
