@@ -26,6 +26,10 @@ project set up
 
 ## Dev
 
+- first run `npx prisma generate` https://stackoverflow.com/a/67796697
+
+### PlanetScale
+
 - Connect to database with PlanetScale _TODO: ADD INSTRUCTIONS_
 
 - Start dev server:
@@ -33,6 +37,18 @@ project set up
   ```sh
   npm run dev
   ```
+
+### Docker PostgreSQL
+
+#### 1. Start containers
+
+`docker compose up -d`
+
+#### 2. Connect from host
+
+`psql -h localhost -U postgres`
+
+#### 3. Create database with psql or pgAdmin
 
 ## Deployment
 
@@ -116,3 +132,5 @@ to get auto-formatting on save. There's also a `npm run format` script you can
 run to format all files in the project.
 
 _TODO: ADD INSTRUCTIONS FOR TRUNK_
+
+#
