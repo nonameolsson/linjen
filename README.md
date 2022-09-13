@@ -26,8 +26,7 @@ project set up
 
 ## Dev
 
-- first run `npx prisma generate`
-https://stackoverflow.com/a/67796697
+- first run `npx prisma generate` https://stackoverflow.com/a/67796697
 
 ### PlanetScale
 
@@ -38,24 +37,16 @@ https://stackoverflow.com/a/67796697
   ```sh
   npm run dev
   ```
+
 ### Docker PostgreSQL
 
-1. Start containers
-```sh
-docker compose up -d
-```
+#### 1. Start containers
+`docker compose up -d`
 
-2. Connect from host
-```
-psql -h localhost -U postgres
-```
+#### 2. Connect from host
+`psql -h localhost -U postgres`
 
-3. Create database
-```
-
-```
-
-
+#### 3. Create database with psql or pgAdmin
 
 ## Deployment
 
