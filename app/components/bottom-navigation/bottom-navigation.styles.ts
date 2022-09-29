@@ -15,13 +15,13 @@ export const useStyles = createStyles(theme => ({
     color: theme.colors.gray[5]
   },
   iconActive: {
-    color: theme.primaryColor
+    color: theme.colors.blue[7]
   },
   title: {
     color: theme.colors.gray[5]
   },
   titleActive: {
-    color: theme.colors.black
+    color: theme.colors.blue[7]
   },
   link: {
     textDecoration: 'none'

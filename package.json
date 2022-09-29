@@ -9,7 +9,6 @@
     "db:seed": "ts-node --require tsconfig-paths/register prisma/seed.ts",
     "db:reset": "ts-node --require tsconfig-paths/register prisma/reset.ts",
     "dev": "run-p dev:*",
-    "dev:css": "cross-env NODE_ENV=development npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development binode --require ./mocks -- @remix-run/dev:remix dev",
     "format": "prettier --write .",
     "prisma:generate": "DISABLE_ERD=true npx prisma generate",

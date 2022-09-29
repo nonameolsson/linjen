@@ -79,7 +79,7 @@ export default function EventsTab() {
           ))}
         </Container>
       ) : (
-        <Container size={50}>
+        <Container fluid>
           <DataTable
             withBorder={false}
             withColumnBorders

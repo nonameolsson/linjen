@@ -4,7 +4,7 @@ import {
   createEmotionCache,
   MantineProvider
 } from '@mantine/core'
-import { useColorScheme } from '@mantine/hooks'
+import { useHotkeys, useLocalStorage } from '@mantine/hooks'
 import { ModalsProvider } from '@mantine/modals'
 import { StylesPlaceholder } from '@mantine/remix'
 import type { LoaderArgs, MetaFunction } from '@remix-run/node'
@@ -18,7 +18,6 @@ import {
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react'
-import { useState } from 'react'
 
 import { NewLinkDialog } from '~/components'
 import type { EnvironmentVariables } from './entry.server'
@@ -37,6 +36,7 @@ type LoaderData = {
 }
 
 export async function loader({ request }: LoaderArgs) {
+  // Environment Variables
   const ENV: EnvironmentVariables = {
     LOG_ROCKET_APP_ID: process.env.LOG_ROCKET_APP_ID || ''
   }
@@ -51,13 +51,17 @@ createEmotionCache({ key: 'mantine' })
 
 export default function App() {
   const data = useLoaderData<LoaderData>()
-  // hook will return either 'dark' or 'light' on client
-  // and always 'light' during ssr as window.matchMedia is not available
-  const preferredColorScheme = useColorScheme()
-  const [colorScheme, setColorScheme] =
-    useState<ColorScheme>(preferredColorScheme)
+
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: 'mantine-color-scheme',
+    defaultValue: 'light',
+    getInitialValueInEffect: true
+  })
+
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
+
+  useHotkeys([['mod+J', () => toggleColorScheme()]])
 
   return (
     <ColorSchemeProvider

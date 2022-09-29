@@ -3,7 +3,7 @@ import { NavLink } from '@remix-run/react'
 import type { NavbarLinkProps } from './navbar-link.types'
 
 export function NavbarLink({
-  icon,
+  icon: Icon,
   color,
   label,
   href
@@ -30,7 +30,7 @@ export function NavbarLink({
     >
       <Group>
         <ThemeIcon color={color} variant='light'>
-          {icon}
+          <Icon />
         </ThemeIcon>
 
         <Text size='sm'>{label}</Text>
