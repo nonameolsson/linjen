@@ -1,4 +1,4 @@
-import { Box, Navbar as MantineNavbar, Title } from '@mantine/core'
+import { Box, Navbar as MantineNavbar } from '@mantine/core'
 import { Form } from '@remix-run/react'
 import {
   IconCalendarEvent,
@@ -61,8 +61,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
     opened,
     collapsed,
     isMobile,
-    subNavigation,
-    subNavigationTitle
+    subNavigation
     // toggleCollapsed
   } = props
   const collapsedItems: boolean = isMobile ? false : !!collapsed
@@ -143,15 +142,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
           </MantineNavbar.Section>
         </div>
 
-        {!isMobile && subNavigation && (
-          <div className={classes.main}>
-            <Title order={4} className={classes.title}>
-              {subNavigationTitle}
-            </Title>
-
-            {subNavigation}
-          </div>
-        )}
+        {!isMobile && subNavigation}
       </MantineNavbar.Section>
     </MantineNavbar>
   )

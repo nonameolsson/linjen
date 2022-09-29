@@ -55,7 +55,7 @@ export default function EventsTab() {
     <>
       <Fab
         icon={<IconPlus />}
-        offset={true}
+        offset={isMobile}
         link={`/event/new?timelineId=${params.timelineId}`}
       />
       {isMobile ? (
@@ -79,7 +79,7 @@ export default function EventsTab() {
           ))}
         </Container>
       ) : (
-        <Container fluid>
+        <Container fluid mt='xl'>
           <DataTable
             withBorder={false}
             withColumnBorders

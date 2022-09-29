@@ -20,7 +20,7 @@ export const useStyles = createStyles((theme, props: NavbarStyleProps) => {
       flexDirection: 'column',
       alignItems: 'center',
 
-      borderRight: collapsed //&& hasSubnavigation
+      borderRight: collapsed
         ? `1px solid ${
             theme.colorScheme === 'dark'
               ? theme.colors.dark[7]
@@ -66,30 +66,6 @@ export const useStyles = createStyles((theme, props: NavbarStyleProps) => {
           }`
         : undefined,
       marginBottom: theme.spacing.md
-    },
-
-    main: {
-      flex: 1,
-      backgroundColor:
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[6]
-          : theme.colors.gray[0]
-    },
-
-    title: {
-      boxSizing: 'border-box',
-      fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-      marginBottom: theme.spacing.xl,
-      backgroundColor:
-        theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-      padding: theme.spacing.md,
-      paddingTop: 18,
-      height: 60,
-      borderBottom: `1px solid ${
-        theme.colorScheme === 'dark'
-          ? theme.colors.dark[7]
-          : theme.colors.gray[3]
-      }`
     }
   }
 })

@@ -100,10 +100,36 @@ export default function TimelineDetailsPage() {
       padding={0}
       showBackButton
       goBackTo='/timelines'
-      subNavigation={{
-        component: <SubNavbar links={SUBNAV_LINKS} />,
-        title: data.timeline.title
-      }}
+      subNavigation={
+        <SubNavbar
+          buttons={
+            <Menu shadow='md' width={200} position='bottom-end'>
+              <Menu.Target>
+                <OverflowButton />
+              </Menu.Target>
+
+              <Menu.Dropdown>
+                <Menu.Item
+                  icon={<IconEdit size={14} />}
+                  component={Link}
+                  to='edit'
+                >
+                  Edit
+                </Menu.Item>
+                <Menu.Item
+                  onClick={openDeleteModal}
+                  color='red'
+                  icon={<IconTrash size={14} />}
+                >
+                  Delete
+                </Menu.Item>
+              </Menu.Dropdown>
+            </Menu>
+          }
+          title={data.timeline.title}
+          links={SUBNAV_LINKS}
+        />
+      }
       bottomNavigation={
         <BottomNavigation>
           <BottomNavigation.Button

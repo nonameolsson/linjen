@@ -1,3 +1,4 @@
+import { Group, Title } from '@mantine/core'
 import { NavLink } from '@remix-run/react'
 import { useStyles } from './sub-navbar.styles'
 
@@ -8,14 +9,23 @@ export type SubLink = {
 
 export type SubNavbarProps = {
   links: SubLink[]
+  title: string
+  buttons?: React.ReactNode
 }
 
 export function SubNavbar(props: SubNavbarProps): JSX.Element {
-  const { links } = props
+  const { links, title, buttons } = props
   const { classes, cx } = useStyles()
 
   return (
-    <>
+    <div className={classes.main}>
+      <Group position='apart' className={classes.header}>
+        <Title order={4} className={classes.title}>
+          {title}
+        </Title>
+        {buttons && <div>{buttons}</div>}
+      </Group>
+
       {links.map(link => (
         <NavLink
           className={({ isActive }) =>
@@ -27,6 +37,6 @@ export function SubNavbar(props: SubNavbarProps): JSX.Element {
           {link.label}
         </NavLink>
       ))}
-    </>
+    </div>
   )
 }

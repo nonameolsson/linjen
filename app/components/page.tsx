@@ -29,10 +29,7 @@ type PageProps = {
   header?: React.ReactNode
   padding?: MantineNumberSize
   showBackButton?: boolean
-  subNavigation?: {
-    component: React.ReactNode
-    title: string
-  }
+  subNavigation?: React.ReactNode
   transition?: MantineTransition
   title: string
   toolbarButtons?: JSX.Element
@@ -109,12 +106,29 @@ export function Page(props: PageProps): JSX.Element {
           isMobile={isMobile}
           collapsed={isCollapsed}
           toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
-          subNavigation={subNavigation?.component}
-          subNavigationTitle={subNavigation?.title}
+          subNavigation={subNavigation}
           opened={opened}
         />
       }
     >
+      {subNavigation && (
+        <Box
+          sx={{
+            backgroundColor:
+              theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+            borderBottom: `1px solid ${
+              theme.colorScheme === 'dark'
+                ? theme.colors.dark[7]
+                : theme.colors.gray[3]
+            }`,
+            marginBottom: theme.spacing.xl,
+            padding: theme.spacing.md,
+            paddingTop: 18,
+            height: 60
+          }}
+        />
+      )}
+
       {fab && (
         <Fab
           onClick={fab.onClick}
