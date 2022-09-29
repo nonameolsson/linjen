@@ -152,6 +152,7 @@ function AsideWidget(props: {
       </Group>
       {data.length > 0 ? (
         data.map(item => (
+          // eslint-disable-next-line jsx-a11y/anchor-has-content
           <NavLink
             styles={theme => ({
               root: {
@@ -167,6 +168,7 @@ function AsideWidget(props: {
           />
         ))
       ) : (
+        // eslint-disable-next-line jsx-a11y/anchor-has-content
         <NavLink
           styles={theme => ({
             root: {
@@ -306,14 +308,17 @@ export default function EventDetailsPage() {
           </Menu.Dropdown>
         </Menu>
       }
-      aside={
-        <EventAside
-          events={referencedEvents}
-          timelines={data.event.timelines}
-          people={[]}
-          locations={data.event.location}
-        />
-      }
+      aside={{
+        title: 'Related Info',
+        component: (
+          <EventAside
+            events={referencedEvents}
+            timelines={data.event.timelines}
+            people={[]}
+            locations={data.event.location}
+          />
+        )
+      }}
     >
       <Container my='md'>
         <SimpleGrid

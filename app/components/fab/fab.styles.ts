@@ -18,6 +18,7 @@ export const useStyles = createStyles((theme, { offset }: FabStyleProps) => ({
     width: '3rem',
     height: '3rem',
     display: 'flex',
+    alignItems: 'center',
 
     '&:hover': {
       backgroundColor: theme.colors.blue[7],

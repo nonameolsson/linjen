@@ -33,9 +33,13 @@ export function Fab(props: FabProps) {
             <div>{icon}</div>
           </UnstyledButton>
         ) : (
-          <div style={styles} onClick={onClick} className={classes.button}>
-            {icon}
-          </div>
+          <UnstyledButton
+            className={classes.button}
+            onClick={onClick}
+            style={styles}
+          >
+            <div>{icon}</div>
+          </UnstyledButton>
         )
       }
     </Transition>

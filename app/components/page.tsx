@@ -3,11 +3,14 @@ import {
   AppShell,
   Aside,
   Box,
+  Drawer,
+  Group,
   MediaQuery,
   Transition,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { IconArrowBarLeft } from '@tabler/icons'
 import { useEffect, useState } from 'react'
 
 import { Fab } from './fab'
@@ -16,7 +19,10 @@ import { Navbar } from './navbar'
 
 type PageProps = {
   actions?: JSX.Element
-  aside?: JSX.Element
+  aside?: {
+    title: string
+    component: JSX.Element
+  }
   children: React.ReactNode
   fab?: {
     offset: boolean
@@ -58,93 +64,125 @@ export function Page(props: PageProps): JSX.Element {
   const [opened, setOpened] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const [isDrawerVisible, setIsDrawerVisible] = useState(false)
 
   useEffect(() => {
     setMounted(true)
   }, [])
 
   return (
-    <AppShell
-      padding={padding}
-      styles={{
-        main: {
-          background:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0]
-        }
-      }}
-      asideOffsetBreakpoint='sm'
-      aside={
-        aside && (
-          <MediaQuery smallerThan='sm' styles={{ display: 'none' }}>
-            <Aside hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
-              {aside}
-            </Aside>
-          </MediaQuery>
-        )
-      }
-      footer={isMobile ? bottomNavigation : undefined}
-      header={
-        isMobile ? (
-          <div>
-            <Header
-              mobileTitle={title}
-              opened={opened}
-              setOpened={setOpened}
-              goBackTo={goBackTo}
-              showBackButton={showBackButton}
-              rightButtons={toolbarButtons}
-            />
-            {header}
-          </div>
-        ) : undefined
-      }
-      navbarOffsetBreakpoint='sm'
-      navbar={
-        <Navbar
-          isMobile={isMobile}
-          collapsed={isCollapsed}
-          toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
-          subNavigation={subNavigation}
-          opened={opened}
-        />
-      }
-    >
-      {!isMobile && (
-        <Box
-          sx={{
-            backgroundColor:
-              theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-            borderBottom: `1px solid ${
+    <>
+      <AppShell
+        padding={padding}
+        styles={{
+          main: {
+            background:
               theme.colorScheme === 'dark'
-                ? theme.colors.dark[7]
-                : theme.colors.gray[3]
-            }`,
-            marginBottom: theme.spacing.xl,
-            padding: theme.spacing.md,
-            paddingTop: 18,
-            height: 60
-          }}
-        />
-      )}
-
-      {fab && (
-        <Fab
-          onClick={fab.onClick}
-          offset={fab.offset}
-          link={fab.to}
-          icon={fab.icon}
-        />
-      )}
-      <Transition
-        mounted={mounted}
-        transition={transition || 'fade'}
-        duration={400}
-        timingFunction='ease'
+                ? theme.colors.dark[8]
+                : theme.colors.gray[0]
+          }
+        }}
+        asideOffsetBreakpoint='sm'
+        aside={
+          aside && (
+            <MediaQuery smallerThan='sm' styles={{ display: 'none' }}>
+              <Aside hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
+                {aside.component}
+              </Aside>
+            </MediaQuery>
+          )
+        }
+        footer={isMobile ? bottomNavigation : undefined}
+        header={
+          isMobile ? (
+            <div>
+              <Header
+                mobileTitle={title}
+                opened={opened}
+                setOpened={setOpened}
+                goBackTo={goBackTo}
+                showBackButton={showBackButton}
+                rightButtons={toolbarButtons}
+              />
+              {header}
+            </div>
+          ) : undefined
+        }
+        navbarOffsetBreakpoint='sm'
+        navbar={
+          <Navbar
+            isMobile={isMobile}
+            collapsed={isCollapsed}
+            toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
+            subNavigation={subNavigation}
+            opened={opened}
+          />
+        }
       >
-        {styles => <Box style={styles}>{children}</Box>}
-      </Transition>
-    </AppShell>
+        {!isMobile && (
+          <Box
+            sx={{
+              backgroundColor:
+                theme.colorScheme === 'dark'
+                  ? theme.colors.dark[7]
+                  : theme.white,
+              borderBottom: `1px solid ${
+                theme.colorScheme === 'dark'
+                  ? theme.colors.dark[7]
+                  : theme.colors.gray[3]
+              }`,
+              marginBottom: theme.spacing.xl,
+              padding: theme.spacing.md,
+              paddingTop: 18,
+              height: 60
+            }}
+          />
+        )}
+
+        {fab && (
+          <Fab
+            onClick={fab.onClick}
+            offset={fab.offset}
+            link={fab.to}
+            icon={fab.icon}
+          />
+        )}
+        <Transition
+          mounted={mounted}
+          transition={transition || 'fade'}
+          duration={400}
+          timingFunction='ease'
+        >
+          {styles => <Box style={styles}>{children}</Box>}
+        </Transition>
+      </AppShell>
+
+      {aside && (
+        <>
+          <Drawer
+            opened={isDrawerVisible}
+            onClose={() => setIsDrawerVisible(false)}
+            title={aside.title}
+            position='right'
+            size='xl'
+            styles={{
+              header: {
+                padding: theme.spacing.md
+              }
+            }}
+          >
+            {aside.component}
+          </Drawer>
+
+          <Group position='center'>
+            <Fab
+              offset={isMobile && !!bottomNavigation}
+              onClick={() => setIsDrawerVisible(true)}
+              icon={<IconArrowBarLeft />}
+            />
+          </Group>
+        </>
+      )}
+    </>
   )
 }
