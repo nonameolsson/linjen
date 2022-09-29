@@ -7,14 +7,20 @@ import { z } from 'zod'
 import {
   Alert,
   Box,
+  Button,
+  Container,
   createStyles,
   Grid,
   Textarea,
   TextInput,
+  Title,
   UnstyledButton,
   useMantineTheme
 } from '@mantine/core'
+import { DatePicker } from '@mantine/dates'
 import { useMediaQuery } from '@mantine/hooks'
+
+import { IconCalendar } from '@tabler/icons'
 import { Page } from '~/components'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
@@ -142,6 +148,7 @@ export default function NewEventPage() {
                 placeholder='My awesome event'
                 ref={titleRef}
                 required
+                withAsterisk
               />
 
               <Textarea
@@ -154,18 +161,19 @@ export default function NewEventPage() {
                 rows={4}
               />
 
-              <TextInput
+              <DatePicker
+                dropdownType='modal'
                 error={actionData?.error?.startDate?._errors[0]}
+                icon={<IconCalendar size={16} />}
                 label='Start Date'
+                mt='md'
                 name='startDate'
+                placeholder='Pick date'
                 ref={startDateRef}
-                type='date'
                 defaultValue={
                   actionData?.formPayload?.startDate
-                    ? new Intl.DateTimeFormat('sv-SE').format(
-                        new Date(actionData?.formPayload?.startDate)
-                      )
-                    : new Intl.DateTimeFormat('sv-SE').format(new Date())
+                    ? new Date(actionData?.formPayload?.startDate)
+                    : new Date()
                 }
               />
 
@@ -175,6 +183,12 @@ export default function NewEventPage() {
                 name='timelineId'
                 defaultValue={loaderData.timelineId}
               />
+
+              {!mobile && (
+                <Button mt='md' className={classes.button} type='submit'>
+                  Save
+                </Button>
+              )}
             </Form>
           </Grid.Col>
         </Grid>
@@ -188,14 +202,10 @@ export function CatchBoundary() {
 
   return (
     <Page title={`${caught.status} ${caught.statusText}`}>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert color='red'>{`${caught.status} ${caught.statusText}`}</Alert>
-          </section>
-        </main>
-      </div>
+      <Container fluid>
+        <Title>App Error</Title>
+        <Alert color='red'>{`${caught.status} ${caught.statusText}`}</Alert>
+      </Container>
     </Page>
   )
 }
@@ -203,14 +213,10 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <Page title='Uh-oh!'>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert color='red'>{error.message}</Alert>
-          </section>
-        </main>
-      </div>
+      <Container fluid>
+        <Title>App Error</Title>
+        <Alert color='red'>{error.message}</Alert>
+      </Container>
     </Page>
   )
 }
