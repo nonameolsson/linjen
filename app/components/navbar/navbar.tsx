@@ -62,8 +62,8 @@ export function Navbar(props: NavbarProps): JSX.Element {
     collapsed,
     isMobile,
     subNavigation,
-    subNavigationTitle,
-    toggleCollapsed
+    subNavigationTitle
+    // toggleCollapsed
   } = props
   const collapsedItems: boolean = isMobile ? false : !!collapsed
   const { classes } = useStyles({
