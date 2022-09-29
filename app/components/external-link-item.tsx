@@ -1,5 +1,5 @@
 import { ActionIcon, Group, Menu, Text } from '@mantine/core'
-import { Link, useFetcher } from '@remix-run/react'
+import { useFetcher } from '@remix-run/react'
 import {
   IconDotsVertical,
   IconLink,
@@ -42,7 +42,7 @@ export function ExternalLinkItem(props: ExternalLinkItemProps): JSX.Element {
             : theme.colors.gray[0]
       })}
     >
-      <Text component={Link} to={url} style={{ flex: 1 }}>
+      <Text component='a' href={url} target='_blank' style={{ flex: 1 }}>
         <Group>
           <IconLink size={16} />
           <Text variant='text' size='md'>
