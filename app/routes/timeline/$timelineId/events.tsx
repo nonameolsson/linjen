@@ -1,6 +1,7 @@
-import { PlusIcon } from '@heroicons/react/solid'
-import { Container } from '@mantine/core'
+import { Container, NavLink, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import {
+  Link,
   useLoaderData,
   useLocation,
   useNavigate,
@@ -8,6 +9,7 @@ import {
 } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
+import { IconChevronRight, IconPlus } from '@tabler/icons'
 import { DataTable } from 'mantine-datatable'
 import invariant from 'tiny-invariant'
 
@@ -38,6 +40,8 @@ export default function EventsTab() {
   const location = useLocation()
   const data = useLoaderData<LoaderData>()
   const navigate = useNavigate()
+  const theme = useMantineTheme()
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
   const tableData = data.events.map(event => ({
     id: event.id,
@@ -50,30 +54,54 @@ export default function EventsTab() {
   return (
     <>
       <Fab
-        icon={<PlusIcon className='h-5 w-5' aria-hidden='true' />}
+        icon={<IconPlus />}
         offset={true}
         link={`/event/new?timelineId=${params.timelineId}`}
       />
-
-      <Container size={50}>
-        <DataTable
-          withBorder={false}
-          withColumnBorders
-          records={tableData}
-          columns={[
-            { accessor: 'title' },
-            {
-              accessor: 'startDate',
-              visibleMediaQuery: theme =>
-                `(min-width: ${theme.breakpoints.md}px)`
+      {isMobile ? (
+        <Container
+          fluid
+          px={0}
+          sx={{
+            backgroundColor: 'white',
+            width: '100%',
+            height: 'stretch',
+            overflowY: 'scroll'
+          }}
+        >
+          {tableData.map(item => (
+            // eslint-disable-next-line jsx-a11y/anchor-has-content
+            <NavLink
+              key={item.id}
+              description={item.startDate}
+              component={Link}
+              label={item.title}
+              rightSection={<IconChevronRight size={12} stroke={1.5} />}
+              to={`/event/${item.id}?from=${location.pathname}`}
+            />
+          ))}
+        </Container>
+      ) : (
+        <Container size={50}>
+          <DataTable
+            withBorder={false}
+            withColumnBorders
+            records={tableData}
+            columns={[
+              { accessor: 'title' },
+              {
+                accessor: 'startDate',
+                visibleMediaQuery: theme =>
+                  `(min-width: ${theme.breakpoints.md}px)`
+              }
+            ]}
+            // execute this callback when a row is clicked
+            onRowClick={({ id }) =>
+              navigate(`/event/${id}?from=${location.pathname}`)
             }
-          ]}
-          // execute this callback when a row is clicked
-          onRowClick={({ id }) =>
-            navigate(`/event/${id}?from=${location.pathname}`)
-          }
-        />
-      </Container>
+          />
+        </Container>
+      )}
     </>
   )
 }

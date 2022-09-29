@@ -1,6 +1,7 @@
 import { Carousel } from '@mantine/carousel'
 import {
   Button,
+  Center,
   createStyles,
   Paper,
   Text,
@@ -117,30 +118,32 @@ export default function TimelinesPage() {
       title={pageTitle}
       fab={{ icon: <IconPlus />, offset: false, to: '/timeline/new' }}
     >
-      {data.timelineListItems.length === 0 ? (
-        <p>It is empty here. Lets create timeline!</p>
-      ) : (
-        <Carousel
-          slideSize='80%'
-          breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}
-          slideGap='md'
-          skipSnaps={true}
-          align='center'
-          slidesToScroll={1}
-          height='100%'
-          withControls={!mobile}
-          styles={{
-            control: {
-              '&[data-inactive]': {
-                opacity: 0,
-                cursor: 'default'
+      <Center style={{ height: '100%' }}>
+        {data.timelineListItems.length === 0 ? (
+          <p>It is empty here. Lets create timeline!</p>
+        ) : (
+          <Carousel
+            slideSize='80%'
+            breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}
+            slideGap='md'
+            skipSnaps={true}
+            align='center'
+            slidesToScroll={1}
+            height='100%'
+            withControls={!mobile}
+            styles={{
+              control: {
+                '&[data-inactive]': {
+                  opacity: 0,
+                  cursor: 'default'
+                }
               }
-            }
-          }}
-        >
-          {slides}
-        </Carousel>
-      )}
+            }}
+          >
+            {slides}
+          </Carousel>
+        )}
+      </Center>
     </Page>
   )
 }

@@ -87,18 +87,21 @@ export function Page(props: PageProps): JSX.Element {
       padding={0}
       footer={mobile ? bottomNavigation : undefined}
       styles={{
+        body: {
+          height: 'stretch'
+        },
         main: {
           background:
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
-              : theme.colors.gray[0],
+              : theme.colors.white,
           display: 'flex',
           flexDirection: 'column',
-          height: '100vh',
+          height: 'stretch',
           overflowY: 'scroll'
         },
         root: {
-          height: '100vh'
+          height: 'stretch'
         }
       }}
       navbarOffsetBreakpoint='sm'

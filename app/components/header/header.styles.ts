@@ -8,6 +8,10 @@ export const useStyles = createStyles(theme => ({
     marginLeft: '1rem'
   },
   header: {
+    backgroundColor:
+      theme.colorScheme === 'dark'
+        ? theme.colors.dark[6]
+        : theme.colors.gray[0],
     display: 'flex',
     justifyContent: 'space-between',
     alignContent: 'center'

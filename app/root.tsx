@@ -1,4 +1,6 @@
-import { MantineProvider } from '@mantine/core'
+import type { ColorScheme } from '@mantine/core'
+import { ColorSchemeProvider, MantineProvider } from '@mantine/core'
+import { useColorScheme } from '@mantine/hooks'
 import type { LoaderArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
@@ -10,8 +12,9 @@ import {
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react'
-import { NotFound } from './components'
+import { useState } from 'react'
 
+import { NotFound } from './components'
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
 
@@ -40,51 +43,81 @@ export async function loader({ request }: LoaderArgs) {
 
 export default function App() {
   const data = useLoaderData<LoaderData>()
+  // hook will return either 'dark' or 'light' on client
+  // and always 'light' during ssr as window.matchMedia is not available
+  const preferredColorScheme = useColorScheme()
+  const [colorScheme, setColorScheme] =
+    useState<ColorScheme>(preferredColorScheme)
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS withCSSVariables>
-      <html lang='en' style={{ height: '100vh' }}>
-        <head>
-          <Meta />
-          <link rel='manifest' href='/resources/manifest.json' />
-          <Links />
-        </head>
-        <body style={{ height: '100vh', overflow: 'hidden' }}>
-          <Outlet />
-          <ScrollRestoration />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `window.ENV = ${JSON.stringify(data.ENV)}`
-            }}
-          />
-          <Scripts />
-          <LiveReload />
-        </body>
-      </html>
-    </MantineProvider>
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={{ colorScheme }}
+        withGlobalStyles
+        withNormalizeCSS
+        withCSSVariables
+      >
+        <html lang='en' style={{ height: '100%' }}>
+          <head>
+            <Meta />
+            <link rel='manifest' href='/resources/manifest.json' />
+            <Links />
+          </head>
+          <body style={{ height: '100%', overflow: 'hidden' }}>
+            <Outlet />
+            <ScrollRestoration />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+              }}
+            />
+            <Scripts />
+            <LiveReload />
+          </body>
+        </html>
+      </MantineProvider>
+    </ColorSchemeProvider>
   )
 }
 
 export function CatchBoundary() {
+  // hook will return either 'dark' or 'light' on client
+  // and always 'light' during ssr as window.matchMedia is not available
+  const preferredColorScheme = useColorScheme()
+  const [colorScheme, setColorScheme] =
+    useState<ColorScheme>(preferredColorScheme)
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
+
   return (
-    <MantineProvider
-      withGlobalStyles
-      withNormalizeCSS
-      withCSSVariables
-      theme={{ activeStyles: { transform: 'scale(0.95)' } }}
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
     >
-      <html>
-        <head>
-          <title>Oops!</title>
-          <Meta />
-          <link rel='manifest' href='/resources/manifest.json' />
-          <Links />
-        </head>
-        <body>
-          <NotFound />
-          <Scripts />
-        </body>
-      </html>
-    </MantineProvider>
+      <MantineProvider
+        withGlobalStyles
+        withNormalizeCSS
+        withCSSVariables
+        theme={{ activeStyles: { transform: 'scale(0.95)' } }}
+      >
+        <html>
+          <head>
+            <title>Oops!</title>
+            <Meta />
+            <link rel='manifest' href='/resources/manifest.json' />
+            <Links />
+          </head>
+          <body>
+            <NotFound />
+            <Scripts />
+          </body>
+        </html>
+      </MantineProvider>
+    </ColorSchemeProvider>
   )
 }

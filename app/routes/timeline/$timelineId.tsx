@@ -1,6 +1,6 @@
 import { ExclamationIcon } from '@heroicons/react/solid'
 
-import { Container, Menu, Tabs, useMantineTheme } from '@mantine/core'
+import { Menu, Tabs, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
@@ -135,38 +135,38 @@ export default function TimelineDetailsPage() {
         </Tabs>
       )}
 
-      <Container>
-        <Outlet />
+      {/* <Container fluid={true}> */}
+      <Outlet />
 
-        <Modal
-          icon={
-            <ExclamationIcon
-              className='h-6 w-6 text-red-600'
-              aria-hidden='true'
-            />
-          }
-          isOpen={isOpen}
-          closeModal={closeDeleteModal}
-          title='Delete timeline'
-          description='The events, places and people will not be deleted.'
-          buttons={
-            <>
-              <button
-                type='button'
-                className='btn-outline btn'
-                onClick={closeDeleteModal}
-              >
-                Cancel
+      <Modal
+        icon={
+          <ExclamationIcon
+            className='h-6 w-6 text-red-600'
+            aria-hidden='true'
+          />
+        }
+        isOpen={isOpen}
+        closeModal={closeDeleteModal}
+        title='Delete timeline'
+        description='The events, places and people will not be deleted.'
+        buttons={
+          <>
+            <button
+              type='button'
+              className='btn-outline btn'
+              onClick={closeDeleteModal}
+            >
+              Cancel
+            </button>
+            <Form replace method='post'>
+              <button type='submit' className='btn btn-error'>
+                Delete
               </button>
-              <Form replace method='post'>
-                <button type='submit' className='btn btn-error'>
-                  Delete
-                </button>
-              </Form>
-            </>
-          }
-        />
-      </Container>
+            </Form>
+          </>
+        }
+      />
+      {/* </Container> */}
     </Page>
   )
 }

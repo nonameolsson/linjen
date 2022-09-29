@@ -1,7 +1,10 @@
 import { createStyles, UnstyledButton } from '@mantine/core'
 import { Link } from '@remix-run/react'
 
-const useStyles = createStyles(theme => ({
+type FabStyleProps = {
+  offset: boolean
+}
+const useStyles = createStyles((theme, { offset }: FabStyleProps) => ({
   button: {
     backgroundColor: theme.colors.blue[5],
     borderRadius: theme.radius.xl,
@@ -9,13 +12,13 @@ const useStyles = createStyles(theme => ({
     color: theme.white,
     padding: theme.spacing.lg,
     position: 'fixed',
-    bottom: '16px',
+    bottom: offset ? theme.spacing.xl : '16px',
     right: '16px',
     transitionDuration: '150ms',
     transitionProperty: 'box-shadow',
     zIndex: 100,
-    width: '4rem',
-    height: '4rem',
+    width: '3rem',
+    height: '3rem',
 
     '&:hover': {
       backgroundColor: theme.colors.blue[6],
@@ -34,7 +37,7 @@ type FabProps = {
 export function Fab(props: FabProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { link, icon, offset, onClick } = props
-  const { classes } = useStyles()
+  const { classes } = useStyles({ offset })
 
   return link ? (
     <UnstyledButton className={classes.button} component={Link} to={link}>
