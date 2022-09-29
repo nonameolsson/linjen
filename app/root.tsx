@@ -42,7 +42,7 @@ export default function App() {
   const data = useLoaderData<LoaderData>()
 
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider withGlobalStyles withNormalizeCSS withCSSVariables>
       <html lang='en' style={{ height: '100vh' }}>
         <head>
           <Meta />
@@ -67,7 +67,12 @@ export default function App() {
 
 export function CatchBoundary() {
   return (
-    <MantineProvider withGlobalStyles withNormalizeCSS>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      withCSSVariables
+      theme={{ activeStyles: { transform: 'scale(0.95)' } }}
+    >
       <html>
         <head>
           <title>Oops!</title>

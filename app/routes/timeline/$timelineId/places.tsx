@@ -1,4 +1,5 @@
 import { PlusIcon } from '@heroicons/react/solid'
+import { Text } from '@mantine/core'
 import { Link } from '@remix-run/react'
 
 export default function PlacesTab() {
@@ -13,6 +14,7 @@ export default function PlacesTab() {
             <PlusIcon className='h-5 w-5' aria-hidden='true' />
           </Link>
           <h2>Places will be added here</h2>
+          <Text>Hej!</Text>
         </section>
       </main>
     </div>

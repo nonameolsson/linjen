@@ -1,4 +1,5 @@
 export * from './aside'
+export * from './bottom-navigation'
 export * from './button'
 export * from './content-module'
 export * from './desktop-tabs'

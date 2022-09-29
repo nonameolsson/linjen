@@ -36,7 +36,7 @@ export function Header(props: HeaderProps): JSX.Element {
   }
 
   return (
-    <MantineHeader className={classes.header} height={44}>
+    <MantineHeader className={classes.header} height={46}>
       {showBackButton ? (
         <UnstyledButton onClick={goBack} className={classes.button}>
           <IconArrowLeft />

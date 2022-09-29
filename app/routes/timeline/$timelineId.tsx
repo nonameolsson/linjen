@@ -1,26 +1,30 @@
-import { CalendarIcon } from '@heroicons/react/outline'
-
 import { ExclamationIcon } from '@heroicons/react/solid'
 
-import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
-
-import { Container, Menu } from '@mantine/core'
+import { Container, Menu, Tabs, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
   Form,
   Link,
-  NavLink,
   Outlet,
   useCatch,
-  useLoaderData
+  useLoaderData,
+  useLocation,
+  useNavigate
 } from '@remix-run/react'
-import { IconEdit, IconTrash } from '@tabler/icons'
+import {
+  IconCalendarEvent,
+  IconEdit,
+  IconFriends,
+  IconMap,
+  IconTrash
+} from '@tabler/icons'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
 
-import { Modal, OverflowButton } from '~/components'
+import { BottomNavigation, Modal, OverflowButton } from '~/components'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
@@ -57,8 +61,10 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  // const navigate = useNavigate()
-  // const { tabValue } = useParams()
+  const navigate = useNavigate()
+  const theme = useMantineTheme()
+  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.lg}px)`)
+  const { pathname } = useLocation()
 
   function closeDeleteModal() {
     setIsOpen(false)
@@ -68,10 +74,31 @@ export default function TimelineDetailsPage() {
     setIsOpen(true)
   }
 
+  const currentTab = pathname.split('/').pop()
+
   return (
     <Page
       showBackButton
       goBackTo='/timelines'
+      bottomNavigation={
+        <BottomNavigation>
+          <BottomNavigation.Button
+            icon={<IconCalendarEvent />}
+            to='events'
+            title='Events'
+          />
+          <BottomNavigation.Button
+            icon={<IconMap />}
+            to='places'
+            title='Places'
+          />
+          <BottomNavigation.Button
+            icon={<IconFriends />}
+            to='people'
+            title='People'
+          />
+        </BottomNavigation>
+      }
       title={data.timeline.title}
       toolbarButtons={
         <Menu shadow='md' width={200} position='bottom-end'>
@@ -95,76 +122,53 @@ export default function TimelineDetailsPage() {
         //<OverflowButton onDeleteClick={openDeleteModal} />
       }
     >
-      {/* <DesktopTabs
-          tabs={[
-            { name: 'Events', linkTo: 'events' },
-            { name: 'Places', linkTo: 'places' },
-            { name: 'People', linkTo: 'people' }
-          ]}
-        /> */}
-      <Container>
-        {/* <Tabs value={tabValue} onTabChange={value => navigate(value)}>
+      {isDesktop && (
+        <Tabs
+          value={currentTab}
+          onTabChange={(value: string) => navigate(value)}
+        >
           <Tabs.List>
             <Tabs.Tab value='events'>Events</Tabs.Tab>
             <Tabs.Tab value='places'>Places</Tabs.Tab>
             <Tabs.Tab value='people'>People</Tabs.Tab>
           </Tabs.List>
-        </Tabs> */}
+        </Tabs>
+      )}
 
+      <Container>
         <Outlet />
 
-        <div>
-          <NavLink to='events'>
-            <CalendarIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>Events</span>
-          </NavLink>
-          <NavLink to='places'>
-            <GlobeIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>Places</span>
-          </NavLink>
-          <NavLink to='people'>
-            <UsersIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>People</span>
-          </NavLink>
-
-          <Modal
-            icon={
-              <ExclamationIcon
-                className='h-6 w-6 text-red-600'
-                aria-hidden='true'
-              />
-            }
-            isOpen={isOpen}
-            closeModal={closeDeleteModal}
-            title='Delete timeline'
-            description='The events, places and people will not be deleted.'
-            buttons={
-              <>
-                <button
-                  type='button'
-                  className='btn-outline btn'
-                  onClick={closeDeleteModal}
-                >
-                  Cancel
+        <Modal
+          icon={
+            <ExclamationIcon
+              className='h-6 w-6 text-red-600'
+              aria-hidden='true'
+            />
+          }
+          isOpen={isOpen}
+          closeModal={closeDeleteModal}
+          title='Delete timeline'
+          description='The events, places and people will not be deleted.'
+          buttons={
+            <>
+              <button
+                type='button'
+                className='btn-outline btn'
+                onClick={closeDeleteModal}
+              >
+                Cancel
+              </button>
+              <Form replace method='post'>
+                <button type='submit' className='btn btn-error'>
+                  Delete
                 </button>
-                <Form replace method='post'>
-                  <button type='submit' className='btn btn-error'>
-                    Delete
-                  </button>
-                </Form>
-              </>
-            }
-          />
-        </div>
+              </Form>
+            </>
+          }
+        />
       </Container>
     </Page>
   )
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error)
-
-  return <div>An unexpected error occurred: {error.message}</div>
 }
 
 export function CatchBoundary() {

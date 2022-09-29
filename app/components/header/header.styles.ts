@@ -46,6 +46,7 @@ export const useStyles = createStyles(theme => ({
     alignSelf: 'end',
     display: 'flex',
     height: '100%',
-    marginRight: theme.spacing.md
+    marginRight: theme.spacing.md,
+    zIndex: 1
   }
 }))

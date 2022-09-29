@@ -107,7 +107,7 @@ export default function TimelinesPage() {
         title={item.title}
         events={item._count.event}
         imageUrl={item.imageUrl}
-        link={`/timeline/${item.id}`}
+        link={`/timeline/${item.id}/events`}
       />
     </Carousel.Slide>
   ))
@@ -124,7 +124,8 @@ export default function TimelinesPage() {
           slideSize='80%'
           breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}
           slideGap='md'
-          align={mobile ? 'center' : 'start'}
+          skipSnaps={true}
+          align='center'
           slidesToScroll={1}
           height='100%'
           withControls={!mobile}

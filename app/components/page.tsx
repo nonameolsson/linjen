@@ -1,4 +1,5 @@
 import { AppShell, Navbar, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import {
   IconCalendarEvent,
   IconFriends,
@@ -45,20 +46,21 @@ export function MainLinks() {
 }
 
 type PageProps = {
+  actions?: JSX.Element
   aside?: JSX.Element
   children: React.ReactNode
-  actions?: JSX.Element
-  footer?: JSX.Element
-  goBackTo?: string
-  showBackButton?: boolean
-  toolbarButtons?: JSX.Element
   fab?: {
     offset: boolean
     icon: JSX.Element
     to?: string
     onClick?: () => void
   }
+  bottomNavigation?: JSX.Element
+  goBackTo?: string
+  header?: React.ReactNode
+  showBackButton?: boolean
   title: string
+  toolbarButtons?: JSX.Element
 }
 
 export function Page(props: PageProps): JSX.Element {
@@ -68,7 +70,8 @@ export function Page(props: PageProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     actions,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    footer,
+    bottomNavigation,
+    header,
     toolbarButtons,
     showBackButton = false,
     goBackTo,
@@ -76,11 +79,13 @@ export function Page(props: PageProps): JSX.Element {
     title
   } = props
   const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
 
   return (
     <AppShell
-      footer={<p>asdfa</p>}
+      padding={0}
+      footer={mobile ? bottomNavigation : undefined}
       styles={{
         main: {
           background:
@@ -115,14 +120,17 @@ export function Page(props: PageProps): JSX.Element {
         </Navbar>
       }
       header={
-        <Header
-          mobileTitle={title}
-          opened={opened}
-          setOpened={setOpened}
-          goBackTo={goBackTo}
-          showBackButton={showBackButton}
-          rightButtons={toolbarButtons}
-        />
+        <div>
+          <Header
+            mobileTitle={title}
+            opened={opened}
+            setOpened={setOpened}
+            goBackTo={goBackTo}
+            showBackButton={showBackButton}
+            rightButtons={toolbarButtons}
+          />
+          {header}
+        </div>
       }
     >
       {fab && (
@@ -133,7 +141,7 @@ export function Page(props: PageProps): JSX.Element {
           icon={fab.icon}
         />
       )}
-      {children}
+      <div style={{ marginTop: '44px' }}>{children}</div>
     </AppShell>
   )
 }
