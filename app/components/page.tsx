@@ -40,7 +40,7 @@ const data: NavbarLinkProps[] = [
 ]
 
 export function MainLinks() {
-  const links = data.map(link => <NavbarLink key={link.label}  {...link} />)
+  const links = data.map(link => <NavbarLink key={link.label} {...link} />)
   return <div>{links}</div>
 }
 
@@ -88,7 +88,7 @@ export function Page(props: PageProps): JSX.Element {
           display: 'flex',
           flexDirection: 'column',
           height: '100vh',
-          'overflow-y': 'scroll'
+          overflowY: 'scroll'
         },
         root: {
           height: '100vh'

@@ -1,13 +1,14 @@
+import { Carousel } from '@mantine/carousel'
 import {
-  Badge,
-  Card,
+  Button,
   createStyles,
-  Group,
-  Image,
-  SimpleGrid,
-  Text
+  Paper,
+  Text,
+  Title,
+  useMantineTheme
 } from '@mantine/core'
-import type { LoaderFunction } from '@remix-run/node'
+import { useMediaQuery } from '@mantine/hooks'
+import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import { Link, useLoaderData } from '@remix-run/react'
 import { IconPlus } from '@tabler/icons'
@@ -20,9 +21,10 @@ type LoaderData = {
   timelineListItems: Awaited<ReturnType<typeof getTimelineListItems>>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request)
   const timelineListItems = await getTimelineListItems({ userId })
+
   return json<LoaderData>({ timelineListItems })
 }
 
@@ -30,18 +32,85 @@ const pageTitle = 'Your Timelines'
 
 const useStyles = createStyles(theme => ({
   card: {
-    transitionDuration: '150ms',
-    transitionProperty: 'box-shadow',
+    height: 440,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  },
 
-    '&:hover': {
-      boxShadow: theme.shadows.sm
-    }
+  title: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontWeight: 900,
+    color: theme.white,
+    lineHeight: 1.2,
+    fontSize: 32,
+    marginTop: theme.spacing.xs
+  },
+
+  category: {
+    color: theme.white,
+    opacity: 0.7,
+    fontWeight: 700,
+    textTransform: 'uppercase'
   }
 }))
 
-export default function TimelinesPage() {
+type CardProps = {
+  events: number
+  link: string
+  title: string
+  description: null | string
+  imageUrl: null | string
+}
+
+function Card({ imageUrl, events, title, link }: CardProps) {
   const { classes } = useStyles()
-  const data = useLoaderData<LoaderData>()
+  const image =
+    imageUrl ||
+    'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80'
+
+  return (
+    <Paper
+      shadow='md'
+      p='xl'
+      radius='md'
+      sx={{ backgroundImage: `url(${image})` }}
+      className={classes.card}
+    >
+      <div>
+        <Text className={classes.category} size='xs'>
+          Events: {events}
+        </Text>
+        <Title order={3} className={classes.title}>
+          {title}
+        </Title>
+      </div>
+      <Button variant='white' color='dark' component={Link} to={link}>
+        Open Timeline
+      </Button>
+    </Paper>
+  )
+}
+
+export default function TimelinesPage() {
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+  const data = useLoaderData<typeof loader>()
+
+  const slides = data.timelineListItems.map(item => (
+    <Carousel.Slide key={item.title}>
+      <Card
+        description={item.description}
+        title={item.title}
+        events={item._count.event}
+        imageUrl={item.imageUrl}
+        link={`/timeline/${item.id}`}
+      />
+    </Carousel.Slide>
+  ))
 
   return (
     <Page
@@ -49,51 +118,19 @@ export default function TimelinesPage() {
       fab={{ icon: <IconPlus />, offset: false, to: '/timeline/new' }}
     >
       {data.timelineListItems.length === 0 ? (
-        <p>No timelines yet</p>
+        <p>It is empty here. Lets create timeline!</p>
       ) : (
-        <>
-          <SimpleGrid
-            breakpoints={[
-              { minWidth: 'sm', cols: 2 },
-              { minWidth: 'md', cols: 3 },
-              { minWidth: 1200, cols: 4, spacing: 'xl' }
-            ]}
-          >
-            {data.timelineListItems.map(timeline => (
-              <Card
-                className={classes.card}
-                key={timeline.id}
-                p='lg'
-                radius='md'
-                withBorder
-                component={Link}
-                to={`/timeline/${timeline.id}/events`}
-              >
-                <Card.Section>
-                  <Image
-                    src={
-                      timeline.imageUrl ||
-                      'https://images.unsplash.com/photo-1527004013197-933c4bb611b3?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=720&q=80'
-                    }
-                    height={160}
-                    alt='Norway'
-                  />
-                </Card.Section>
-
-                <Group position='apart' mt='md' mb='xs'>
-                  <Text weight={500}>{timeline.title}</Text>
-                  <Badge color='pink' variant='light'>
-                    Events: {timeline._count.event}
-                  </Badge>
-                </Group>
-
-                <Text size='sm' color='dimmed'>
-                  {timeline.description}
-                </Text>
-              </Card>
-            ))}
-          </SimpleGrid>
-        </>
+        <Carousel
+          slideSize='70%'
+          breakpoints={[{ maxWidth: 'sm', slideSize: '80%', slideGap: 'md' }]}
+          slideGap='xl'
+          align='center'
+          slidesToScroll={1}
+          height='100%'
+          withControls={!mobile}
+        >
+          {slides}
+        </Carousel>
       )}
     </Page>
   )

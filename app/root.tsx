@@ -1,3 +1,4 @@
+import { MantineProvider } from '@mantine/core'
 import type { LoaderArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
@@ -9,16 +10,10 @@ import {
   ScrollRestoration,
   useLoaderData
 } from '@remix-run/react'
+import { NotFound } from './components'
 
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
-
-import { MantineProvider } from '@mantine/core'
-// import tailwindStylesheetUrl from './styles/tailwind.css'
-
-// export const links: LinksFunction = () => {
-//   return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
-// }
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
@@ -31,7 +26,6 @@ type LoaderData = {
   ENV: EnvironmentVariables
   user: Awaited<ReturnType<typeof getUser>>
 }
-
 
 export async function loader({ request }: LoaderArgs) {
   const ENV: EnvironmentVariables = {
@@ -49,11 +43,7 @@ export default function App() {
 
   return (
     <MantineProvider withGlobalStyles withNormalizeCSS>
-      <html
-        lang='en'
-        className='h-screen scroll-smooth bg-gray-50'
-        style={{ height: '100vh' }}
-      >
+      <html lang='en' style={{ height: '100vh' }}>
         <head>
           <Meta />
           <link rel='manifest' href='/resources/manifest.json' />
@@ -69,6 +59,25 @@ export default function App() {
           />
           <Scripts />
           <LiveReload />
+        </body>
+      </html>
+    </MantineProvider>
+  )
+}
+
+export function CatchBoundary() {
+  return (
+    <MantineProvider withGlobalStyles withNormalizeCSS>
+      <html>
+        <head>
+          <title>Oops!</title>
+          <Meta />
+          <link rel='manifest' href='/resources/manifest.json' />
+          <Links />
+        </head>
+        <body>
+          <NotFound />
+          <Scripts />
         </body>
       </html>
     </MantineProvider>

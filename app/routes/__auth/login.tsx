@@ -3,12 +3,9 @@ import {
   Anchor,
   Button,
   Checkbox,
-  Container,
-  Image,
   PasswordInput,
-  Space,
-  TextInput,
-  Title
+  Text,
+  TextInput
 } from '@mantine/core'
 import type {
   ActionFunction,
@@ -18,8 +15,8 @@ import type {
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
 import { IconAlertCircle } from '@tabler/icons'
-import * as React from 'react'
 import { z } from 'zod'
+import { Authentication } from '~/components/authentication'
 
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
@@ -93,73 +90,66 @@ export default function LoginPage() {
   const redirectTo = searchParams.get('redirectTo') || '/timelines'
   const actionData = useActionData<ActionData>()
 
-  const emailRef = React.useRef<HTMLInputElement>(null)
-  const passwordRef = React.useRef<HTMLInputElement>(null)
-
-  React.useEffect(() => {
-    if (actionData?.error?.email) {
-      emailRef.current?.focus()
-    } else if (actionData?.error?.password) {
-      passwordRef.current?.focus()
-    }
-  }, [actionData])
-
   return (
-    <Container size='xs' px='xs'>
-      <Title align='center' order={1}>
-        Log in to your account
-      </Title>
-      <Image src='images/landing.jpg' alt='Timelines and events' mb='md' />
-
+    <Authentication title='Welcome to Linjen!'>
       <Form method='post'>
         <TextInput
-          ref={emailRef}
-          id='email'
-          label='Email'
-          required
-          autoFocus={true}
-          name='email'
-          type='email'
           autoComplete='email'
+          autoFocus={true}
           error={actionData?.error?.email?._errors[0]}
+          id='email'
+          label='Email address'
+          name='email'
+          placeholder='hello@gmail.com'
+          required
+          size='md'
+          type='email'
         />
-        {console.log(actionData)}
 
         <PasswordInput
-          id='password'
-          ref={passwordRef}
-          name='password'
-          label='Password'
           autoComplete='current-password'
           error={actionData?.error?.password?._errors[0]}
+          id='password'
+          label='Password'
+          mt='md'
+          name='password'
+          placeholder='Your password'
+          size='md'
         />
 
-        <Checkbox label='Remember me' id='remember' name='remember' mt='md' />
+        <Checkbox label='Keep me logged in' mt='xl' size='md' />
 
         <input type='hidden' name='redirectTo' value={redirectTo} />
 
         {actionData?.formError && (
-          <Alert mt='md' color='red' icon={<IconAlertCircle size={16} />}>
+          <Alert
+            mt='md'
+            icon={<IconAlertCircle size={16} />}
+            title='Bummer!'
+            color='red'
+          >
             {actionData.formError}
           </Alert>
         )}
 
-        <Button fullWidth mt='md' type='submit'>
-          Log in
+        <Button fullWidth mt='xl' size='md' type='submit'>
+          Login
         </Button>
       </Form>
 
-      <Space mt='md' />
-
-      <Anchor
-        component={Link}
-        to={{
-          pathname: '/join',
-          search: searchParams.toString()
-        }}
-      >
-        Create a new account
-      </Anchor>
-    </Container>
+      <Text align='center' mt='md'>
+        Don&apos;t have an account?{' '}
+        <Anchor
+          component={Link}
+          to={{
+            pathname: '/join',
+            search: searchParams.toString()
+          }}
+          weight={700}
+        >
+          Register
+        </Anchor>
+      </Text>
+    </Authentication>
   )
 }

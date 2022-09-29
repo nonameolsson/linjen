@@ -13,16 +13,13 @@ import {
   Alert,
   Anchor,
   Button,
-  Container,
-  Image,
   PasswordInput,
-  Space,
   Text,
-  TextInput,
-  Title
+  TextInput
 } from '@mantine/core'
 import { IconAlertCircle } from '@tabler/icons'
 import { z } from 'zod'
+import { Authentication } from '~/components/authentication'
 import { createUser, getUserByEmail } from '~/models/user.server'
 import { safeRedirect } from '~/utils'
 import { badRequestWithError } from '~/utils/index'
@@ -107,12 +104,7 @@ export default function Join() {
   }, [actionData])
 
   return (
-    <Container size='xs' px='xs'>
-      <Title align='center' order={1}>
-        Create a new account
-      </Title>
-      <Image src='images/landing.jpg' alt='Timelines and events' mb='md' />
-
+    <Authentication title='Create your account'>
       <Form method='post'>
         <TextInput
           ref={emailRef}
@@ -138,28 +130,34 @@ export default function Join() {
         <input type='hidden' name='redirectTo' value={redirectTo} />
 
         {actionData?.formError?.email && (
-          <Alert mt='md' color='red' icon={<IconAlertCircle size={16} />}>
+          <Alert
+            mt='md'
+            color='red'
+            title='Oh no!'
+            icon={<IconAlertCircle size={16} />}
+          >
             {actionData.formError.email}
           </Alert>
         )}
 
-        <Button fullWidth mt='md' type='submit'>
+        <Button fullWidth mt='xl' type='submit'>
           Create account
         </Button>
       </Form>
 
-      <Space mt='md' />
-
-      <Text>Already have an account?</Text>
-      <Anchor
-        component={Link}
-        to={{
-          pathname: '/login',
-          search: searchParams.toString()
-        }}
-      >
-        Click here to log in.
-      </Anchor>
-    </Container>
+      <Text align='center' mt='md'>
+        Already have an account?{' '}
+        <Anchor
+          component={Link}
+          to={{
+            pathname: '/login',
+            search: searchParams.toString()
+          }}
+          weight={700}
+        >
+          Log in
+        </Anchor>
+      </Text>
+    </Authentication>
   )
 }
