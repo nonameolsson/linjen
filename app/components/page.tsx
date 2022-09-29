@@ -94,7 +94,7 @@ export function Page(props: PageProps): JSX.Element {
       footer={mobile ? bottomNavigation : undefined}
       styles={{
         body: {
-          height: 'stretch'
+          height: '100%'
         },
         main: {
           background:
@@ -103,11 +103,12 @@ export function Page(props: PageProps): JSX.Element {
               : theme.colors.gray[0],
           display: 'flex',
           flexDirection: 'column',
-          height: 'stretch',
+          height: '100%',
           overflowY: 'scroll'
         },
         root: {
-          height: 'stretch'
+          height: '100%',
+          overflow: 'hidden'
         }
       }}
       navbarOffsetBreakpoint='sm'

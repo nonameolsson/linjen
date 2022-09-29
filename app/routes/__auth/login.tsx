@@ -95,6 +95,7 @@ export default function LoginPage() {
       <Form method='post'>
         <TextInput
           autoComplete='email'
+          defaultValue={'demo@user.com'}
           autoFocus={true}
           error={actionData?.error?.email?._errors[0]}
           id='email'
@@ -111,6 +112,7 @@ export default function LoginPage() {
           error={actionData?.error?.password?._errors[0]}
           id='password'
           label='Password'
+          defaultValue='demouser'
           mt='md'
           name='password'
           placeholder='Your password'

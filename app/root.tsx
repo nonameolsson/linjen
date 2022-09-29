@@ -22,7 +22,7 @@ export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Linjen',
   viewport:
-    'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'
+    'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'
 })
 
 type LoaderData = {
@@ -62,13 +62,21 @@ export default function App() {
         withNormalizeCSS
         withCSSVariables
       >
-        <html lang='en' style={{ height: '100%' }}>
+        <html
+          lang='en'
+          style={{ height: 'calc(100vh - env(safe-area-inset-bottom))' }}
+        >
           <head>
             <Meta />
             <link rel='manifest' href='/resources/manifest.json' />
             <Links />
           </head>
-          <body style={{ height: '100%', overflow: 'hidden' }}>
+          <body
+            style={{
+              height: 'calc(100vh - env(safe-area-inset-bottom))',
+              overflow: 'hidden'
+            }}
+          >
             <Outlet />
             <ScrollRestoration />
             <script
