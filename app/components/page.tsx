@@ -48,6 +48,7 @@ type PageProps = {
   aside?: JSX.Element
   children: React.ReactNode
   actions?: JSX.Element
+  footer?: JSX.Element
   goBackTo?: string
   showBackButton?: boolean
   toolbarButtons?: JSX.Element
@@ -65,6 +66,7 @@ export function Page(props: PageProps): JSX.Element {
     aside,
     children,
     actions,
+    footer,
     toolbarButtons,
     showBackButton = false,
     goBackTo,
@@ -76,13 +78,15 @@ export function Page(props: PageProps): JSX.Element {
 
   return (
     <AppShell
-      fixed={false}
+      footer={<p>asdfa</p>}
       styles={{
         main: {
           background:
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
               : theme.colors.gray[0],
+          display: 'flex',
+          flexDirection: 'column',
           height: '100vh',
           'overflow-y': 'scroll'
         },
@@ -93,6 +97,7 @@ export function Page(props: PageProps): JSX.Element {
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
       aside={aside}
+      footer={footer}
       navbar={
         <Navbar
           p='md'

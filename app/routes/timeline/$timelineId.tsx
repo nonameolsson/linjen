@@ -3,7 +3,7 @@ import { CalendarIcon } from '@heroicons/react/outline'
 import { ExclamationIcon } from '@heroicons/react/solid'
 
 import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
-import { Menu } from '@mantine/core'
+import { Container, Menu, Tabs } from '@mantine/core'
 
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -13,14 +13,15 @@ import {
   NavLink,
   Outlet,
   useCatch,
-  useLoaderData
+  useLoaderData,
+  useNavigate,
+  useParams
 } from '@remix-run/react'
 import { IconEdit, IconTrash } from '@tabler/icons'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
 
-import { DesktopTabs, Modal, OverflowButton, PageHeader } from '~/components'
-import { Content } from '~/components/content'
+import { Modal, OverflowButton } from '~/components'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
@@ -57,6 +58,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const navigate = useNavigate()
+  const { tabValue } = useParams()
 
   function closeDeleteModal() {
     setIsOpen(false)
@@ -93,40 +96,25 @@ export default function TimelineDetailsPage() {
         //<OverflowButton onDeleteClick={openDeleteModal} />
       }
     >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={data.timeline.title}
-            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
-              new Date()
-            )}
-            actions={
-              <>
-                <button
-                  onClick={openDeleteModal}
-                  className='btn btn-error btn-outline'
-                >
-                  Delete
-                </button>
-                <Link to='edit' className='btn btn-primary'>
-                  Edit
-                </Link>
-              </>
-            }
-          />
-        }
-      >
-        <DesktopTabs
+      {/* <DesktopTabs
           tabs={[
             { name: 'Events', linkTo: 'events' },
             { name: 'Places', linkTo: 'places' },
             { name: 'People', linkTo: 'people' }
           ]}
-        />
+        /> */}
+      <Container>
+        <Tabs value={tabValue} onTabChange={value => navigate(value)}>
+          <Tabs.List>
+            <Tabs.Tab value='events'>Events</Tabs.Tab>
+            <Tabs.Tab value='places'>Places</Tabs.Tab>
+            <Tabs.Tab value='people'>People</Tabs.Tab>
+          </Tabs.List>
+        </Tabs>
 
         <Outlet />
 
-        <div className='btm-nav lg:hidden'>
+        <div>
           <NavLink to='events'>
             <CalendarIcon className='h-5 w-5' />
             <span className='btm-nav-label'>Events</span>
@@ -169,7 +157,7 @@ export default function TimelineDetailsPage() {
             }
           />
         </div>
-      </Content>
+      </Container>
     </Page>
   )
 }
