@@ -4,4 +4,5 @@ export type NavbarProps = {
   subNavigation?: React.ReactNode
   collapsed?: boolean
   toggleCollapsed: () => void
+  isMobile: boolean
 }

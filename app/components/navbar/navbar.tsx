@@ -1,23 +1,16 @@
+import { Box, Code, Group, Navbar as MantineNavbar } from '@mantine/core'
+import { Form, NavLink } from '@remix-run/react'
 import {
-  Center,
-  Navbar as MantineNavbar,
-  Stack,
-  Text,
-  Title
-} from '@mantine/core'
-import {
-  IconArrowAutofitLeft,
-  IconArrowAutofitRight,
   IconCalendarEvent,
   IconFriends,
+  IconLogout,
   IconMap,
   IconTimeline,
   IconUser
 } from '@tabler/icons'
-import { useState } from 'react'
 
-import { NavbarLink } from '../navbar-link'
 import type { NavbarLinkProps } from '../navbar-link/'
+import { NavbarLink } from '../navbar-link/'
 import { useStyles } from './navbar.styles'
 import type { NavbarProps } from './navbar.types'
 
@@ -26,39 +19,29 @@ const mainLinks: NavbarLinkProps[] = [
     icon: IconTimeline,
     color: 'blue',
     title: 'Timelines',
-    handle: '/timelines',
+    to: '/timelines',
     tooltipLabel: 'All timelines'
   },
   {
     icon: IconCalendarEvent,
     color: 'teal',
     title: 'Events',
-    handle: '/events',
+    to: '/events',
     tooltipLabel: 'All events'
   },
   {
     icon: IconFriends,
     color: 'violet',
     title: 'People',
-    handle: '/people',
+    to: '/people',
     tooltipLabel: 'All people'
   },
   {
     icon: IconMap,
     color: 'grape',
     title: 'Locations',
-    handle: '/locations',
+    to: '/locations',
     tooltipLabel: 'All locations'
-  }
-]
-
-const userLinks: NavbarLinkProps[] = [
-  {
-    icon: IconUser,
-    color: 'blue',
-    title: 'Profile',
-    handle: '/profile',
-    tooltipLabel: 'Profile'
   }
 ]
 
@@ -75,55 +58,90 @@ const linksMockdata = [
   'Open Issues',
   'Wiki pages'
 ]
+const userLinks: NavbarLinkProps[] = [
+  {
+    icon: IconUser,
+    color: 'blue',
+    title: 'Profile',
+    to: '/profile',
+    tooltipLabel: 'Profile'
+  }
+]
 
 export function Navbar(props: NavbarProps): JSX.Element {
-  const { opened, logo, collapsed, subNavigation, toggleCollapsed } = props
+  const { opened, logo, collapsed, isMobile, subNavigation, toggleCollapsed } =
+    props
   const { classes, cx } = useStyles()
-  const [active, setActive] = useState('Releases')
-  const [activeLink, setActiveLink] = useState('Settings')
 
-  const links = linksMockdata.map(link => (
-    <a
-      className={cx(classes.link, {
-        [classes.linkActive]: activeLink === link
-      })}
-      href='/'
-      onClick={event => {
-        event.preventDefault()
-        setActiveLink(link)
-      }}
-      key={link}
-    >
-      {link}
-    </a>
+  // const [active, setActive] = useState('Billing')
+
+  const links2 = mainLinks.map(item => (
+    <NavbarLink
+      color={item.color}
+      to={item.to}
+      icon={item.icon}
+      iconOnly={false}
+      key={item.title}
+      title={item.title}
+      tooltipLabel={item.tooltipLabel}
+    />
   ))
 
   return (
     <MantineNavbar
+      // width={{
+      //   sm: collapsed ? 80 : 300
+      //   // subNavigation
+      //   //   ? collapsed : 220
+      //   //     ? 100
+      //   //     : 100
+      // }}
       hiddenBreakpoint='sm'
       hidden={!opened}
-      width={{ sm: collapsed ? 80 : 300 }}
+      width={{ sm: 300 }}
       p='md'
     >
-      <Center>
-        {logo} {!collapsed && <Text>Linjen</Text>}
-      </Center>
-      <MantineNavbar.Section grow mt={50}>
-        <Stack justify='center' spacing={0}>
-          {mainLinks.map(link => (
-            <NavbarLink
-              color={link.color}
-              handle={link.handle}
-              icon={link.icon}
-              iconOnly={collapsed}
-              key={link.title}
-              title={link.title}
-              tooltipLabel={link.tooltipLabel}
-            />
-          ))}
-        </Stack>
+      <MantineNavbar.Section grow>
+        <Group className={classes.header} position='apart'>
+          LOGO
+          <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
+        </Group>
+        {links2}
+      </MantineNavbar.Section>
 
-        {subNavigation && (
+      <MantineNavbar.Section className={classes.footer}>
+        {userLinks.map(link => (
+          <NavbarLink
+            component={NavLink}
+            color={link.color}
+            to={link.to}
+            icon={link.icon}
+            iconOnly={collapsed}
+            key={link.title}
+            title={link.title}
+            tooltipLabel={link.tooltipLabel}
+          />
+        ))}
+        <Box
+          component={Form}
+          action='/logout'
+          method='post'
+          sx={{ display: 'flex ' }}
+        >
+          <NavbarLink
+            component='button'
+            type='submit'
+            color='blue'
+            icon={IconLogout}
+            iconOnly={false}
+            title='Log out'
+            tooltipLabel='Log out'
+            sx={{ flex: 1 }}
+          />
+        </Box>
+      </MantineNavbar.Section>
+
+      {/* {!isMobile && subNavigation && (
           <div className={classes.main}>
             <Title order={4} className={classes.title}>
               {active}
@@ -132,31 +150,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
             {subNavigation}
           </div>
         )}
-      </MantineNavbar.Section>
-
-      <MantineNavbar.Section>
-        <Stack justify='center' spacing={0}>
-          {userLinks.map(link => (
-            <NavbarLink
-              color={link.color}
-              handle={link.handle}
-              icon={link.icon}
-              iconOnly={collapsed}
-              key={link.title}
-              title={link.title}
-              tooltipLabel={link.tooltipLabel}
-            />
-          ))}
-          <NavbarLink
-            color='blue'
-            handle={toggleCollapsed}
-            icon={collapsed ? IconArrowAutofitRight : IconArrowAutofitLeft}
-            iconOnly={collapsed}
-            title={collapsed ? 'Expand' : 'Collapse'}
-            tooltipLabel={collapsed ? 'Expand' : 'Collapse'}
-          />
-        </Stack>
-      </MantineNavbar.Section>
+      </MantineNavbar.Section> */}
     </MantineNavbar>
   )
 }

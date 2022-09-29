@@ -1,69 +1,146 @@
-import { Group, Text, ThemeIcon, Tooltip, UnstyledButton } from '@mantine/core'
+import { createPolymorphicComponent, UnstyledButton } from '@mantine/core'
 import { NavLink } from '@remix-run/react'
+import { forwardRef } from 'react'
 import { useStyles } from './navbar-link.styles'
 import type { NavbarLinkProps } from './navbar-link.types'
 import { isLink } from './navbar-link.types'
 
-export function NavbarLink(props: NavbarLinkProps) {
-  const {
-    active,
-    color,
-    handle,
-    iconOnly = true,
-    icon: Icon,
-    title,
-    tooltipLabel
-  } = props
-  const { classes, cx } = useStyles()
+// Create intermediate component with default ref type and props
+const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
+  ({ children, ...props }, ref) => {
+    const {
+      color,
+      to,
+      onClick,
+      iconOnly = true,
+      icon: Icon,
+      title,
+      tooltipLabel
+      // ...others
+    } = props
 
-  let extraProps = {}
+    const { classes, cx } = useStyles()
 
-  if (isLink(handle)) {
-    extraProps = {
-      component: NavLink,
-      to: handle
+    let extraProps = {}
+
+    if (isLink(to)) {
+      extraProps = {
+        component: NavLink,
+        to: to
+      }
+    } else {
+      extraProps = {
+        onClick
+      }
     }
-  } else {
-    extraProps = {
-      onClick: handle
-    }
-  }
 
-  return iconOnly ? (
-    <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
+    return (
       <UnstyledButton
-        className={cx(classes.link, { [classes.active]: active })}
+        className={cx(classes.link, {
+          [classes.linkActive]: title === 'Timelines'
+        })}
+        component='a'
+        ref={ref}
+        {...props}
         {...extraProps}
+        // {...others}
       >
-        <Icon stroke={1.5} />
+        <Icon className={classes.linkIcon} stroke={1.5} />
+        <span>{title}</span>
+        {/* <Group>
+          <ThemeIcon color={color} variant='light'>
+            <Icon className={classes.linkIcon} />
+          </ThemeIcon>
+
+          <Text size='sm'>{title}</Text>
+        </Group> */}
       </UnstyledButton>
-    </Tooltip>
-  ) : (
-    <UnstyledButton
-      sx={theme => ({
-        display: 'block',
-        width: '100%',
-        padding: theme.spacing.xs,
-        borderRadius: theme.radius.sm,
-        color:
-          theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+      // <Box
+      //   // define default component, you will be able to override it with `component` prop from ...others
+      //   component='button'
+      //   ref={ref}
+      //   {...others}
+      // >
+      //   {children}
+      // </Box>
+    )
+  }
+)
 
-        '&:hover': {
-          backgroundColor:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[6]
-              : theme.colors.gray[0]
-        }
-      })}
-      {...extraProps}
-    >
-      <Group>
-        <ThemeIcon color={color} variant='light'>
-          <Icon />
-        </ThemeIcon>
+// export function NavbarLink2(props: NavbarLinkProps): JSX.Element {
+//   const {
+//     active,
+//     color,
+//     handle,
+//     iconOnly = true,
+//     icon: Icon,
+//     title,
+//     tooltipLabel
+//   } = props
+//   const { classes, cx } = useStyles()
 
-        <Text size='sm'>{title}</Text>
-      </Group>
-    </UnstyledButton>
-  )
-}
+//   let extraProps = {}
+
+//   if (isLink(handle)) {
+//     extraProps = {
+//       component: NavLink,
+//       to: handle
+//     }
+//   } else {
+//     extraProps = {
+//       onClick: handle
+//     }
+//   }
+
+//   // return iconOnly ? (
+//   //   <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
+//   //     <UnstyledButton
+//   //       className={cx(classes.link, { [classes.linkActive]: active })}
+//   //       {...extraProps}
+//   //     >
+//   //       <Icon stroke={1.5} />
+//   //     </UnstyledButton>
+//   //   </Tooltip>
+//   // ) : (
+//   return (
+//     <UnstyledButton
+//       className={cx(classes.link, {
+//         [classes.linkActive]: title === 'Timelines'
+//       })}
+//       // sx={theme => ({
+//       //   display: 'block',
+//       //   width: '100%',
+//       //   padding: theme.spacing.xs,
+//       //   borderRadius: theme.radius.sm,
+//       //   color:
+//       //     theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
+
+//       //   '&:hover': {
+//       //     backgroundColor:
+//       //       theme.colorScheme === 'dark'
+//       //         ? theme.colors.dark[6]
+//       //         : theme.colors.gray[0]
+//       //   }
+//       // })}
+//       {...extraProps}
+//     >
+//       <Icon className={classes.linkIcon} stroke={1.5} />
+//       <span>{title}</span>
+//       {/* <Group>
+//         <ThemeIcon color={color} variant='light'>
+//           <Icon className={classes.linkIcon} />
+//         </ThemeIcon>
+
+//         <Text size='sm'>{title}</Text>
+//       </Group> */}
+//     </UnstyledButton>
+//   )
+// }
+
+_NavbarLink.displayName = 'NavbarLink'
+
+// createPolymorphicComponent accepts two types: default element and component props
+// all other props will be added to component type automatically
+export const NavbarLink = createPolymorphicComponent<'a', NavbarLinkProps>(
+  _NavbarLink
+)

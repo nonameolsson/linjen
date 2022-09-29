@@ -55,11 +55,11 @@ export function Page(props: PageProps): JSX.Element {
     transition = 'fade'
   } = props
   const theme = useMantineTheme()
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
-  const herp = mobile ? false : isCollapsed
+  const herp = isMobile ? false : isCollapsed
 
   useEffect(() => {
     setMounted(true)
@@ -86,9 +86,9 @@ export function Page(props: PageProps): JSX.Element {
           </MediaQuery>
         )
       }
-      footer={mobile ? bottomNavigation : undefined}
+      footer={isMobile ? bottomNavigation : undefined}
       header={
-        mobile ? (
+        isMobile ? (
           <div>
             <Header
               mobileTitle={title}
@@ -105,6 +105,7 @@ export function Page(props: PageProps): JSX.Element {
       navbarOffsetBreakpoint='sm'
       navbar={
         <Navbar
+          isMobile={isMobile}
           collapsed={herp}
           toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
           subNavigation={subNavigation}

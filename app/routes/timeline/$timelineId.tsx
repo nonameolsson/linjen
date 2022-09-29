@@ -19,7 +19,9 @@ import {
 } from '@tabler/icons'
 import invariant from 'tiny-invariant'
 
-import { BottomNavigation, OverflowButton, Page } from '~/components'
+import { useState } from 'react'
+import { BottomNavigation, OverflowButton, Page, SubNavbar } from '~/components'
+import { useStyles } from '~/components/navbar/navbar.styles'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -55,6 +57,9 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const submit = useSubmit()
+  const { classes, cx } = useStyles()
+  const [active, setActive] = useState('Releases')
+  const [activeLink, setActiveLink] = useState('Settings')
   const { pathname } = useLocation()
 
   function openDeleteModal() {
@@ -86,6 +91,7 @@ export default function TimelineDetailsPage() {
       padding={0}
       showBackButton
       goBackTo='/timelines'
+      subNavigation={<SubNavbar />}
       bottomNavigation={
         <BottomNavigation>
           <BottomNavigation.Button
