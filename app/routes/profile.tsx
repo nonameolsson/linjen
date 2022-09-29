@@ -2,6 +2,7 @@ import {
   ActionIcon,
   Avatar,
   Button,
+  Container,
   Paper,
   Text,
   useMantineColorScheme
@@ -20,46 +21,48 @@ export default function NotesPage() {
 
   return (
     <Page title={pageTitle}>
-      <Paper
-        radius='md'
-        withBorder
-        p='lg'
-        sx={theme => ({
-          backgroundColor:
-            theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
-        })}
-      >
-        <ActionIcon
-          variant='outline'
-          color={dark ? 'yellow' : 'blue'}
-          onClick={() => toggleColorScheme()}
-          title='Toggle color scheme'
+      <Container size='xs'>
+        <Paper
+          radius='md'
+          withBorder
+          p='lg'
+          sx={theme => ({
+            backgroundColor:
+              theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
+          })}
         >
-          {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
-        </ActionIcon>
-        <Avatar
-          src='https://joeschmoe.io/api/v1/asdfjdk'
-          size={120}
-          radius={120}
-          mx='auto'
-        />
-        <Text align='center' size='lg' weight={500} mt='md'>
-          {user.id}
-        </Text>
-        <Text align='center' color='dimmed' size='sm'>
-          {user.email}
-        </Text>
+          <ActionIcon
+            variant='outline'
+            color={dark ? 'yellow' : 'blue'}
+            onClick={() => toggleColorScheme()}
+            title='Toggle color scheme'
+          >
+            {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+          </ActionIcon>
+          <Avatar
+            src='https://joeschmoe.io/api/v1/asdfjdk'
+            size={120}
+            radius={120}
+            mx='auto'
+          />
+          <Text align='center' size='lg' weight={500} mt='md'>
+            {user.id}
+          </Text>
+          <Text align='center' color='dimmed' size='sm'>
+            {user.email}
+          </Text>
 
-        <Button variant='default' fullWidth mt='md'>
-          Send message
-        </Button>
-      </Paper>
+          <Button variant='default' fullWidth mt='md'>
+            Send message
+          </Button>
+        </Paper>
 
-      <Form action='/logout' method='post'>
-        <Button mt='xl' fullWidth type='submit'>
-          Log out
-        </Button>
-      </Form>
+        <Form action='/logout' method='post'>
+          <Button mt='xl' fullWidth type='submit'>
+            Log out
+          </Button>
+        </Form>
+      </Container>
     </Page>
   )
 }

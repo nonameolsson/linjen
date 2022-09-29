@@ -1,22 +1,6 @@
 import { createStyles } from '@mantine/core'
 
 export const useStyles = createStyles(theme => ({
-  // wrapper: {
-  //   display: 'flex'
-  // },
-
-  // aside: {
-  //   flex: '0 0 60px',
-  //   backgroundColor:
-  //     theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-  //   display: 'flex',
-  //   flexDirection: 'column',
-  //   alignItems: 'center',
-  //   borderRight: `1px solid ${
-  //     theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.colors.gray[3]
-  //   }`
-  // },
-
   main: {
     flex: 1,
     backgroundColor:

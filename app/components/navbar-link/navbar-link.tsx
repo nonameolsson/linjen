@@ -1,17 +1,45 @@
-import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core'
+import { Group, Text, ThemeIcon, Tooltip, UnstyledButton } from '@mantine/core'
 import { NavLink } from '@remix-run/react'
+import { useStyles } from './navbar-link.styles'
 import type { NavbarLinkProps } from './navbar-link.types'
+import { isLink } from './navbar-link.types'
 
-export function NavbarLink({
-  icon: Icon,
-  color,
-  title,
-  href
-}: NavbarLinkProps): JSX.Element {
-  return (
+export function NavbarLink(props: NavbarLinkProps) {
+  const {
+    active,
+    color,
+    handle,
+    iconOnly = true,
+    icon: Icon,
+    title,
+    tooltipLabel
+  } = props
+  const { classes, cx } = useStyles()
+
+  let extraProps = {}
+
+  if (isLink(handle)) {
+    extraProps = {
+      component: NavLink,
+      to: handle
+    }
+  } else {
+    extraProps = {
+      onClick: handle
+    }
+  }
+
+  return iconOnly ? (
+    <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
+      <UnstyledButton
+        className={cx(classes.link, { [classes.active]: active })}
+        {...extraProps}
+      >
+        <Icon stroke={1.5} />
+      </UnstyledButton>
+    </Tooltip>
+  ) : (
     <UnstyledButton
-      component={NavLink}
-      to={href}
       sx={theme => ({
         display: 'block',
         width: '100%',
@@ -27,6 +55,7 @@ export function NavbarLink({
               : theme.colors.gray[0]
         }
       })}
+      {...extraProps}
     >
       <Group>
         <ThemeIcon color={color} variant='light'>

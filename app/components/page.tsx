@@ -8,6 +8,7 @@ import {
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { IconHourglassEmpty } from '@tabler/icons'
 import { useEffect, useState } from 'react'
 
 import { Fab } from './fab'
@@ -58,6 +59,7 @@ export function Page(props: PageProps): JSX.Element {
   const [opened, setOpened] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
+  const herp = mobile ? false : isCollapsed
 
   useEffect(() => {
     setMounted(true)
@@ -86,25 +88,27 @@ export function Page(props: PageProps): JSX.Element {
       }
       footer={mobile ? bottomNavigation : undefined}
       header={
-        <div>
-          <Header
-            mobileTitle={title}
-            opened={opened}
-            setOpened={setOpened}
-            goBackTo={goBackTo}
-            showBackButton={showBackButton}
-            rightButtons={toolbarButtons}
-          />
-          {header}
-        </div>
+        mobile ? (
+          <div>
+            <Header
+              mobileTitle={title}
+              opened={opened}
+              setOpened={setOpened}
+              goBackTo={goBackTo}
+              showBackButton={showBackButton}
+              rightButtons={toolbarButtons}
+            />
+            {header}
+          </div>
+        ) : undefined
       }
       navbarOffsetBreakpoint='sm'
       navbar={
         <Navbar
-          collapsed={isCollapsed}
+          collapsed={herp}
           toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
           subNavigation={subNavigation}
-          logo={<p>L</p>}
+          logo={<IconHourglassEmpty size={30} color='yellow' />}
           opened={opened}
         />
       }

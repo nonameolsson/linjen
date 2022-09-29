@@ -1,16 +1,22 @@
-import { Center, Navbar as MantineNavbar, Stack, Title } from '@mantine/core'
+import {
+  Center,
+  Navbar as MantineNavbar,
+  Stack,
+  Text,
+  Title
+} from '@mantine/core'
 import {
   IconArrowAutofitLeft,
   IconArrowAutofitRight,
   IconCalendarEvent,
   IconFriends,
-  IconHourglassEmpty,
   IconMap,
   IconTimeline,
   IconUser
 } from '@tabler/icons'
 import { useState } from 'react'
-import { NavbarIconLink } from '../navbar-icon-link'
+
+import { NavbarLink } from '../navbar-link'
 import type { NavbarLinkProps } from '../navbar-link/'
 import { useStyles } from './navbar.styles'
 import type { NavbarProps } from './navbar.types'
@@ -20,33 +26,29 @@ const mainLinks: NavbarLinkProps[] = [
     icon: IconTimeline,
     color: 'blue',
     title: 'Timelines',
-    href: '/timelines',
-    tooltipLabel: 'All timelines',
-    id: 1
+    handle: '/timelines',
+    tooltipLabel: 'All timelines'
   },
   {
     icon: IconCalendarEvent,
     color: 'teal',
     title: 'Events',
-    href: '/events',
-    tooltipLabel: 'All events',
-    id: 2
+    handle: '/events',
+    tooltipLabel: 'All events'
   },
   {
     icon: IconFriends,
     color: 'violet',
     title: 'People',
-    href: '/people',
-    tooltipLabel: 'All people',
-    id: 3
+    handle: '/people',
+    tooltipLabel: 'All people'
   },
   {
     icon: IconMap,
     color: 'grape',
     title: 'Locations',
-    href: '/locations',
-    tooltipLabel: 'All locations',
-    id: 4
+    handle: '/locations',
+    tooltipLabel: 'All locations'
   }
 ]
 
@@ -55,9 +57,8 @@ const userLinks: NavbarLinkProps[] = [
     icon: IconUser,
     color: 'blue',
     title: 'Profile',
-    href: '/profile',
-    tooltipLabel: 'Profile',
-    id: 1
+    handle: '/profile',
+    tooltipLabel: 'Profile'
   }
 ]
 
@@ -105,15 +106,14 @@ export function Navbar(props: NavbarProps): JSX.Element {
       p='md'
     >
       <Center>
-        {/*logo*/}
-        <IconHourglassEmpty size={30} color='yellow' />
+        {logo} {!collapsed && <Text>Linjen</Text>}
       </Center>
-      <MantineNavbar.Section grow mt='50'>
+      <MantineNavbar.Section grow mt={50}>
         <Stack justify='center' spacing={0}>
           {mainLinks.map(link => (
-            <NavbarIconLink
+            <NavbarLink
               color={link.color}
-              href={link.href}
+              handle={link.handle}
               icon={link.icon}
               iconOnly={collapsed}
               key={link.title}
@@ -137,19 +137,19 @@ export function Navbar(props: NavbarProps): JSX.Element {
       <MantineNavbar.Section>
         <Stack justify='center' spacing={0}>
           {userLinks.map(link => (
-            <NavbarIconLink
+            <NavbarLink
               color={link.color}
-              href={link.href}
+              handle={link.handle}
               icon={link.icon}
               iconOnly={collapsed}
-              key={link.id}
+              key={link.title}
               title={link.title}
               tooltipLabel={link.tooltipLabel}
             />
           ))}
-          <NavbarIconLink
+          <NavbarLink
             color='blue'
-            onClick={toggleCollapsed}
+            handle={toggleCollapsed}
             icon={collapsed ? IconArrowAutofitRight : IconArrowAutofitLeft}
             iconOnly={collapsed}
             title={collapsed ? 'Expand' : 'Collapse'}
