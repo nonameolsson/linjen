@@ -1,3 +1,4 @@
+import { Container, Textarea, TextInput, UnstyledButton } from '@mantine/core'
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -6,8 +7,7 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
-import { Page, PageHeader, TextArea, TextField } from '~/components'
-import { Content } from '~/components/content'
+import { Page } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -112,16 +112,18 @@ export default function EditTimelinePage() {
     <Page
       title={pageTitle}
       showBackButton
-      toolbarButtons={<EditTimelineButton className='btn btn-ghost' />}
+      toolbarButtons={
+        <UnstyledButton
+          form='edit-timeline'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </UnstyledButton>
+      }
     >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={<EditTimelineButton className='btn btn-primary' />}
-          />
-        }
-      >
+      <Container>
         <Form
           id='edit-timeline'
           replace
@@ -133,39 +135,38 @@ export default function EditTimelinePage() {
             width: '100%'
           }}
         >
-          <TextField
+          <TextInput
             name='title'
             id='title'
             label='Title'
             ref={titleRef}
-            errorMessage={actionData?.error?.title?._errors[0]}
+            error={actionData?.error?.title?._errors[0]}
             defaultValue={loaderData.timeline.title}
           />
 
-          <TextArea
+          <Textarea
             name='description'
             ref={descriptionRef}
             rows={4}
-            className='mt-2'
             label='Description'
             defaultValue={loaderData.timeline.description || ''}
-            errorMessage={actionData?.error?.description?._errors[0]}
+            error={actionData?.error?.description?._errors[0]}
             required={false}
           />
 
-          <TextField
+          <TextInput
             name='imageUrl'
             ref={imageUrlRef}
             id='imageUrl'
             type='url'
             label='Cover image (Optional)'
-            errorMessage={actionData?.error?.imageUrl?._errors[0]}
+            error={actionData?.error?.imageUrl?._errors[0]}
             placeholder='https://myurl.com/image.png'
             defaultValue={loaderData.timeline.imageUrl || ''}
             required={false}
           />
         </Form>
-      </Content>
+      </Container>
     </Page>
   )
 }

@@ -1,9 +1,8 @@
-import { Alert } from '@mantine/core'
+import { Alert, List, Table } from '@mantine/core'
 import type { Event, Timeline } from '@prisma/client'
 import { Link, useLoaderData, useLocation } from '@remix-run/react'
 import type { LoaderFunction } from '@remix-run/server-runtime'
 import { json } from '@remix-run/server-runtime'
-import { Content } from '~/components/content'
 
 import { Page } from '~/components/page'
 import { getAllEventsForUser } from '~/models/event.server'
@@ -24,70 +23,58 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   })
 }
 
+const pageTitle = 'Events'
+
 export default function EventsPage() {
   const data = useLoaderData<LoaderData>()
   const location = useLocation()
 
-  return (
-    <Page title='Events'>
-      <Content>
-        <section className='col-span-8 col-start-3'>
-          <ul className='divide-y divide-gray-200 bg-white lg:hidden'>
-            {data.events.map(event => (
-              <li key={event.id} className='px-4 py-4'>
-                {event.title}
-              </li>
-            ))}
-          </ul>
+  const rows = data.events.map(event => {
+    const link = `/event/${event.id}?from=${location.pathname}`
 
-          <table className='table w-full hidden lg:table'>
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Start Date</th>
-                <th>Timelines</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.events.map(event => {
-                const link = `/event/${event.id}?from=${location.pathname}`
-                return (
-                  <tr
-                    className='hover:hover hover:cursor-pointer'
-                    key={event.id}
-                  >
-                    <td className='p-0'>
-                      <Link className='flex p-4' to={link}>
-                        {event.title}
-                      </Link>
-                    </td>
-                    <td className='p-0'>
-                      <Link className='flex p-4' to={link}>
-                        {new Intl.DateTimeFormat('sv-SE').format(
-                          new Date(event.startDate)
-                        )}
-                      </Link>
-                    </td>
-                    <td className='p-0'>
-                      <Link
-                        key={event.id}
-                        className='flex flex-col p-4'
-                        to={link}
-                      >
-                        {event.timelines.map(timeline => (
-                          <span key={timeline.id} className='flex'>
-                            {timeline.title}
-                          </span>
-                        ))}
-                      </Link>
-                    </td>
-                  </tr>
-                )
-              })}
-            </tbody>
-          </table>
-        </section>
-      </Content>
+    return (
+      <tr className='hover:hover hover:cursor-pointer' key={event.id}>
+        <td className='p-0'>
+          <Link className='flex p-4' to={link}>
+            {event.title}
+          </Link>
+        </td>
+        <td className='p-0'>
+          <Link className='flex p-4' to={link}>
+            {new Intl.DateTimeFormat('sv-SE').format(new Date(event.startDate))}
+          </Link>
+        </td>
+        <td className='p-0'>
+          <Link key={event.id} className='flex flex-col p-4' to={link}>
+            {event.timelines.map(timeline => (
+              <span key={timeline.id} className='flex'>
+                {timeline.title}
+              </span>
+            ))}
+          </Link>
+        </td>
+      </tr>
+    )
+  })
+
+  return (
+    <Page title={pageTitle}>
+      <List>
+        {data.events.map(event => (
+          <List.Item key={event.id}>{event.title}</List.Item>
+        ))}
+      </List>
+
+      <Table highlightOnHover>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Start Date</th>
+            <th>Timelines</th>
+          </tr>
+        </thead>
+        <tbody>{rows}</tbody>
+      </Table>
     </Page>
   )
 }

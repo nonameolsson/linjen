@@ -3,6 +3,7 @@ import { CalendarIcon } from '@heroicons/react/outline'
 import { ExclamationIcon } from '@heroicons/react/solid'
 
 import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
+import { Menu } from '@mantine/core'
 
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -14,12 +15,12 @@ import {
   useCatch,
   useLoaderData
 } from '@remix-run/react'
+import { IconEdit, IconTrash } from '@tabler/icons'
 import { useState } from 'react'
 import invariant from 'tiny-invariant'
 
-import { DesktopTabs, Modal, PageHeader } from '~/components'
+import { DesktopTabs, Modal, OverflowButton, PageHeader } from '~/components'
 import { Content } from '~/components/content'
-import { OverflowButton } from '~/components/overflow-button'
 import { Page } from '~/components/page'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
@@ -70,7 +71,27 @@ export default function TimelineDetailsPage() {
       showBackButton
       goBackTo='/timelines'
       title={data.timeline.title}
-      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
+      toolbarButtons={
+        <Menu shadow='md' width={200} position='bottom-end'>
+          <Menu.Target>
+            <OverflowButton />
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              onClick={openDeleteModal}
+              color='red'
+              icon={<IconTrash size={14} />}
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+        //<OverflowButton onDeleteClick={openDeleteModal} />
+      }
     >
       <Content
         desktopNavbar={

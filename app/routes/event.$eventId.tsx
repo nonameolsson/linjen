@@ -21,7 +21,7 @@ import {
   LinkList,
   List,
   Modal,
-  OverflowButton,
+  OverflowButtonOld,
   Page,
   PageHeader,
   TextField
@@ -266,7 +266,7 @@ export default function EventDetailsPage() {
     <Page
       title={data.event.title}
       showBackButton
-      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
+      toolbarButtons={<OverflowButtonOld onDeleteClick={openDeleteModal} />}
     >
       <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
       <Content

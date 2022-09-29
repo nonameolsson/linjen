@@ -44,16 +44,7 @@ export function MainLinks() {
   return <div>{links}</div>
 }
 
-export function Page({
-  aside,
-  children,
-  actions,
-  toolbarButtons,
-  showBackButton = false,
-  goBackTo,
-  fab,
-  title
-}: {
+type PageProps = {
   aside?: JSX.Element
   children: React.ReactNode
   actions?: JSX.Element
@@ -67,7 +58,19 @@ export function Page({
     onClick?: () => void
   }
   title: string
-}): JSX.Element {
+}
+
+export function Page(props: PageProps): JSX.Element {
+  const {
+    aside,
+    children,
+    actions,
+    toolbarButtons,
+    showBackButton = false,
+    goBackTo,
+    fab,
+    title
+  } = props
   const theme = useMantineTheme()
   const [opened, setOpened] = useState(false)
 
@@ -79,7 +82,12 @@ export function Page({
           background:
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
-              : theme.colors.gray[0]
+              : theme.colors.gray[0],
+          height: '100vh',
+          'overflow-y': 'scroll'
+        },
+        root: {
+          height: '100vh'
         }
       }}
       navbarOffsetBreakpoint='sm'
@@ -92,7 +100,6 @@ export function Page({
           hidden={!opened}
           width={{ sm: 200, lg: 300 }}
         >
-          <Navbar.Section>LINJEN</Navbar.Section>
           <Navbar.Section grow mt='md'>
             <MainLinks />
           </Navbar.Section>
@@ -101,7 +108,16 @@ export function Page({
           </Navbar.Section>
         </Navbar>
       }
-      header={<Header title={title} opened={opened} setOpened={setOpened} />}
+      header={
+        <Header
+          mobileTitle={title}
+          opened={opened}
+          setOpened={setOpened}
+          goBackTo={goBackTo}
+          showBackButton={showBackButton}
+          rightButtons={toolbarButtons}
+        />
+      }
     >
       {fab && (
         <Fab
@@ -113,15 +129,5 @@ export function Page({
       )}
       {children}
     </AppShell>
-    // <div className='drawer-mobile drawer min-h-full'>
-    //   <input id='my-drawer' type='checkbox' className='drawer-toggle' />
-    //   <div className='drawer-content flex flex-col'>
-    //     <Navbar
-    //       className='lg:hidden'
-    //       title={title}
-    //       goBackTo={goBackTo}
-    //       rightButtons={toolbarButtons}
-    //       showBackButton={showBackButton}
-    //     />
   )
 }

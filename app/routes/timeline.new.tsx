@@ -1,11 +1,9 @@
+import { Container, Textarea, TextInput, UnstyledButton } from '@mantine/core'
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import { z } from 'zod'
-
-import { PageHeader, TextArea, TextField } from '~/components'
-import { Content } from '~/components/content'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
@@ -54,22 +52,6 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
-const NewTimelineButton = ({
-  className
-}: {
-  className: string
-}): JSX.Element => (
-  <button
-    form='new-timeline'
-    className={className}
-    type='submit'
-    name='action'
-    value='update'
-  >
-    Save
-  </button>
-)
-
 const pageTitle = 'New Timeline'
 
 export default function NewTimelinePage() {
@@ -93,16 +75,18 @@ export default function NewTimelinePage() {
     <Page
       title={pageTitle}
       showBackButton
-      toolbarButtons={<NewTimelineButton className='btn btn-ghost' />}
+      toolbarButtons={
+        <UnstyledButton
+          form='new-timeline'
+          type='submit'
+          name='action'
+          value='update'
+        >
+          Save
+        </UnstyledButton>
+      }
     >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={<NewTimelineButton className='btn btn-primary' />}
-          />
-        }
-      >
+      <Container>
         <Form
           id='new-timeline'
           replace
@@ -114,42 +98,42 @@ export default function NewTimelinePage() {
             width: '100%'
           }}
         >
-          <TextField
+          <TextInput
             ref={titleRef}
             autoFocus
             name='title'
             id='title'
             label='Title'
-            errorMessage={actionData?.error?.title?._errors[0]}
+            error={actionData?.error?.title?._errors[0]}
             placeholder='My awesome timeline'
             required
             defaultValue={actionData?.formPayload?.title}
             key={actionData?.formPayload?.title}
           />
 
-          <TextArea
+          <Textarea
             name='description'
             className='mt-2'
             rows={4}
             ref={descriptionRef}
             label='Description'
             defaultValue={actionData?.formPayload?.description}
-            errorMessage={actionData?.error?.description?._errors[0]}
+            error={actionData?.error?.description?._errors[0]}
           />
 
-          <TextField
+          <TextInput
             name='imageUrl'
             ref={imageUrlRef}
             className='mt-2'
             id='imageUrl'
             label='Cover image (Optional)'
             type='url'
-            errorMessage={actionData?.error?.imageUrl?._errors[0]}
+            error={actionData?.error?.imageUrl?._errors[0]}
             placeholder='https://myurl.com/image.png'
             defaultValue={actionData?.formPayload?.imageUrl}
           />
         </Form>
-      </Content>
+      </Container>
     </Page>
   )
 }
