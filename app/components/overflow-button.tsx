@@ -35,8 +35,8 @@ export const OverflowButton = forwardRef<
     <UnstyledButton
       title='More'
       ref={ref}
-      {...others}
       className={classes.button}
+      {...others}
     >
       {icon || <IconDotsVertical />}
     </UnstyledButton>

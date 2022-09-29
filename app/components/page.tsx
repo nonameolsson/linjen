@@ -40,7 +40,7 @@ const data: NavbarLinkProps[] = [
 ]
 
 export function MainLinks() {
-  const links = data.map(link => <NavbarLink {...link} key={link.label} />)
+  const links = data.map(link => <NavbarLink key={link.label}  {...link} />)
   return <div>{links}</div>
 }
 

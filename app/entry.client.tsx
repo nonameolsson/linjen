@@ -2,7 +2,7 @@ import { ClientProvider } from '@mantine/remix'
 import { RemixBrowser } from '@remix-run/react'
 import LogRocket from 'logrocket'
 import setupLogRocketReact from 'logrocket-react'
-import { hydrate } from 'react-dom'
+import { hydrateRoot } from 'react-dom/client'
 
 import type { EnvironmentVariables } from './entry.server'
 
@@ -15,11 +15,11 @@ const appId: string = window.ENV.LOG_ROCKET_APP_ID
 LogRocket.init(appId)
 setupLogRocketReact(LogRocket)
 
-hydrate(
+hydrateRoot(
+  document,
   <ClientProvider>
     <RemixBrowser />
-  </ClientProvider>,
-  document
+  </ClientProvider>
 )
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {

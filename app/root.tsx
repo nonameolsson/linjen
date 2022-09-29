@@ -1,4 +1,4 @@
-import type { LoaderFunction, MetaFunction } from '@remix-run/node'
+import type { LoaderArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Links,
@@ -32,12 +32,13 @@ type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+
+export async function loader({ request }: LoaderArgs) {
   const ENV: EnvironmentVariables = {
     LOG_ROCKET_APP_ID: process.env.LOG_ROCKET_APP_ID || ''
   }
 
-  return json<LoaderData>({
+  return json({
     ENV,
     user: await getUser(request)
   })
