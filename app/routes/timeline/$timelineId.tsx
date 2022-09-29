@@ -63,7 +63,7 @@ export default function TimelineDetailsPage() {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const navigate = useNavigate()
   const theme = useMantineTheme()
-  const isDesktop = useMediaQuery(`(min-width: ${theme.breakpoints.lg}px)`)
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const { pathname } = useLocation()
 
   function closeDeleteModal() {
@@ -122,7 +122,7 @@ export default function TimelineDetailsPage() {
         //<OverflowButton onDeleteClick={openDeleteModal} />
       }
     >
-      {isDesktop && (
+      {!isMobile && (
         <Tabs
           value={currentTab}
           onTabChange={(value: string) => navigate(value)}

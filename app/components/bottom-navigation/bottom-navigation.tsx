@@ -8,7 +8,7 @@ import type {
 } from './bottom-navigation.types'
 
 function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
-  const { classes, cx } = useStyles()
+  const { classes } = useStyles()
 
   return (
     <NavLink to={to} className={classes.link}>
@@ -21,7 +21,6 @@ function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
               size={24}
               className={isActive ? classes.active : classes.inactive}
             />
-            {/* <Text size='xs' color={isActive ? '' : 'dimmed'}> */}
             <Text
               size='xs'
               className={isActive ? classes.active : classes.inactive}

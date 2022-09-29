@@ -141,7 +141,7 @@ export function Page(props: PageProps): JSX.Element {
           icon={fab.icon}
         />
       )}
-      <div style={{ marginTop: '44px' }}>{children}</div>
+      {children}
     </AppShell>
   )
 }
