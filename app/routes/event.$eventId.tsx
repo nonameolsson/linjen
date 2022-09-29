@@ -1,11 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationIcon } from '@heroicons/react/solid'
-import { Grid, Menu } from '@mantine/core'
+import { Box, Grid, Menu, SimpleGrid, useMantineTheme } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form,
   Link,
   useActionData,
   useCatch,
@@ -22,13 +21,10 @@ import {
   ContentModule,
   LinkList,
   List,
-  Modal,
   OverflowButton,
   Page,
-  PageHeader,
   TextField
 } from '~/components'
-import { Content } from '~/components/content'
 import { SidebarWidget } from '~/components/sidebar-widget'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
@@ -241,6 +237,10 @@ function NewLinkDialog({
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+
   const [isOpenLinkDialog, setIsOpenLinkDialog] = useState<boolean>(false)
 
   function closeDeleteModal(): void {
@@ -332,62 +332,37 @@ export default function EventDetailsPage() {
         </>
       }
     >
-      <Grid>
-        <Grid.Col span={12} lg={6}>
-          <ContentModule title='Event Information'>
-            <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
-              <div className='sm:col-span-1'>
-                <dt className='text-sm font-medium text-gray-500'>
+      <Box px='xl' py='md'>
+        <Grid>
+          <Grid.Col span={12} lg={12}>
+            <ContentModule title='Event Information'>
+              <SimpleGrid cols={2}>
+                <div>
                   Start Date
-                </dt>
-                <dd className='mt-1 text-sm text-gray-900'>
                   {new Intl.DateTimeFormat('sv-SE').format(
                     new Date(data.event.startDate)
                   )}
-                </dd>
-              </div>
-              <div className='sm:col-span-1'>
-                <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-                <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-              </div>
-              <div className='sm:col-span-1'>
-                <dt className='text-sm font-medium text-gray-500'>
-                  Salary expectation
-                </dt>
-                <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
-              </div>
-              <div className='sm:col-span-1'>
-                <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-                <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-              </div>
-              <div className='sm:col-span-2'>
-                <dt className='text-sm font-medium text-gray-500'>
-                  Description
-                </dt>
-                <dd className='mt-1 text-sm text-gray-900'>
+                </div>
+                <div>
+                  Content
                   {data.event.content}
-                </dd>
-              </div>
-              <div className='sm:col-span-2'>
-                <LinkList
-                  onNewClick={openLinkDialog}
-                  title='Links'
-                  items={data.event.externalLinks.map(link => ({
-                    title: link.title,
-                    url: link.url,
-                    id: link.id
-                  }))}
-                />
-              </div>
-            </dl>
-          </ContentModule>
-        </Grid.Col>
-        <Grid.Col span={12} lg={6}>
-          Second
-        </Grid.Col>
-      </Grid>
+                </div>
+              </SimpleGrid>
+              <LinkList
+                onNewClick={openLinkDialog}
+                title='Links'
+                items={data.event.externalLinks.map(link => ({
+                  title: link.title,
+                  url: link.url,
+                  id: link.id
+                }))}
+              />
+            </ContentModule>
+          </Grid.Col>
+        </Grid>
+      </Box>
       <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
-      <Content
+      {/* <Content
         desktopNavbar={
           <PageHeader
             title={data.event.title}
@@ -411,7 +386,7 @@ export default function EventDetailsPage() {
           />
         }
       >
-        <ContentModule title='Event Information'>
+        {/* <ContentModule title='Event Information'>
           <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
             <div className='sm:col-span-1'>
               <dt className='text-sm font-medium text-gray-500'>Start Date</dt>
@@ -453,9 +428,9 @@ export default function EventDetailsPage() {
               />
             </div>
           </dl>
-        </ContentModule>
+        </ContentModule> */}
 
-        <Modal
+      {/* <Modal
           icon={
             <ExclamationIcon
               className='h-6 w-6 text-red-600'
@@ -492,8 +467,8 @@ export default function EventDetailsPage() {
               </Form>
             </>
           }
-        />
-      </Content>
+        /> *
+      </Content> */}
     </Page>
   )
 }

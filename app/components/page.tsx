@@ -1,4 +1,10 @@
-import { AppShell, Navbar, useMantineTheme } from '@mantine/core'
+import {
+  AppShell,
+  Aside,
+  MediaQuery,
+  Navbar,
+  useMantineTheme
+} from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import {
   IconCalendarEvent,
@@ -94,7 +100,7 @@ export function Page(props: PageProps): JSX.Element {
           background:
             theme.colorScheme === 'dark'
               ? theme.colors.dark[8]
-              : theme.colors.white,
+              : theme.colors.gray[0],
           display: 'flex',
           flexDirection: 'column',
           height: 'stretch',
@@ -106,7 +112,15 @@ export function Page(props: PageProps): JSX.Element {
       }}
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
-      aside={aside}
+      aside={
+        aside && (
+          <MediaQuery smallerThan='sm' styles={{ display: 'none' }}>
+            <Aside p='md' hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
+              {aside}
+            </Aside>
+          </MediaQuery>
+        )
+      }
       navbar={
         <Navbar
           p='md'

@@ -134,7 +134,7 @@ export default function NewEventPage() {
         ) : undefined
       }
     >
-      <Box px='md'>
+      <Box py='md' px='xl'>
         <Grid justify='center'>
           <Grid.Col span={12} md={6}>
             <Form replace id='new-event' method='post'>
