@@ -1,18 +1,16 @@
-import { ExclamationIcon } from '@heroicons/react/solid'
-
-import { Menu, Tabs, useMantineTheme } from '@mantine/core'
+import { Menu, Tabs, Text, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-
+import { openConfirmModal } from '@mantine/modals'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form,
   Link,
   Outlet,
   useCatch,
   useLoaderData,
   useLocation,
-  useNavigate
+  useNavigate,
+  useSubmit
 } from '@remix-run/react'
 import {
   IconCalendarEvent,
@@ -21,11 +19,9 @@ import {
   IconMap,
   IconTrash
 } from '@tabler/icons'
-import { useState } from 'react'
 import invariant from 'tiny-invariant'
 
-import { BottomNavigation, Modal, OverflowButton } from '~/components'
-import { Page } from '~/components/page'
+import { BottomNavigation, OverflowButton, Page } from '~/components'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -60,18 +56,32 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const submit = useSubmit()
   const navigate = useNavigate()
   const theme = useMantineTheme()
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const { pathname } = useLocation()
 
-  function closeDeleteModal() {
-    setIsOpen(false)
-  }
-
   function openDeleteModal() {
-    setIsOpen(true)
+    openConfirmModal({
+      title: 'Delete timeline',
+      children: (
+        <Text size='sm'>
+          Do you really want to delete this timeline? Events, places and people
+          will not be deleted.
+        </Text>
+      ),
+
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () =>
+        submit(null, {
+          method: 'post',
+          action: `timeline/${data.timeline.id}`,
+          replace: true
+        })
+    })
   }
 
   const currentTab = pathname.split('/').pop()
@@ -136,35 +146,6 @@ export default function TimelineDetailsPage() {
       )}
 
       <Outlet />
-
-      <Modal
-        icon={
-          <ExclamationIcon
-            className='h-6 w-6 text-red-600'
-            aria-hidden='true'
-          />
-        }
-        isOpen={isOpen}
-        closeModal={closeDeleteModal}
-        title='Delete timeline'
-        description='The events, places and people will not be deleted.'
-        buttons={
-          <>
-            <button
-              type='button'
-              className='btn-outline btn'
-              onClick={closeDeleteModal}
-            >
-              Cancel
-            </button>
-            <Form replace method='post'>
-              <button type='submit' className='btn btn-error'>
-                Delete
-              </button>
-            </Form>
-          </>
-        }
-      />
     </Page>
   )
 }

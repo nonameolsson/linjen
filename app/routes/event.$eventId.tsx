@@ -1,19 +1,10 @@
 import { Dialog, Transition } from '@headlessui/react'
-import {
-  Box,
-  Grid,
-  Menu,
-  SimpleGrid,
-  Text,
-  useMantineTheme
-} from '@mantine/core'
-import { useMediaQuery } from '@mantine/hooks'
+import { Box, Grid, Menu, SimpleGrid, Text } from '@mantine/core'
 import { openConfirmModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form,
   Link,
   useActionData,
   useCatch,
@@ -69,7 +60,7 @@ type LoaderData = {
   }
 }
 
-const DEFAULT_REDIRECT = 'timelines'
+const DEFAULT_REDIRECT = 'timelines' // FIXME: Redirect back in history after deleting a newly created event.
 
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -248,17 +239,9 @@ function NewLinkDialog({
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const submit = useSubmit()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const formRef = useRef<HTMLFormElement>()
-
-  const theme = useMantineTheme()
-  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
   const [isOpenLinkDialog, setIsOpenLinkDialog] = useState<boolean>(false)
 
-  function closeDeleteModal(): void {
-    setIsOpen(false)
-  }
   function openLinkDialog(): void {
     setIsOpenLinkDialog(true)
   }
@@ -269,21 +252,10 @@ export default function EventDetailsPage() {
 
   function openDeleteModal() {
     openConfirmModal({
-      title: 'Please confirm your action',
-      children: (
-        <Form replace method='post'>
-          <input
-            type='hidden'
-            defaultValue={data.redirectTo}
-            name='redirectTo'
-          />
-          <Text size='sm'>
-            This action is so important that you are required to confirm it with
-            a modal. Please click one of these buttons to proceed.
-          </Text>
-        </Form>
-      ),
-      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      title: 'Delete event',
+      children: <Text size='sm'>Do you really want to delete this event?</Text>,
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
       onCancel: () => console.log('Cancel'),
       onConfirm: () =>
         submit(
@@ -291,40 +263,6 @@ export default function EventDetailsPage() {
           { method: 'post', action: `event/${data.event.id}`, replace: true }
         )
     })
-
-    // openModal({
-    //   title: 'Delete event',
-
-    //   children: (
-    //     <>
-    //       <Button onClick={() => closeAllModals} mt='md'>
-    //         Submit
-    //       </Button>
-    //       <Button
-    //         type='button'
-    //         className='btn btn-outline'
-    //         onClick={closeDeleteModal}
-    //       >
-    //         Cancel
-    //       </Button>
-    //       <Form replace method='post'>
-    //         <input
-    //           type='hidden'
-    //           defaultValue={data.redirectTo}
-    //           name='redirectTo'
-    //         />
-    //         <Button
-
-    //           name='action'
-    //           value='delete-event'
-    //           type='submit'
-    //         >
-    //           Delete
-    //         </Button>
-    //       </Form>
-    //     </>
-    //   )
-    // })
   }
 
   const referencedEvents = [
