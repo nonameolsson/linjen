@@ -6,23 +6,34 @@ type FabStyleProps = {
 }
 const useStyles = createStyles((theme, { offset }: FabStyleProps) => ({
   button: {
-    backgroundColor: theme.colors.blue[5],
+    backgroundColor: theme.colors.blue[6],
     borderRadius: theme.radius.xl,
     boxShadow: theme.shadows.sm,
     color: theme.white,
-    padding: theme.spacing.lg,
     position: 'fixed',
-    bottom: offset ? theme.spacing.xl : '16px',
+    bottom: offset ? '5rem' : theme.spacing.md,
     right: '16px',
     transitionDuration: '150ms',
     transitionProperty: 'box-shadow',
     zIndex: 100,
     width: '3rem',
     height: '3rem',
+    display: 'flex',
+
+    transition: 'all 0.3s ease-in-out',
 
     '&:hover': {
-      backgroundColor: theme.colors.blue[6],
-      boxShadow: theme.shadows.md
+      backgroundColor: theme.colors.blue[7],
+      boxShadow: theme.shadows.lg,
+
+      transform: 'scale(1.1)'
+    },
+
+    '> div': {
+      display: 'flex',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center'
     }
   }
 }))
@@ -41,7 +52,7 @@ export function Fab(props: FabProps) {
 
   return link ? (
     <UnstyledButton className={classes.button} component={Link} to={link}>
-      {icon}
+      <div>{icon}</div>
     </UnstyledButton>
   ) : (
     <div onClick={onClick}>{icon}</div>

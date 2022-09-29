@@ -5,11 +5,20 @@ export const useStyles = createStyles(theme => ({
     backgroundColor:
       theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0]
   },
-  active: {
+  icons: {
+    height: '100%'
+  },
+  icon: {
+    color: theme.colors.gray[5]
+  },
+  iconActive: {
     color: theme.primaryColor
   },
-  inactive: {
+  title: {
     color: theme.colors.gray[5]
+  },
+  titleActive: {
+    color: theme.colors.black
   },
   link: {
     textDecoration: 'none'

@@ -10,7 +10,7 @@ import type {
 } from './bottom-navigation.types'
 
 function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   return (
     <NavLink to={to} className={classes.link}>
@@ -21,11 +21,11 @@ function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
             <Icon.type
               {...Icon.props}
               size={24}
-              className={isActive ? classes.active : classes.inactive}
+              className={cx(classes.icon, { [classes.iconActive]: isActive })}
             />
             <Text
               size='xs'
-              className={isActive ? classes.active : classes.inactive}
+              className={cx(classes.title, { [classes.titleActive]: isActive })}
             >
               {title}
             </Text>
@@ -47,7 +47,7 @@ export function BottomNavigation(props: BottomNavigationProps): JSX.Element {
       // height={os === 'ios' ? 88 : 60}
       className={classes.footer}
     >
-      <Group grow position='center' px='xl' sx={{ height: '100%' }}>
+      <Group grow position='center' px='xl' className={classes.icons}>
         {children}
       </Group>
     </Footer>
