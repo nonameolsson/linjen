@@ -1,4 +1,4 @@
-import { Container, Textarea, TextInput, UnstyledButton } from '@mantine/core'
+import { Textarea, TextInput, UnstyledButton } from '@mantine/core'
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -124,50 +124,48 @@ export default function EditTimelinePage() {
         </UnstyledButton>
       }
     >
-      <Container>
-        <Form
-          id='edit-timeline'
-          replace
-          method='post'
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            width: '100%'
-          }}
-        >
-          <TextInput
-            name='title'
-            id='title'
-            label='Title'
-            ref={titleRef}
-            error={actionData?.error?.title?._errors[0]}
-            defaultValue={loaderData.timeline.title}
-          />
+      <Form
+        id='edit-timeline'
+        replace
+        method='post'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          width: '100%'
+        }}
+      >
+        <TextInput
+          name='title'
+          id='title'
+          label='Title'
+          ref={titleRef}
+          error={actionData?.error?.title?._errors[0]}
+          defaultValue={loaderData.timeline.title}
+        />
 
-          <Textarea
-            name='description'
-            ref={descriptionRef}
-            rows={4}
-            label='Description'
-            defaultValue={loaderData.timeline.description || ''}
-            error={actionData?.error?.description?._errors[0]}
-            required={false}
-          />
+        <Textarea
+          name='description'
+          ref={descriptionRef}
+          rows={4}
+          label='Description'
+          defaultValue={loaderData.timeline.description || ''}
+          error={actionData?.error?.description?._errors[0]}
+          required={false}
+        />
 
-          <TextInput
-            name='imageUrl'
-            ref={imageUrlRef}
-            id='imageUrl'
-            type='url'
-            label='Cover image (Optional)'
-            error={actionData?.error?.imageUrl?._errors[0]}
-            placeholder='https://myurl.com/image.png'
-            defaultValue={loaderData.timeline.imageUrl || ''}
-            required={false}
-          />
-        </Form>
-      </Container>
+        <TextInput
+          name='imageUrl'
+          ref={imageUrlRef}
+          id='imageUrl'
+          type='url'
+          label='Cover image (Optional)'
+          error={actionData?.error?.imageUrl?._errors[0]}
+          placeholder='https://myurl.com/image.png'
+          defaultValue={loaderData.timeline.imageUrl || ''}
+          required={false}
+        />
+      </Form>
     </Page>
   )
 }

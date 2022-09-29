@@ -1,6 +1,12 @@
 import type { ColorScheme } from '@mantine/core'
-import { ColorSchemeProvider, MantineProvider } from '@mantine/core'
+import {
+  ColorSchemeProvider,
+  createEmotionCache,
+  MantineProvider
+} from '@mantine/core'
 import { useColorScheme } from '@mantine/hooks'
+import { ModalsProvider } from '@mantine/modals'
+import { StylesPlaceholder } from '@mantine/remix'
 import type { LoaderArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
@@ -40,6 +46,8 @@ export async function loader({ request }: LoaderArgs) {
   })
 }
 
+createEmotionCache({ key: 'mantine' })
+
 export default function App() {
   const data = useLoaderData<LoaderData>()
   // hook will return either 'dark' or 'light' on client
@@ -61,23 +69,18 @@ export default function App() {
         withNormalizeCSS
         withCSSVariables
       >
-        <html
-          lang='en'
-          style={{ height: 'calc(100vh - env(safe-area-inset-bottom))' }}
-        >
+        <html lang='en'>
           <head>
+            <StylesPlaceholder />
             <Meta />
             <link rel='manifest' href='/resources/manifest.json' />
             <Links />
           </head>
-          <body
-            style={{
-              height: 'calc(100vh - env(safe-area-inset-bottom))',
-              overflow: 'hidden'
-            }}
-          >
-            <Outlet />
-            <ScrollRestoration />
+          <body>
+            <ModalsProvider>
+              <Outlet />
+              <ScrollRestoration />
+            </ModalsProvider>
             <script
               dangerouslySetInnerHTML={{
                 __html: `window.ENV = ${JSON.stringify(data.ENV)}`
@@ -91,5 +94,3 @@ export default function App() {
     </ColorSchemeProvider>
   )
 }
-
-

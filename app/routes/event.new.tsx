@@ -143,7 +143,6 @@ export default function NewEventPage() {
                 defaultValue={actionData?.formPayload?.title}
                 error={actionData?.error?.title?._errors[0]}
                 label='Title'
-                mt='md'
                 name='title'
                 placeholder='My awesome event'
                 ref={titleRef}

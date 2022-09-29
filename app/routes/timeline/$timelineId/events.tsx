@@ -63,11 +63,7 @@ export default function EventsTab() {
           fluid
           px={0}
           sx={{
-            backgroundColor: 'white',
-            width: '100%',
-            height: 'stretch',
-            overflowY: 'scroll',
-            paddingBottom: 'calc(env(safe-area-inset-bottom, 50px) + 1em)'
+            backgroundColor: 'white'
           }}
         >
           {tableData.map(item => (

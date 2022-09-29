@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   createStyles,
   Grid,
@@ -108,56 +107,54 @@ export default function NewTimelinePage() {
         ) : undefined
       }
     >
-      <Box px='md'>
-        <Grid justify='center'>
-          <Grid.Col span={12} lg={6}>
-            <Form id='new-timeline' replace method='post'>
-              <TextInput
-                autoFocus
-                defaultValue={actionData?.formPayload?.title}
-                error={actionData?.error?.title?._errors[0]}
-                id='title'
-                key={actionData?.formPayload?.title}
-                label='Title'
-                mt='md'
-                name='title'
-                placeholder='My awesome timeline'
-                ref={titleRef}
-                required
-                withAsterisk
-              />
+      <Grid justify='center'>
+        <Grid.Col span={12} lg={6}>
+          <Form id='new-timeline' replace method='post'>
+            <TextInput
+              autoFocus
+              defaultValue={actionData?.formPayload?.title}
+              error={actionData?.error?.title?._errors[0]}
+              id='title'
+              key={actionData?.formPayload?.title}
+              label='Title'
+              mt='md'
+              name='title'
+              placeholder='My awesome timeline'
+              ref={titleRef}
+              required
+              withAsterisk
+            />
 
-              <Textarea
-                defaultValue={actionData?.formPayload?.description}
-                error={actionData?.error?.description?._errors[0]}
-                label='Description'
-                mt='md'
-                name='description'
-                ref={descriptionRef}
-                rows={4}
-              />
+            <Textarea
+              defaultValue={actionData?.formPayload?.description}
+              error={actionData?.error?.description?._errors[0]}
+              label='Description'
+              mt='md'
+              name='description'
+              ref={descriptionRef}
+              rows={4}
+            />
 
-              <TextInput
-                defaultValue={actionData?.formPayload?.imageUrl}
-                error={actionData?.error?.imageUrl?._errors[0]}
-                id='imageUrl'
-                label='Cover image (Optional)'
-                mt='md'
-                name='imageUrl'
-                placeholder='https://myurl.com/image.png'
-                ref={imageUrlRef}
-                type='url'
-              />
+            <TextInput
+              defaultValue={actionData?.formPayload?.imageUrl}
+              error={actionData?.error?.imageUrl?._errors[0]}
+              id='imageUrl'
+              label='Cover image (Optional)'
+              mt='md'
+              name='imageUrl'
+              placeholder='https://myurl.com/image.png'
+              ref={imageUrlRef}
+              type='url'
+            />
 
-              {!mobile && (
-                <Button mt='md' className={classes.button} type='submit'>
-                  Save
-                </Button>
-              )}
-            </Form>
-          </Grid.Col>
-        </Grid>
-      </Box>
+            {!mobile && (
+              <Button mt='md' className={classes.button} type='submit'>
+                Save
+              </Button>
+            )}
+          </Form>
+        </Grid.Col>
+      </Grid>
     </Page>
   )
 }

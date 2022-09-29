@@ -1,14 +1,16 @@
-import type { MantineTransition } from '@mantine/core'
+import type { MantineNumberSize, MantineTransition } from '@mantine/core'
 import {
   AppShell,
   Aside,
   Box,
   MediaQuery,
   Navbar,
+  Text,
   Transition,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { openConfirmModal } from '@mantine/modals'
 import {
   IconCalendarEvent,
   IconFriends,
@@ -67,6 +69,7 @@ type PageProps = {
   bottomNavigation?: JSX.Element
   goBackTo?: string
   header?: React.ReactNode
+  padding?: MantineNumberSize
   showBackButton?: boolean
   transition?: MantineTransition
   title: string
@@ -75,19 +78,20 @@ type PageProps = {
 
 export function Page(props: PageProps): JSX.Element {
   const {
-    aside,
     children,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     actions,
+    aside,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bottomNavigation,
-    header,
-    toolbarButtons,
-    showBackButton = false,
-    goBackTo,
     fab,
-    transition = 'fade',
-    title
+    goBackTo,
+    header,
+    padding,
+    showBackButton = false,
+    title,
+    toolbarButtons,
+    transition = 'fade'
   } = props
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
@@ -98,30 +102,31 @@ export function Page(props: PageProps): JSX.Element {
     setMounted(true)
   }, [])
 
+  const openModal = () =>
+    openConfirmModal({
+      title: 'Please confirm your action',
+      children: (
+        <Text size='sm'>
+          This action is so important that you are required to confirm it with a
+          modal. Please click one of these buttons to proceed.
+        </Text>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => console.log('Confirmed')
+    })
+
   return (
     <AppShell
-      padding={0}
-      footer={mobile ? bottomNavigation : undefined}
-      // styles={{
-      //   body: {
-      //     height: '100%'
-      //   },
-      //   main: {
-      //     background:
-      //       theme.colorScheme === 'dark'
-      //         ? theme.colors.dark[8]
-      //         : theme.colors.gray[0],
-      //     display: 'flex',
-      //     flexDirection: 'column',
-      //     height: '100%',
-      //     overflowY: 'scroll'
-      //   },
-      //   root: {
-      //     height: '100%',
-      //     overflow: 'hidden'
-      //   }
-      // }}
-      navbarOffsetBreakpoint='sm'
+      padding={padding}
+      styles={{
+        main: {
+          background:
+            theme.colorScheme === 'dark'
+              ? theme.colors.dark[8]
+              : theme.colors.gray[0]
+        }
+      }}
       asideOffsetBreakpoint='sm'
       aside={
         aside && (
@@ -132,6 +137,21 @@ export function Page(props: PageProps): JSX.Element {
           </MediaQuery>
         )
       }
+      footer={mobile ? bottomNavigation : undefined}
+      header={
+        <div>
+          <Header
+            mobileTitle={title}
+            opened={opened}
+            setOpened={setOpened}
+            goBackTo={goBackTo}
+            showBackButton={showBackButton}
+            rightButtons={toolbarButtons}
+          />
+          {header}
+        </div>
+      }
+      navbarOffsetBreakpoint='sm'
       navbar={
         <Navbar
           p='md'
@@ -146,19 +166,6 @@ export function Page(props: PageProps): JSX.Element {
             <NavbarUser />
           </Navbar.Section>
         </Navbar>
-      }
-      header={
-        <div>
-          <Header
-            mobileTitle={title}
-            opened={opened}
-            setOpened={setOpened}
-            goBackTo={goBackTo}
-            showBackButton={showBackButton}
-            rightButtons={toolbarButtons}
-          />
-          {header}
-        </div>
       }
     >
       {fab && (

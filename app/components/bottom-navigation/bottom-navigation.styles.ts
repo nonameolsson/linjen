@@ -6,7 +6,6 @@ export const useStyles = createStyles(theme => ({
       theme.colorScheme === 'dark'
         ? theme.colors.dark[6]
         : theme.colors.gray[0],
-    height: '140px',
     marginBottom: 'env(safe-area-inset-bottom, 50px)'
   },
   icons: {

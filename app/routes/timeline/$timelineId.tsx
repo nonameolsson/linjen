@@ -78,6 +78,7 @@ export default function TimelineDetailsPage() {
 
   return (
     <Page
+      padding={0}
       showBackButton
       goBackTo='/timelines'
       bottomNavigation={
@@ -134,7 +135,6 @@ export default function TimelineDetailsPage() {
         </Tabs>
       )}
 
-      {/* <Container fluid={true}> */}
       <Outlet />
 
       <Modal

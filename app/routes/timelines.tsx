@@ -116,6 +116,7 @@ export default function TimelinesPage() {
   return (
     <Page
       title={pageTitle}
+      padding={0}
       fab={{ icon: <IconPlus />, offset: false, to: '/timeline/new' }}
     >
       <Center

@@ -149,7 +149,6 @@ export default function EditEvent() {
                 defaultValue={loaderData.event.title}
                 error={actionData?.error?.title?._errors[0]}
                 label='Title'
-                mt='md'
                 name='title'
                 ref={titleRef}
               />
