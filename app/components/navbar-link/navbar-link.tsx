@@ -1,4 +1,8 @@
-import { createPolymorphicComponent, UnstyledButton } from '@mantine/core'
+import {
+  createPolymorphicComponent,
+  Tooltip,
+  UnstyledButton
+} from '@mantine/core'
 import { NavLink } from '@remix-run/react'
 import { forwardRef } from 'react'
 import { useStyles } from './navbar-link.styles'
@@ -36,7 +40,14 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
     }
 
     return collapsed ? (
-      <p>afklj</p>
+      <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
+        <UnstyledButton
+          className={cx(classes.link, { [classes.linkActive]: 'Timelines' })}
+          {...extraProps}
+        >
+          <Icon stroke={1.5} />
+        </UnstyledButton>
+      </Tooltip>
     ) : (
       <UnstyledButton
         className={cx(classes.link, {
@@ -46,17 +57,9 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
         ref={ref}
         {...props}
         {...extraProps}
-        // {...others}
       >
         <Icon className={classes.linkIcon} stroke={1.5} />
         <span>{title}</span>
-        {/* <Group>
-          <ThemeIcon color={color} variant='light'>
-            <Icon className={classes.linkIcon} />
-          </ThemeIcon>
-
-          <Text size='sm'>{title}</Text>
-        </Group> */}
       </UnstyledButton>
     )
   }

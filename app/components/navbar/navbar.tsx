@@ -100,7 +100,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
       // }}
       hiddenBreakpoint='sm'
       hidden={!opened}
-      width={{ sm: 300 }}
+      width={{ sm: collapsedItems ? 80 : 300 }}
       p='md'
     >
       <MantineNavbar.Section grow>

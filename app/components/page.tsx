@@ -57,7 +57,7 @@ export function Page(props: PageProps): JSX.Element {
   const theme = useMantineTheme()
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
