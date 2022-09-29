@@ -72,9 +72,11 @@ const useStyles = createStyles(theme => ({
 
 export default function NewTimelinePage() {
   const actionData = useActionData<ActionData>()
+
   const { classes } = useStyles()
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+
   const titleRef = useRef<HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const imageUrlRef = useRef<HTMLInputElement>(null)
@@ -108,44 +110,43 @@ export default function NewTimelinePage() {
     >
       <Box px='md'>
         <Grid justify='center'>
-          <Grid.Col span={12} md={6}>
+          <Grid.Col span={12} lg={6}>
             <Form id='new-timeline' replace method='post'>
               <TextInput
-                ref={titleRef}
                 autoFocus
-                name='title'
+                defaultValue={actionData?.formPayload?.title}
+                error={actionData?.error?.title?._errors[0]}
                 id='title'
+                key={actionData?.formPayload?.title}
                 label='Title'
                 mt='md'
-                error={actionData?.error?.title?._errors[0]}
+                name='title'
                 placeholder='My awesome timeline'
+                ref={titleRef}
                 required
-                defaultValue={actionData?.formPayload?.title}
-                key={actionData?.formPayload?.title}
+                withAsterisk
               />
 
               <Textarea
-                name='description'
-                className='mt-2'
-                rows={4}
-                mt='md'
-                ref={descriptionRef}
-                label='Description'
                 defaultValue={actionData?.formPayload?.description}
                 error={actionData?.error?.description?._errors[0]}
+                label='Description'
+                mt='md'
+                name='description'
+                ref={descriptionRef}
+                rows={4}
               />
 
               <TextInput
-                name='imageUrl'
-                ref={imageUrlRef}
-                className='mt-2'
+                defaultValue={actionData?.formPayload?.imageUrl}
+                error={actionData?.error?.imageUrl?._errors[0]}
                 id='imageUrl'
                 label='Cover image (Optional)'
                 mt='md'
-                type='url'
-                error={actionData?.error?.imageUrl?._errors[0]}
+                name='imageUrl'
                 placeholder='https://myurl.com/image.png'
-                defaultValue={actionData?.formPayload?.imageUrl}
+                ref={imageUrlRef}
+                type='url'
               />
 
               {!mobile && (

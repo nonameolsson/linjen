@@ -119,7 +119,6 @@ export default function TimelineDetailsPage() {
             </Menu.Item>
           </Menu.Dropdown>
         </Menu>
-        //<OverflowButton onDeleteClick={openDeleteModal} />
       }
     >
       {!isMobile && (

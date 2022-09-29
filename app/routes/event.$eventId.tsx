@@ -1,5 +1,6 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { ExclamationIcon } from '@heroicons/react/solid'
+import { Grid, Menu } from '@mantine/core'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -12,6 +13,7 @@ import {
   useLoaderData,
   useTransition
 } from '@remix-run/react'
+import { IconEdit, IconTrash } from '@tabler/icons'
 import { Fragment, useEffect, useRef, useState } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
@@ -21,7 +23,7 @@ import {
   LinkList,
   List,
   Modal,
-  OverflowButtonOld,
+  OverflowButton,
   Page,
   PageHeader,
   TextField
@@ -266,53 +268,126 @@ export default function EventDetailsPage() {
     <Page
       title={data.event.title}
       showBackButton
-      toolbarButtons={<OverflowButtonOld onDeleteClick={openDeleteModal} />}
+      toolbarButtons={
+        <Menu shadow='md' width={200} position='bottom-end'>
+          <Menu.Target>
+            <OverflowButton />
+          </Menu.Target>
+
+          <Menu.Dropdown>
+            <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              onClick={openDeleteModal}
+              color='red'
+              icon={<IconTrash size={14} />}
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      }
+      aside={
+        <>
+          <SidebarWidget>
+            <List
+              title='Timelines'
+              items={data.event.timelines.map(timeline => {
+                return {
+                  linkTo: timeline.id,
+                  title: timeline.title,
+                  id: timeline.id
+                }
+              })}
+            />
+          </SidebarWidget>
+
+          <SidebarWidget>
+            <List
+              title='Events'
+              items={referencedEvents.map(event => {
+                return {
+                  title: event.title,
+                  linkTo: event.id,
+                  description: event.content || undefined,
+                  id: event.id
+                }
+              })}
+            />
+          </SidebarWidget>
+
+          <SidebarWidget>
+            <List
+              title='Locations'
+              items={data.event.location.map(location => {
+                return {
+                  linkTo: `location/${location.id}`,
+                  title: location.title,
+                  id: location.id
+                }
+              })}
+            />
+          </SidebarWidget>
+        </>
+      }
     >
+      <Grid>
+        <Grid.Col span={12} lg={6}>
+          <ContentModule title='Event Information'>
+            <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
+              <div className='sm:col-span-1'>
+                <dt className='text-sm font-medium text-gray-500'>
+                  Start Date
+                </dt>
+                <dd className='mt-1 text-sm text-gray-900'>
+                  {new Intl.DateTimeFormat('sv-SE').format(
+                    new Date(data.event.startDate)
+                  )}
+                </dd>
+              </div>
+              <div className='sm:col-span-1'>
+                <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+                <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+              </div>
+              <div className='sm:col-span-1'>
+                <dt className='text-sm font-medium text-gray-500'>
+                  Salary expectation
+                </dt>
+                <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
+              </div>
+              <div className='sm:col-span-1'>
+                <dt className='text-sm font-medium text-gray-500'>End Date</dt>
+                <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
+              </div>
+              <div className='sm:col-span-2'>
+                <dt className='text-sm font-medium text-gray-500'>
+                  Description
+                </dt>
+                <dd className='mt-1 text-sm text-gray-900'>
+                  {data.event.content}
+                </dd>
+              </div>
+              <div className='sm:col-span-2'>
+                <LinkList
+                  onNewClick={openLinkDialog}
+                  title='Links'
+                  items={data.event.externalLinks.map(link => ({
+                    title: link.title,
+                    url: link.url,
+                    id: link.id
+                  }))}
+                />
+              </div>
+            </dl>
+          </ContentModule>
+        </Grid.Col>
+        <Grid.Col span={12} lg={6}>
+          Second
+        </Grid.Col>
+      </Grid>
       <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
       <Content
-        aside={
-          <div className='sticky top-4 space-y-4'>
-            <SidebarWidget>
-              <List
-                title='Timelines'
-                items={data.event.timelines.map(timeline => {
-                  return {
-                    linkTo: timeline.id,
-                    title: timeline.title,
-                    id: timeline.id
-                  }
-                })}
-              />
-            </SidebarWidget>
-
-            <SidebarWidget>
-              <List
-                title='Events'
-                items={referencedEvents.map(event => {
-                  return {
-                    title: event.title,
-                    linkTo: event.id,
-                    description: event.content || undefined,
-                    id: event.id
-                  }
-                })}
-              />
-            </SidebarWidget>
-
-            <SidebarWidget>
-              <List
-                title='Locations'
-                items={data.event.location.map(location => {
-                  return {
-                    linkTo: `location/${location.id}`,
-                    title: location.title,
-                    id: location.id
-                  }
-                })}
-              />
-            </SidebarWidget>
-          </div>
-        }
         desktopNavbar={
           <PageHeader
             title={data.event.title}
