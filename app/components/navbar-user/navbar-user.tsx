@@ -6,6 +6,7 @@ import {
   UnstyledButton,
   useMantineTheme
 } from '@mantine/core'
+import { Link } from '@remix-run/react'
 import { IconChevronLeft, IconChevronRight } from '@tabler/icons'
 
 export function NavbarUser() {
@@ -23,6 +24,8 @@ export function NavbarUser() {
       }}
     >
       <UnstyledButton
+        component={Link}
+        to='/profile'
         sx={{
           display: 'block',
           width: '100%',

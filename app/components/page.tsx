@@ -13,10 +13,30 @@ import { NavbarLink } from './navbar-link'
 import { NavbarUser } from './navbar-user'
 
 const data: NavbarLinkProps[] = [
-  { icon: <IconTimeline size={16} />, color: 'blue', label: 'Timelines' },
-  { icon: <IconCalendarEvent size={16} />, color: 'teal', label: 'Events' },
-  { icon: <IconFriends size={16} />, color: 'violet', label: 'People' },
-  { icon: <IconMap size={16} />, color: 'grape', label: 'Locations' }
+  {
+    icon: <IconTimeline size={16} />,
+    color: 'blue',
+    label: 'Timelines',
+    href: '/timelines'
+  },
+  {
+    icon: <IconCalendarEvent size={16} />,
+    color: 'teal',
+    label: 'Events',
+    href: '/events'
+  },
+  {
+    icon: <IconFriends size={16} />,
+    color: 'violet',
+    label: 'People',
+    href: '/people'
+  },
+  {
+    icon: <IconMap size={16} />,
+    color: 'grape',
+    label: 'Locations',
+    href: '/locations'
+  }
 ]
 
 export function MainLinks() {
@@ -53,6 +73,7 @@ export function Page({
 
   return (
     <AppShell
+      fixed={false}
       styles={{
         main: {
           background:
