@@ -8,8 +8,8 @@ export let loader: LoaderFunction = () => {
       name: 'Linjen',
       start_url: '/',
       display: 'standalone',
-      background_color: '#a991f7',
-      theme_color: '#a991f7',
+      background_color: '#ffffff',
+      theme_color: '#ffffff',
       shortcuts: [
         {
           name: 'Homepage',
