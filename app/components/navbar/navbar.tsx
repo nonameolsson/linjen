@@ -1,5 +1,7 @@
 import { Center, Navbar as MantineNavbar, Stack, Title } from '@mantine/core'
 import {
+  IconArrowAutofitLeft,
+  IconArrowAutofitRight,
   IconCalendarEvent,
   IconFriends,
   IconHourglassEmpty,
@@ -74,7 +76,7 @@ const linksMockdata = [
 ]
 
 export function Navbar(props: NavbarProps): JSX.Element {
-  const { opened, logo, subNavigation } = props
+  const { opened, logo, collapsed, subNavigation, toggleCollapsed } = props
   const { classes, cx } = useStyles()
   const [active, setActive] = useState('Releases')
   const [activeLink, setActiveLink] = useState('Settings')
@@ -99,7 +101,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
     <MantineNavbar
       hiddenBreakpoint='sm'
       hidden={!opened}
-      width={{ sm: 80 /*300*/ }}
+      width={{ sm: collapsed ? 80 : 300 }}
       p='md'
     >
       <Center>
@@ -110,13 +112,13 @@ export function Navbar(props: NavbarProps): JSX.Element {
         <Stack justify='center' spacing={0}>
           {mainLinks.map(link => (
             <NavbarIconLink
-              title={link.title}
               color={link.color}
               href={link.href}
-              iconOnly={true}
               icon={link.icon}
-              tooltipLabel={link.tooltipLabel}
+              iconOnly={collapsed}
               key={link.title}
+              title={link.title}
+              tooltipLabel={link.tooltipLabel}
             />
           ))}
         </Stack>
@@ -136,15 +138,23 @@ export function Navbar(props: NavbarProps): JSX.Element {
         <Stack justify='center' spacing={0}>
           {userLinks.map(link => (
             <NavbarIconLink
-              iconOnly
-              key={link.id}
               color={link.color}
               href={link.href}
               icon={link.icon}
-              tooltipLabel={link.tooltipLabel}
+              iconOnly={collapsed}
+              key={link.id}
               title={link.title}
+              tooltipLabel={link.tooltipLabel}
             />
           ))}
+          <NavbarIconLink
+            color='blue'
+            onClick={toggleCollapsed}
+            icon={collapsed ? IconArrowAutofitRight : IconArrowAutofitLeft}
+            iconOnly={collapsed}
+            title={collapsed ? 'Expand' : 'Collapse'}
+            tooltipLabel={collapsed ? 'Expand' : 'Collapse'}
+          />
         </Stack>
       </MantineNavbar.Section>
     </MantineNavbar>

@@ -45,9 +45,9 @@ const useStyles = createStyles(theme => ({
 interface NavbarLinkProps {
   icon: TablerIcon
   color: string
-  href: string
+  href?: string
   tooltipLabel: string
-  iconOnly: boolean
+  iconOnly?: boolean
   active?: boolean
   title: string
   onClick?(): void
@@ -57,8 +57,8 @@ export function NavbarIconLink(props: NavbarLinkProps) {
   const {
     active,
     color,
-    href,
-    iconOnly,
+    href = '',
+    iconOnly = true,
     icon: Icon,
     onClick,
     title,
@@ -69,6 +69,8 @@ export function NavbarIconLink(props: NavbarLinkProps) {
   return iconOnly ? (
     <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
       <UnstyledButton
+        component={NavLink}
+        to={href}
         onClick={onClick}
         className={cx(classes.link, { [classes.active]: active })}
       >
@@ -79,6 +81,7 @@ export function NavbarIconLink(props: NavbarLinkProps) {
     <UnstyledButton
       component={NavLink}
       to={href}
+      onClick={onClick}
       sx={theme => ({
         display: 'block',
         width: '100%',

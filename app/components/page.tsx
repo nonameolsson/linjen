@@ -56,6 +56,7 @@ export function Page(props: PageProps): JSX.Element {
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -99,7 +100,13 @@ export function Page(props: PageProps): JSX.Element {
       }
       navbarOffsetBreakpoint='sm'
       navbar={
-        <Navbar subNavigation={subNavigation} logo={<p>L</p>} opened={opened} />
+        <Navbar
+          collapsed={isCollapsed}
+          toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
+          subNavigation={subNavigation}
+          logo={<p>L</p>}
+          opened={opened}
+        />
       }
     >
       {fab && (
