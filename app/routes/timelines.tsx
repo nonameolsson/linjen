@@ -122,7 +122,7 @@ export default function TimelinesPage() {
       {data.timelineListItems.length === 0 ? (
         <p>It is empty here. Lets create timeline!</p>
       ) : (
-        <Box pt='lg'>
+        <Box pt='xl'>
           <Carousel
             slideSize='80%'
             breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}

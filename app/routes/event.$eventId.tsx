@@ -1,16 +1,14 @@
 import { Dialog, Transition } from '@headlessui/react'
 import {
   Box,
-  Button,
   Grid,
-  Group,
   Menu,
-  Modal,
   SimpleGrid,
   Text,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
+import { openConfirmModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -21,6 +19,7 @@ import {
   useCatch,
   useFetcher,
   useLoaderData,
+  useSubmit,
   useTransition
 } from '@remix-run/react'
 import { IconEdit, IconTrash } from '@tabler/icons'
@@ -74,6 +73,9 @@ const DEFAULT_REDIRECT = 'timelines'
 
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
+  console.log('LOADER')
+  console.log(request)
+  console.log(params)
   await requireUserId(request)
 
   invariant(params.eventId, 'eventId not found')
@@ -90,12 +92,13 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
+  console.log('ACTION')
   invariant(params.eventId, 'eventId not found')
   await requireUserId(request)
 
   const formData = await request.formData()
   let action = formData.get('action')
-
+  console.log(action)
   switch (action) {
     case 'add-link': {
       try {
@@ -247,7 +250,9 @@ function NewLinkDialog({
 
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
+  const submit = useSubmit()
   const [isOpen, setIsOpen] = useState<boolean>(false)
+  const formRef = useRef<HTMLFormElement>()
 
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
@@ -257,17 +262,68 @@ export default function EventDetailsPage() {
   function closeDeleteModal(): void {
     setIsOpen(false)
   }
-
-  function openDeleteModal(): void {
-    setIsOpen(true)
-  }
-
   function openLinkDialog(): void {
     setIsOpenLinkDialog(true)
   }
 
   function closeLinkDialog(): void {
     setIsOpenLinkDialog(false)
+  }
+
+  function openDeleteModal() {
+    openConfirmModal({
+      title: 'Please confirm your action',
+      children: (
+        <Form replace method='post'>
+          <input
+            type='hidden'
+            defaultValue={data.redirectTo}
+            name='redirectTo'
+          />
+          <Text size='sm'>
+            This action is so important that you are required to confirm it with
+            a modal. Please click one of these buttons to proceed.
+          </Text>
+        </Form>
+      ),
+      labels: { confirm: 'Confirm', cancel: 'Cancel' },
+      onCancel: () => console.log('Cancel'),
+      onConfirm: () => console.log('Cancel')
+    })
+
+    // openModal({
+    //   title: 'Delete event',
+
+    //   children: (
+    //     <>
+    //       <Button onClick={() => closeAllModals} mt='md'>
+    //         Submit
+    //       </Button>
+    //       <Button
+    //         type='button'
+    //         className='btn btn-outline'
+    //         onClick={closeDeleteModal}
+    //       >
+    //         Cancel
+    //       </Button>
+    //       <Form replace method='post'>
+    //         <input
+    //           type='hidden'
+    //           defaultValue={data.redirectTo}
+    //           name='redirectTo'
+    //         />
+    //         <Button
+
+    //           name='action'
+    //           value='delete-event'
+    //           type='submit'
+    //         >
+    //           Delete
+    //         </Button>
+    //       </Form>
+    //     </>
+    //   )
+    // })
   }
 
   const referencedEvents = [
@@ -372,139 +428,8 @@ export default function EventDetailsPage() {
           </Grid.Col>
         </Grid>
       </Box>
-      <Modal
-        centered
-        opened={isOpen}
-        withCloseButton={false}
-        onClose={() => setIsOpen(false)}
-        title='Delete event?'
-      >
-        <Text>Do you really want to delete this event?</Text>
-        <Group>
-          <Button type='button' onClick={closeDeleteModal}>
-            Cancel
-          </Button>
-          <Form replace method='post'>
-            <input
-              type='hidden'
-              defaultValue={data.redirectTo}
-              name='redirectTo'
-            />
-            <Button name='action' value='delete-event' type='submit'>
-              Delete
-            </Button>
-          </Form>
-        </Group>
-      </Modal>
 
       <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
-      {/* <Content
-        desktopNavbar={
-          <PageHeader
-            title={data.event.title}
-            description='Last updated'
-            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
-              new Date()
-            )}
-            actions={
-              <>
-                <button
-                  onClick={openDeleteModal}
-                  className='btn btn-error btn-outline'
-                >
-                  Delete
-                </button>
-                <Link to='edit' className='btn btn-primary'>
-                  Edit
-                </Link>
-              </>
-            }
-          />
-        }
-      >
-        {/* <ContentModule title='Event Information'>
-          <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>Start Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>
-                {new Intl.DateTimeFormat('sv-SE').format(
-                  new Date(data.event.startDate)
-                )}
-              </dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>
-                Salary expectation
-              </dt>
-              <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-            </div>
-            <div className='sm:col-span-2'>
-              <dt className='text-sm font-medium text-gray-500'>Description</dt>
-              <dd className='mt-1 text-sm text-gray-900'>
-                {data.event.content}
-              </dd>
-            </div>
-            <div className='sm:col-span-2'>
-              <LinkList
-                onNewClick={openLinkDialog}
-                title='Links'
-                items={data.event.externalLinks.map(link => ({
-                  title: link.title,
-                  url: link.url,
-                  id: link.id
-                }))}
-              />
-            </div>
-          </dl>
-        </ContentModule> */}
-
-      {/* <Modal
-          icon={
-            <ExclamationIcon
-              className='h-6 w-6 text-red-600'
-              aria-hidden='true'
-            />
-          }
-          isOpen={isOpen}
-          description='Do you really want to delete this event?'
-          closeModal={closeDeleteModal}
-          title='Delete event'
-          buttons={
-            <>
-              <button
-                type='button'
-                className='btn btn-outline'
-                onClick={closeDeleteModal}
-              >
-                Cancel
-              </button>
-              <Form replace method='post'>
-                <input
-                  type='hidden'
-                  defaultValue={data.redirectTo}
-                  name='redirectTo'
-                />
-                <button
-                  name='action'
-                  value='delete-event'
-                  type='submit'
-                  className='btn btn-error'
-                >
-                  Delete
-                </button>
-              </Form>
-            </>
-          }
-        /> *
-      </Content> */}
     </Page>
   )
 }
