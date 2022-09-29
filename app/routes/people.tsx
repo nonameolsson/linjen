@@ -8,7 +8,7 @@ const PAGE_TITLE = 'People'
 
 export default function PeoplePage() {
   return (
-    <Page title={PAGE_TITLE} footer={<div>FOOTER</div>}>
+    <Page title={PAGE_TITLE}>
       <Container>
         <Link to=''>
           <IconPlus />
