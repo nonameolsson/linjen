@@ -1,5 +1,4 @@
 import { Footer, Group, Stack, Text } from '@mantine/core'
-import { useOs } from '@mantine/hooks'
 import { NavLink } from '@remix-run/react'
 
 import { useStyles } from './bottom-navigation.styles'
@@ -38,15 +37,10 @@ function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
 
 export function BottomNavigation(props: BottomNavigationProps): JSX.Element {
   const { children } = props
-  const os = useOs()
   const { classes } = useStyles()
 
   return (
-    <Footer
-      height={60}
-      // height={os === 'ios' ? 88 : 60}
-      className={classes.footer}
-    >
+    <Footer height={60} className={classes.footer}>
       <Group grow className={classes.icons}>
         {children}
       </Group>
