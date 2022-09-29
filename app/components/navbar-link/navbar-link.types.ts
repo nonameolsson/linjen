@@ -4,6 +4,7 @@ export interface NavbarLinkProps {
   icon: TablerIcon
   color: string
   href: string
-  label: string
-  tooltip: string
+  title: string
+  tooltipLabel: string
+  id: number
 }

@@ -5,7 +5,7 @@ import type { NavbarLinkProps } from './navbar-link.types'
 export function NavbarLink({
   icon: Icon,
   color,
-  label,
+  title,
   href
 }: NavbarLinkProps): JSX.Element {
   return (
@@ -33,7 +33,7 @@ export function NavbarLink({
           <Icon />
         </ThemeIcon>
 
-        <Text size='sm'>{label}</Text>
+        <Text size='sm'>{title}</Text>
       </Group>
     </UnstyledButton>
   )

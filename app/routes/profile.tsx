@@ -29,6 +29,14 @@ export default function NotesPage() {
             theme.colorScheme === 'dark' ? theme.colors.dark[8] : theme.white
         })}
       >
+        <ActionIcon
+          variant='outline'
+          color={dark ? 'yellow' : 'blue'}
+          onClick={() => toggleColorScheme()}
+          title='Toggle color scheme'
+        >
+          {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
+        </ActionIcon>
         <Avatar
           src='https://joeschmoe.io/api/v1/asdfjdk'
           size={120}
@@ -46,16 +54,11 @@ export default function NotesPage() {
           Send message
         </Button>
       </Paper>
-      <ActionIcon
-        variant='outline'
-        color={dark ? 'yellow' : 'blue'}
-        onClick={() => toggleColorScheme()}
-        title='Toggle color scheme'
-      >
-        {dark ? <IconSun size={18} /> : <IconMoonStars size={18} />}
-      </ActionIcon>
+
       <Form action='/logout' method='post'>
-        <button type='submit'>Log out</button>
+        <Button mt='xl' fullWidth type='submit'>
+          Log out
+        </Button>
       </Form>
     </Page>
   )
