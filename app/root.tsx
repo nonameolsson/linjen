@@ -14,7 +14,6 @@ import {
 } from '@remix-run/react'
 import { useState } from 'react'
 
-import { NotFound } from './components'
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
 
@@ -93,39 +92,4 @@ export default function App() {
   )
 }
 
-export function CatchBoundary() {
-  // hook will return either 'dark' or 'light' on client
-  // and always 'light' during ssr as window.matchMedia is not available
-  const preferredColorScheme = useColorScheme()
-  const [colorScheme, setColorScheme] =
-    useState<ColorScheme>(preferredColorScheme)
-  const toggleColorScheme = (value?: ColorScheme) =>
-    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
 
-  return (
-    <ColorSchemeProvider
-      colorScheme={colorScheme}
-      toggleColorScheme={toggleColorScheme}
-    >
-      <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
-        withCSSVariables
-        theme={{ activeStyles: { transform: 'scale(0.95)' } }}
-      >
-        <html>
-          <head>
-            <title>Oops!</title>
-            <Meta />
-            <link rel='manifest' href='/resources/manifest.json' />
-            <Links />
-          </head>
-          <body>
-            <NotFound />
-            <Scripts />
-          </body>
-        </html>
-      </MantineProvider>
-    </ColorSchemeProvider>
-  )
-}

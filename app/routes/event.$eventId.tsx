@@ -1,10 +1,21 @@
 import { Dialog, Transition } from '@headlessui/react'
-import { Box, Grid, Menu, SimpleGrid, useMantineTheme } from '@mantine/core'
+import {
+  Box,
+  Button,
+  Grid,
+  Group,
+  Menu,
+  Modal,
+  SimpleGrid,
+  Text,
+  useMantineTheme
+} from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
+  Form,
   Link,
   useActionData,
   useCatch,
@@ -361,6 +372,31 @@ export default function EventDetailsPage() {
           </Grid.Col>
         </Grid>
       </Box>
+      <Modal
+        centered
+        opened={isOpen}
+        withCloseButton={false}
+        onClose={() => setIsOpen(false)}
+        title='Delete event?'
+      >
+        <Text>Do you really want to delete this event?</Text>
+        <Group>
+          <Button type='button' onClick={closeDeleteModal}>
+            Cancel
+          </Button>
+          <Form replace method='post'>
+            <input
+              type='hidden'
+              defaultValue={data.redirectTo}
+              name='redirectTo'
+            />
+            <Button name='action' value='delete-event' type='submit'>
+              Delete
+            </Button>
+          </Form>
+        </Group>
+      </Modal>
+
       <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
       {/* <Content
         desktopNavbar={

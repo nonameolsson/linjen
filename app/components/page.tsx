@@ -102,25 +102,25 @@ export function Page(props: PageProps): JSX.Element {
     <AppShell
       padding={0}
       footer={mobile ? bottomNavigation : undefined}
-      styles={{
-        body: {
-          height: '100%'
-        },
-        main: {
-          background:
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[8]
-              : theme.colors.gray[0],
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100%',
-          overflowY: 'scroll'
-        },
-        root: {
-          height: '100%',
-          overflow: 'hidden'
-        }
-      }}
+      // styles={{
+      //   body: {
+      //     height: '100%'
+      //   },
+      //   main: {
+      //     background:
+      //       theme.colorScheme === 'dark'
+      //         ? theme.colors.dark[8]
+      //         : theme.colors.gray[0],
+      //     display: 'flex',
+      //     flexDirection: 'column',
+      //     height: '100%',
+      //     overflowY: 'scroll'
+      //   },
+      //   root: {
+      //     height: '100%',
+      //     overflow: 'hidden'
+      //   }
+      // }}
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
       aside={
@@ -133,29 +133,19 @@ export function Page(props: PageProps): JSX.Element {
         )
       }
       navbar={
-        <Transition
-          mounted={opened}
-          transition='slide-up'
-          duration={400}
-          timingFunction='ease'
+        <Navbar
+          p='md'
+          hiddenBreakpoint='sm'
+          hidden={!opened}
+          width={{ sm: 200, lg: 300 }}
         >
-          {styles => (
-            <Navbar
-              style={styles}
-              p='md'
-              hiddenBreakpoint='sm'
-              hidden={!opened}
-              width={{ sm: 200, lg: 300 }}
-            >
-              <Navbar.Section grow mt='md'>
-                <MainLinks />
-              </Navbar.Section>
-              <Navbar.Section>
-                <NavbarUser />
-              </Navbar.Section>
-            </Navbar>
-          )}
-        </Transition>
+          <Navbar.Section grow mt='md'>
+            <MainLinks />
+          </Navbar.Section>
+          <Navbar.Section>
+            <NavbarUser />
+          </Navbar.Section>
+        </Navbar>
       }
       header={
         <div>
