@@ -1,7 +1,13 @@
+import type { DefaultMantineColor } from '@mantine/core'
 import { createStyles } from '@mantine/core'
 
-export const useStyles = createStyles((theme, _params, getRef) => {
+type StyleProps = {
+  color: DefaultMantineColor
+}
+
+export const useStyles = createStyles((theme, props: StyleProps, getRef) => {
   const icon = getRef('icon')
+  const { color } = props
 
   return {
     link: {
@@ -12,8 +18,8 @@ export const useStyles = createStyles((theme, _params, getRef) => {
       fontSize: theme.fontSizes.sm,
       color:
         theme.colorScheme === 'dark'
-          ? theme.colors.dark[1]
-          : theme.colors.gray[7],
+          ? theme.colors[color][1]
+          : theme.colors[color][7],
       padding: `${theme.spacing.xs}px ${theme.spacing.sm}px`,
       borderRadius: theme.radius.sm,
       fontWeight: 500,
@@ -21,12 +27,21 @@ export const useStyles = createStyles((theme, _params, getRef) => {
       '&:hover': {
         backgroundColor:
           theme.colorScheme === 'dark'
-            ? theme.colors.dark[6]
-            : theme.colors.gray[0],
-        color: theme.colorScheme === 'dark' ? theme.white : theme.black,
+            ? theme.fn.variant({
+                variant: 'default',
+                color: theme.colors[color][theme.fn.primaryShade()]
+              }).background
+            : theme.colors[color][0],
+        color:
+          theme.colorScheme === 'dark'
+            ? theme.colors[color][0]
+            : theme.colors[color][9],
 
         [`& .${icon}`]: {
-          color: theme.colorScheme === 'dark' ? theme.white : theme.black
+          color:
+            theme.colorScheme === 'dark'
+              ? theme.colors[color][0]
+              : theme.colors[color][9]
         }
       }
     },
@@ -35,24 +50,25 @@ export const useStyles = createStyles((theme, _params, getRef) => {
       ref: icon,
       color:
         theme.colorScheme === 'dark'
-          ? theme.colors.dark[2]
-          : theme.colors.gray[6],
+          ? theme.colors[color][2]
+          : theme.colors[color][7],
       marginRight: theme.spacing.sm
     },
 
     linkActive: {
       '&, &:hover': {
-        backgroundColor: theme.fn.variant({
-          variant: 'light',
-          color: theme.primaryColor
-        }).background,
-        color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
-          .color,
+        backgroundColor:
+          theme.colorScheme === 'dark'
+            ? theme.colors.dark[6]
+            : theme.colors[color][0],
+        color: theme.colorScheme
+          ? theme.colors[color][6]
+          : theme.colors[color][7],
         [`& .${icon}`]: {
-          color: theme.fn.variant({
-            variant: 'light',
-            color: theme.primaryColor
-          }).color
+          color:
+            theme.colorScheme === 'dark'
+              ? theme.colors[color][6]
+              : theme.colors[color][7]
         }
       }
     }

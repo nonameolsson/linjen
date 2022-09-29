@@ -31,7 +31,7 @@ const mainLinks: NavbarLinkProps[] = [
   },
   {
     icon: IconFriends,
-    color: 'violet',
+    color: 'lime',
     title: 'People',
     target: '/people',
     tooltipLabel: 'All people'
@@ -61,7 +61,7 @@ const linksMockdata = [
 const bottomLinks: NavbarLinkProps[] = [
   {
     icon: IconUser,
-    color: 'blue',
+    color: 'gray',
     title: 'Profile',
     target: '/profile',
     tooltipLabel: 'Profile'
@@ -125,7 +125,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
         >
           <NavbarLink
             target={undefined}
-            color='blue'
+            color='gray'
             icon={IconLogout}
             collapsed={collapsedItems}
             title='Log out'

@@ -15,7 +15,7 @@ export function NavbarLink(props: NavbarLinkProps): JSX.Element {
     ...rest
   } = props
 
-  const { classes, cx } = useStyles()
+  const { classes, cx } = useStyles({ color })
 
   if (collapsed) {
     if (typeof target === 'string') {
