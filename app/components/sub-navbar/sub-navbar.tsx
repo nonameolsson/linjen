@@ -10,7 +10,7 @@ export type SubLink = {
 export type SubNavbarProps = {
   links: SubLink[]
   title: string
-  buttons?: React.ReactNode
+  buttons?: JSX.Element
 }
 
 export function SubNavbar(props: SubNavbarProps): JSX.Element {

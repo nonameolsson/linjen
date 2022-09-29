@@ -111,7 +111,7 @@ export function Page(props: PageProps): JSX.Element {
         />
       }
     >
-      {subNavigation && (
+      {!isMobile && (
         <Box
           sx={{
             backgroundColor:

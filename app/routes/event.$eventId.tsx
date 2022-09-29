@@ -1,4 +1,15 @@
-import { Grid, Menu, Paper, Text, Title } from '@mantine/core'
+import {
+  Button,
+  Container,
+  Grid,
+  Menu,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+  useMantineTheme
+} from '@mantine/core'
 import { openConfirmModal, openContextModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
@@ -9,6 +20,7 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 import {
+  ContentPaper,
   linkFormSchema,
   LinkList,
   List,
@@ -108,9 +120,10 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 }
-
+const PRIMARY_COL_HEIGHT = 300
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
+  const theme = useMantineTheme()
   const submit = useSubmit()
 
   function openNewLinkModal() {
@@ -142,6 +155,8 @@ export default function EventDetailsPage() {
     ...data.event.referencedBy,
     ...data.event.referencing
   ]
+
+  const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - theme.spacing.md / 2
 
   return (
     <Page
@@ -212,33 +227,71 @@ export default function EventDetailsPage() {
         </>
       }
     >
-      <Grid>
-        <Grid.Col span={12} lg={12} p={0}>
-          <Paper p='md'>
-            <Title order={3}>Event Information</Title>
-            <div>
-              Start Date
-              {new Intl.DateTimeFormat('sv-SE').format(
+      <Container my='md'>
+        <SimpleGrid
+          cols={2}
+          spacing='md'
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+        >
+          <Stack>
+            <ContentPaper
+              title={data.event.title}
+              description={new Intl.DateTimeFormat('sv-SE').format(
                 new Date(data.event.startDate)
               )}
-            </div>
-            <div>
-              Content
-              {data.event.content}
-            </div>
-          </Paper>
+            >
+              <Text>{data.event.content}</Text>
+            </ContentPaper>
+          </Stack>
 
-          <LinkList
-            onNewClick={openNewLinkModal}
-            title='Links'
-            items={data.event.externalLinks.map(link => ({
-              title: link.title,
-              url: link.url,
-              id: link.id
-            }))}
-          />
-        </Grid.Col>
-      </Grid>
+          <Stack>
+            <ContentPaper
+              p={0}
+              title='Links'
+              styles={{
+                content: { paddingTop: 0 },
+                container: { padding: 0 }
+              }}
+              button={
+                <Button
+                  onClick={openNewLinkModal}
+                  variant='filled'
+                  size='md'
+                  compact
+                >
+                  New
+                </Button>
+              }
+            >
+              <LinkList
+                items={data.event.externalLinks.map(link => ({
+                  title: link.title,
+                  url: link.url,
+                  id: link.id
+                }))}
+              />
+            </ContentPaper>
+
+            <Title order={3}>Gallery</Title>
+            <Grid gutter='md'>
+              <Grid.Col span={6}>
+                <Skeleton
+                  height={SECONDARY_COL_HEIGHT}
+                  radius='md'
+                  animate={false}
+                />
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <Skeleton
+                  height={SECONDARY_COL_HEIGHT}
+                  radius='md'
+                  animate={false}
+                />
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        </SimpleGrid>
+      </Container>
     </Page>
   )
 }

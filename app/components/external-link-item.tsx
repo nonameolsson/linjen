@@ -31,18 +31,31 @@ export function ExternalLinkItem(props: ExternalLinkItemProps): JSX.Element {
   return (
     <Group
       position='apart'
-      px='md'
-      py='xs'
       sx={theme => ({
         borderWidth: '1px',
         borderStyle: 'solid',
         borderColor:
           theme.colorScheme === 'dark'
             ? theme.colors.dark[5]
-            : theme.colors.gray[0]
+            : theme.colors.gray[0],
+
+        '&:hover': {
+          backgroundColor:
+            theme.colorScheme === 'dark'
+              ? theme.colors.dark[6]
+              : theme.colors.gray[1],
+          cursor: 'pointer'
+        }
       })}
     >
-      <Text component='a' href={url} target='_blank' style={{ flex: 1 }}>
+      <Text
+        component='a'
+        href={url}
+        target='_blank'
+        style={{ flex: 1 }}
+        px='md'
+        py='xs'
+      >
         <Group>
           <IconLink size={16} />
           <Text variant='text' size='md'>
@@ -53,7 +66,7 @@ export function ExternalLinkItem(props: ExternalLinkItemProps): JSX.Element {
 
       <Menu shadow='md' position='bottom-end'>
         <Menu.Target>
-          <ActionIcon variant='subtle' size='md'>
+          <ActionIcon variant='subtle' size='md' mr='md'>
             <IconDotsVertical size={16} />
           </ActionIcon>
         </Menu.Target>

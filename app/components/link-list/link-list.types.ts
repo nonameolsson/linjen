@@ -7,6 +7,4 @@ export interface Link {
 
 export interface LinkListProps {
   items: Link[]
-  onNewClick: () => void
-  title?: string
 }

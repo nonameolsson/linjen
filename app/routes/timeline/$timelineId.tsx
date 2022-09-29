@@ -95,6 +95,27 @@ export default function TimelineDetailsPage() {
 
   // const currentTab = pathname.split('/').pop()
 
+  const overflowMenu: JSX.Element = (
+    <Menu shadow='md' width={200} position='bottom-start'>
+      <Menu.Target>
+        <OverflowButton />
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
+          Edit
+        </Menu.Item>
+        <Menu.Item
+          onClick={openDeleteModal}
+          color='red'
+          icon={<IconTrash size={14} />}
+        >
+          Delete
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  )
+
   return (
     <Page
       padding={0}
@@ -102,30 +123,7 @@ export default function TimelineDetailsPage() {
       goBackTo='/timelines'
       subNavigation={
         <SubNavbar
-          buttons={
-            <Menu shadow='md' width={200} position='bottom-end'>
-              <Menu.Target>
-                <OverflowButton />
-              </Menu.Target>
-
-              <Menu.Dropdown>
-                <Menu.Item
-                  icon={<IconEdit size={14} />}
-                  component={Link}
-                  to='edit'
-                >
-                  Edit
-                </Menu.Item>
-                <Menu.Item
-                  onClick={openDeleteModal}
-                  color='red'
-                  icon={<IconTrash size={14} />}
-                >
-                  Delete
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          }
+          buttons={overflowMenu}
           title={data.timeline.title}
           links={SUBNAV_LINKS}
         />
@@ -150,26 +148,7 @@ export default function TimelineDetailsPage() {
         </BottomNavigation>
       }
       title={data.timeline.title}
-      toolbarButtons={
-        <Menu shadow='md' width={200} position='bottom-end'>
-          <Menu.Target>
-            <OverflowButton />
-          </Menu.Target>
-
-          <Menu.Dropdown>
-            <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
-              Edit
-            </Menu.Item>
-            <Menu.Item
-              onClick={openDeleteModal}
-              color='red'
-              icon={<IconTrash size={14} />}
-            >
-              Delete
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      }
+      toolbarButtons={overflowMenu}
     >
       <Outlet />
     </Page>
