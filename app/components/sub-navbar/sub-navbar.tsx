@@ -1,41 +1,31 @@
-import { useState } from 'react'
-import { useStyles } from '../navbar/navbar.styles'
+import { NavLink } from '@remix-run/react'
+import { useStyles } from './sub-navbar.styles'
 
-const linksMockdata = [
-  'Security',
-  'Settings',
-  'Dashboard',
-  'Releases',
-  'Account',
-  'Orders',
-  'Clients',
-  'Databases',
-  'Pull Requests',
-  'Open Issues',
-  'Wiki pages'
-]
+export type SubLink = {
+  label: string
+  to: string
+}
 
-export function SubNavbar(): JSX.Element {
+export type SubNavbarProps = {
+  links: SubLink[]
+}
+
+export function SubNavbar(props: SubNavbarProps): JSX.Element {
+  const { links } = props
   const { classes, cx } = useStyles()
-  const [active, setActive] = useState('Releases')
-  const [activeLink, setActiveLink] = useState('Settings')
 
   return (
     <>
-      {linksMockdata.map(link => (
-        <a
-          className={cx(classes.link, {
-            [classes.linkActive]: activeLink === link
-          })}
-          href='/'
-          onClick={event => {
-            event.preventDefault()
-            setActiveLink(link)
-          }}
-          key={link}
+      {links.map(link => (
+        <NavLink
+          className={({ isActive }) =>
+            cx(classes.link, { [classes.linkActive]: isActive })
+          }
+          to={link.to}
+          key={link.to}
         >
-          {link}
-        </a>
+          {link.label}
+        </NavLink>
       ))}
     </>
   )

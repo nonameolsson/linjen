@@ -7,7 +7,6 @@ import {
   Outlet,
   useCatch,
   useLoaderData,
-  useLocation,
   useSubmit
 } from '@remix-run/react'
 import {
@@ -19,9 +18,8 @@ import {
 } from '@tabler/icons'
 import invariant from 'tiny-invariant'
 
-import { useState } from 'react'
+import type { SubLink } from '~/components'
 import { BottomNavigation, OverflowButton, Page, SubNavbar } from '~/components'
-import { useStyles } from '~/components/navbar/navbar.styles'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -29,6 +27,21 @@ import { requireUserId } from '~/session.server'
 type LoaderData = {
   timeline: Timeline
 }
+
+const SUBNAV_LINKS: SubLink[] = [
+  {
+    label: 'Events',
+    to: 'events'
+  },
+  {
+    label: 'Places',
+    to: 'places'
+  },
+  {
+    label: 'People',
+    to: 'people'
+  }
+]
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
@@ -57,10 +70,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const submit = useSubmit()
-  const { classes, cx } = useStyles()
-  const [active, setActive] = useState('Releases')
-  const [activeLink, setActiveLink] = useState('Settings')
-  const { pathname } = useLocation()
 
   function openDeleteModal() {
     openConfirmModal({
@@ -91,7 +100,10 @@ export default function TimelineDetailsPage() {
       padding={0}
       showBackButton
       goBackTo='/timelines'
-      subNavigation={<SubNavbar />}
+      subNavigation={{
+        component: <SubNavbar links={SUBNAV_LINKS} />,
+        title: data.timeline.title
+      }}
       bottomNavigation={
         <BottomNavigation>
           <BottomNavigation.Button

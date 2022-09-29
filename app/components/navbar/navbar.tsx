@@ -1,9 +1,8 @@
-import { Box, Code, Group, Navbar as MantineNavbar } from '@mantine/core'
-import { Form } from '@remix-run/react'
+import { Navbar as MantineNavbar, Title } from '@mantine/core'
 import {
   IconCalendarEvent,
   IconFriends,
-  IconLogout,
+  IconHome,
   IconMap,
   IconTimeline,
   IconUser
@@ -45,19 +44,6 @@ const mainLinks: NavbarLinkProps[] = [
   }
 ]
 
-const linksMockdata = [
-  'Security',
-  'Settings',
-  'Dashboard',
-  'Releases',
-  'Account',
-  'Orders',
-  'Clients',
-  'Databases',
-  'Pull Requests',
-  'Open Issues',
-  'Wiki pages'
-]
 const bottomLinks: NavbarLinkProps[] = [
   {
     icon: IconUser,
@@ -69,11 +55,18 @@ const bottomLinks: NavbarLinkProps[] = [
 ]
 
 export function Navbar(props: NavbarProps): JSX.Element {
-  const { opened, logo, collapsed, isMobile, subNavigation, toggleCollapsed } =
-    props
-  const { classes } = useStyles()
-
-  const collapsedItems = isMobile ? false : collapsed
+  const {
+    opened,
+    collapsed,
+    isMobile,
+    subNavigation,
+    subNavigationTitle,
+    toggleCollapsed
+  } = props
+  const collapsedItems: boolean = isMobile ? false : !!collapsed
+  const { classes } = useStyles({
+    collapsed: collapsedItems
+  })
 
   const renderLinks = (links: NavbarLinkProps[]): React.ReactNode => {
     return links.map(item => (
@@ -101,50 +94,81 @@ export function Navbar(props: NavbarProps): JSX.Element {
       hiddenBreakpoint='sm'
       hidden={!opened}
       width={{
-        sm: collapsedItems ? 80 : 300
+        // sm: collapsedItems ? 80 : 300
+        sm: collapsedItems ? (subNavigation ? 300 : 60) : 300
       }}
-      p='md'
+      p={isMobile ? 'md' : undefined}
     >
-      <MantineNavbar.Section grow>
-        <Group className={classes.header} position='apart'>
-          LOGO
-          <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
-        </Group>
+      <MantineNavbar.Section grow className={classes.wrapper}>
+        <div className={classes.aside}>
+          <div className={classes.logo}>
+            <IconHome type='mark' size={30} />
+          </div>
 
-        {renderLinks(mainLinks)}
-      </MantineNavbar.Section>
+          {/* <MantineNavbar.Section
+            grow
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignSelf: 'normal'
+            }}
+          > */}
+          {renderLinks(mainLinks)}
+          {/* </MantineNavbar.Section> */}
+          {/* <MantineNavbar.Section className={classes.footer}>
+            {renderLinks(bottomLinks)}
 
-      <MantineNavbar.Section className={classes.footer}>
-        {renderLinks(bottomLinks)}
+            <Box
+              component={Form}
+              action='/logout'
+              method='post'
+              sx={{ display: 'flex ' }}
+            >
+              <NavbarLink
+                target={undefined}
+                color='gray'
+                icon={IconLogout}
+                collapsed={collapsedItems}
+                title='Log out'
+                tooltipLabel='Log out'
+                sx={{ flex: 1 }}
+              />
+            </Box>
+          </MantineNavbar.Section> */}
+        </div>
 
-        <Box
-          component={Form}
-          action='/logout'
-          method='post'
-          sx={{ display: 'flex ' }}
-        >
-          <NavbarLink
-            target={undefined}
-            color='gray'
-            icon={IconLogout}
-            collapsed={collapsedItems}
-            title='Log out'
-            tooltipLabel='Log out'
-            sx={{ flex: 1 }}
-          />
-        </Box>
-      </MantineNavbar.Section>
-
-      {/* {!isMobile && subNavigation && (
+        {!isMobile && subNavigation && (
           <div className={classes.main}>
             <Title order={4} className={classes.title}>
-              {active}
+              {subNavigationTitle}
             </Title>
 
             {subNavigation}
           </div>
         )}
-      </MantineNavbar.Section> */}
+        {/* </MantineNavbar.Section> */}
+
+        {/* <MantineNavbar.Section className={classes.footer}>
+          {renderLinks(bottomLinks)}
+
+          <Box
+            component={Form}
+            action='/logout'
+            method='post'
+            sx={{ display: 'flex ' }}
+          >
+            <NavbarLink
+              target={undefined}
+              color='gray'
+              icon={IconLogout}
+              collapsed={collapsedItems}
+              title='Log out'
+              tooltipLabel='Log out'
+              sx={{ flex: 1 }}
+            />
+          </Box>
+           */}
+      </MantineNavbar.Section>
     </MantineNavbar>
   )
 }

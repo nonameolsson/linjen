@@ -15,7 +15,7 @@ export function NavbarLink(props: NavbarLinkProps): JSX.Element {
     ...rest
   } = props
 
-  const { classes, cx } = useStyles({ color })
+  const { classes, cx } = useStyles({ color, collapsed })
 
   if (collapsed) {
     if (typeof target === 'string') {
@@ -34,12 +34,7 @@ export function NavbarLink(props: NavbarLinkProps): JSX.Element {
     } else {
       return (
         <Tooltip label={tooltipLabel} position='right' transitionDuration={0}>
-          <UnstyledButton<'button'>
-            // onClick={target}
-            type='submit'
-            // className={cx(classes.link, { [classes.linkActive]: 'Timelines' })}
-            className={classes.link}
-          >
+          <UnstyledButton<'button'> type='submit' className={classes.link}>
             <Icon stroke={1.5} />
           </UnstyledButton>
         </Tooltip>
@@ -48,7 +43,6 @@ export function NavbarLink(props: NavbarLinkProps): JSX.Element {
   }
 
   if (typeof target === 'string') {
-    console.log('hej')
     return (
       <NavLink
         to={target}

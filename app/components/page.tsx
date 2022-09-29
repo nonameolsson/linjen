@@ -8,7 +8,6 @@ import {
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconHourglassEmpty } from '@tabler/icons'
 import { useEffect, useState } from 'react'
 
 import { Fab } from './fab'
@@ -30,7 +29,10 @@ type PageProps = {
   header?: React.ReactNode
   padding?: MantineNumberSize
   showBackButton?: boolean
-  subNavigation?: React.ReactNode
+  subNavigation?: {
+    component: React.ReactNode
+    title: string
+  }
   transition?: MantineTransition
   title: string
   toolbarButtons?: JSX.Element
@@ -107,8 +109,8 @@ export function Page(props: PageProps): JSX.Element {
           isMobile={isMobile}
           collapsed={isCollapsed}
           toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
-          subNavigation={subNavigation}
-          logo={<IconHourglassEmpty size={30} color='yellow' />}
+          subNavigation={subNavigation?.component}
+          subNavigationTitle={subNavigation?.title}
           opened={opened}
         />
       }
