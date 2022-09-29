@@ -2,7 +2,7 @@ import { createStyles } from '@mantine/core'
 
 export interface ContentPaperStylesParams {}
 
-export default createStyles((theme, {}: ContentPaperStylesParams) => ({
+export default createStyles((theme, props: ContentPaperStylesParams) => ({
   root: {},
   container: {
     backgroundColor:

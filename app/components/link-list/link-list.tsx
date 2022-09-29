@@ -1,8 +1,11 @@
+import { Box, Text } from '@mantine/core'
 import { ExternalLinkItem } from '../external-link-item'
 import type { Link, LinkListProps } from './link-list.types'
 
 export function LinkList(props: LinkListProps) {
-  return (
+  const { items } = props
+
+  return items.length > 0 ? (
     <>
       {props.items.map((item: Link) => (
         <ExternalLinkItem
@@ -13,5 +16,9 @@ export function LinkList(props: LinkListProps) {
         />
       ))}
     </>
+  ) : (
+    <Box p='md'>
+      <Text>No links added yet...</Text>
+    </Box>
   )
 }

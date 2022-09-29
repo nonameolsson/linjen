@@ -78,7 +78,7 @@ export function Page(props: PageProps): JSX.Element {
       aside={
         aside && (
           <MediaQuery smallerThan='sm' styles={{ display: 'none' }}>
-            <Aside p='md' hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
+            <Aside hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
               {aside}
             </Aside>
           </MediaQuery>

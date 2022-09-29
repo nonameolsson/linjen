@@ -1,8 +1,11 @@
 import {
+  Box,
   Button,
   Container,
   Grid,
+  Group,
   Menu,
+  NavLink,
   SimpleGrid,
   Skeleton,
   Stack,
@@ -15,7 +18,14 @@ import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Link, useCatch, useLoaderData, useSubmit } from '@remix-run/react'
-import { IconEdit, IconTrash } from '@tabler/icons'
+import {
+  IconCalendarEvent,
+  IconChevronRight,
+  IconEdit,
+  IconMap,
+  IconTimeline,
+  IconTrash
+} from '@tabler/icons'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
@@ -23,11 +33,9 @@ import {
   ContentPaper,
   linkFormSchema,
   LinkList,
-  List,
   OverflowButton,
   Page
 } from '~/components'
-import { SidebarWidget } from '~/components/sidebar-widget'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
 import { createLink } from '~/models/externalLink'
@@ -120,7 +128,106 @@ export const action: ActionFunction = async ({ request, params }) => {
     }
   }
 }
+
 const PRIMARY_COL_HEIGHT = 300
+
+function AsideWidget(props: {
+  title: string
+  icon?: JSX.Element
+  emptyDataTitle: string
+  data: { title: string; id: string }[]
+  path: {
+    prefix: string
+    suffix?: string
+  }
+}): JSX.Element {
+  const { data, emptyDataTitle, icon, path, title } = props
+
+  return (
+    <Box mb='xl'>
+      <Group mb='md' mx='md'>
+        {icon}
+        <Title order={4}>{title}</Title>
+      </Group>
+      {data.length > 0 ? (
+        data.map(item => (
+          <NavLink
+            component={Link}
+            to={`/${path.prefix}/${item.id}/${path.suffix}`}
+            label={item.title}
+            key={item.id}
+            rightSection={<IconChevronRight size={12} stroke={1.5} />}
+          />
+        ))
+      ) : (
+        <NavLink label={emptyDataTitle} />
+      )}
+    </Box>
+  )
+}
+
+function EventAside(props: {
+  timelines: { title: string; id: string }[]
+  events: { title: string; id: string }[]
+  locations: { title: string; id: string }[]
+  people: { title: string; id: string }[]
+}): JSX.Element {
+  const { timelines, events, locations, people } = props
+  const theme = useMantineTheme()
+
+  return (
+    <>
+      <Box
+        sx={{
+          backgroundColor:
+            theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
+          borderBottom: `1px solid ${
+            theme.colorScheme === 'dark'
+              ? theme.colors.dark[7]
+              : theme.colors.gray[3]
+          }`,
+          marginBottom: theme.spacing.xl,
+          padding: theme.spacing.md,
+          paddingTop: 18,
+          height: 60
+        }}
+      >
+        <Title order={3}>Related info</Title>
+      </Box>
+      <AsideWidget
+        icon={<IconTimeline />}
+        emptyDataTitle='No timelines'
+        title='Timelines'
+        data={timelines}
+        path={{
+          prefix: 'timeline',
+          suffix: 'events'
+        }}
+      />
+
+      <AsideWidget
+        icon={<IconCalendarEvent />}
+        emptyDataTitle='No events'
+        title='Events'
+        data={events}
+        path={{
+          prefix: '/event'
+        }}
+      />
+
+      <AsideWidget
+        icon={<IconMap />}
+        emptyDataTitle='No locations'
+        title='Locations'
+        data={locations}
+        path={{
+          prefix: '/location'
+        }}
+      />
+    </>
+  )
+}
+
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const theme = useMantineTheme()
@@ -160,9 +267,9 @@ export default function EventDetailsPage() {
 
   return (
     <Page
-      title={data.event.title}
       showBackButton
       padding={0}
+      title={data.event.title}
       toolbarButtons={
         <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
@@ -184,47 +291,12 @@ export default function EventDetailsPage() {
         </Menu>
       }
       aside={
-        <>
-          <SidebarWidget>
-            <List
-              title='Timelines'
-              items={data.event.timelines.map(timeline => {
-                return {
-                  linkTo: timeline.id,
-                  title: timeline.title,
-                  id: timeline.id
-                }
-              })}
-            />
-          </SidebarWidget>
-
-          <SidebarWidget>
-            <List
-              title='Events'
-              items={referencedEvents.map(event => {
-                return {
-                  title: event.title,
-                  linkTo: event.id,
-                  description: event.content || undefined,
-                  id: event.id
-                }
-              })}
-            />
-          </SidebarWidget>
-
-          <SidebarWidget>
-            <List
-              title='Locations'
-              items={data.event.location.map(location => {
-                return {
-                  linkTo: `location/${location.id}`,
-                  title: location.title,
-                  id: location.id
-                }
-              })}
-            />
-          </SidebarWidget>
-        </>
+        <EventAside
+          events={referencedEvents}
+          timelines={data.event.timelines}
+          people={[]}
+          locations={data.event.location}
+        />
       }
     >
       <Container my='md'>
