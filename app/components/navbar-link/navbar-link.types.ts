@@ -15,6 +15,6 @@ export interface NavbarLinkProps extends DefaultProps {
   to?: string
   tooltipLabel: string
   onClick?: () => void
-  iconOnly?: boolean
+  collapsed?: boolean
   title: string
 }

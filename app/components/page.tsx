@@ -57,9 +57,8 @@ export function Page(props: PageProps): JSX.Element {
   const theme = useMantineTheme()
   const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
-  const [isCollapsed, setIsCollapsed] = useState(true)
+  const [isCollapsed, setIsCollapsed] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const herp = isMobile ? false : isCollapsed
 
   useEffect(() => {
     setMounted(true)
@@ -106,7 +105,7 @@ export function Page(props: PageProps): JSX.Element {
       navbar={
         <Navbar
           isMobile={isMobile}
-          collapsed={herp}
+          collapsed={isCollapsed}
           toggleCollapsed={() => setIsCollapsed(!isCollapsed)}
           subNavigation={subNavigation}
           logo={<IconHourglassEmpty size={30} color='yellow' />}

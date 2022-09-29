@@ -12,7 +12,7 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
       color,
       to,
       onClick,
-      iconOnly = true,
+      collapsed = true,
       icon: Icon,
       title,
       tooltipLabel
@@ -20,6 +20,7 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
     } = props
 
     const { classes, cx } = useStyles()
+    console.log('collapsed', collapsed)
 
     let extraProps = {}
 
@@ -34,7 +35,9 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
       }
     }
 
-    return iconOnly ? (
+    return collapsed ? (
+      <p>afklj</p>
+    ) : (
       <UnstyledButton
         className={cx(classes.link, {
           [classes.linkActive]: title === 'Timelines'
@@ -55,16 +58,6 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
           <Text size='sm'>{title}</Text>
         </Group> */}
       </UnstyledButton>
-    ) : (
-      // <Box
-      //   // define default component, you will be able to override it with `component` prop from ...others
-      //   component='button'
-      //   ref={ref}
-      //   {...others}
-      // >
-      //   {children}
-      // </Box>
-      <p>fjd</p>
     )
   }
 )

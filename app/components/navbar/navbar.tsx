@@ -73,7 +73,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
     props
   const { classes } = useStyles()
 
-  const collapsedItems = isMobile ? true : collapsed
+  const collapsedItems = isMobile ? false : collapsed
 
   const renderLinks = (links: NavbarLinkProps[]): React.ReactNode => {
     return links.map(item => (
@@ -81,7 +81,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
         color={item.color}
         to={item.to}
         icon={item.icon}
-        iconOnly={collapsedItems}
+        collapsed={collapsedItems}
         key={item.title}
         title={item.title}
         tooltipLabel={item.tooltipLabel}
@@ -126,7 +126,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
             type='submit'
             color='blue'
             icon={IconLogout}
-            iconOnly={collapsed}
+            collapsed={collapsedItems}
             title='Log out'
             tooltipLabel='Log out'
             sx={{ flex: 1 }}
