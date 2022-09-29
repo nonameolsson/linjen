@@ -16,7 +16,7 @@ export const useStyles = createStyles(theme => ({
     display: 'flex',
     alignSelf: 'center',
     justifyContent: 'center',
-    position: 'fixed',
+    // position: 'fixed',
     width: '100%',
 
     [`@media (min-width: ${theme.breakpoints.sm}px)`]: {

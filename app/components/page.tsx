@@ -87,17 +87,16 @@ export function Page(props: PageProps): JSX.Element {
               : theme.colors.gray[0],
           display: 'flex',
           flexDirection: 'column',
-          height: '100vh',
+          // height: '100vh',
           'overflow-y': 'scroll'
         },
         root: {
-          height: '100vh'
+          // height: '100vh'
         }
       }}
       navbarOffsetBreakpoint='sm'
       asideOffsetBreakpoint='sm'
       aside={aside}
-      footer={footer}
       navbar={
         <Navbar
           p='md'

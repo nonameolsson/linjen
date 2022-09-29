@@ -52,6 +52,7 @@ tasks:
 github:
   prebuilds:
     addBadge: true
+    addComment: true
 
 vscode:
   extensions:
