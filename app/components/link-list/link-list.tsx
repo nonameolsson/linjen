@@ -1,6 +1,9 @@
-import { PaperClipIcon, PlusIcon } from '@heroicons/react/solid'
+import { PaperClipIcon } from '@heroicons/react/solid'
+import { ActionIcon, Group, Paper, Title } from '@mantine/core'
 import { useFetcher } from '@remix-run/react'
+import { IconPlus } from '@tabler/icons'
 import cx from 'classnames'
+import { ExternalLinkItem } from '../external-link-item'
 import type { Link, LinkListProps } from './link-list.types'
 
 function LinkItem({ link }: { link: Link }) {
@@ -55,27 +58,31 @@ export function LinkList(props: LinkListProps) {
 
   return (
     <>
-      <dt className='text-sm font-medium text-gray-500'>{title}</dt>
-      <dd className='mt-1 text-sm text-gray-900'>
-        <ul className='divide-y divide-gray-200 rounded-md border border-gray-200'>
-          {items.map((item: Link) => (
-            <LinkItem key={item.id} link={item} />
-          ))}
-          <li
-            onClick={onNewClick}
-            className='flex items-center justify-between text-sm hover:bg-gray-50 hover:cursor-pointer py-3 pl-3 pr-4'
-          >
-            <div className='flex w-0 flex-1 items-center'>
-              <PlusIcon
-                className='h-5 w-5 flex-shrink-0 text-gray-400'
-                aria-hidden='true'
-              />
+      <Group position='apart'>
+        <Title ml='md' mt='md' mb='sm' order={3}>
+          {title}
+        </Title>
+        <ActionIcon
+          color='blue'
+          radius='xl'
+          variant='default'
+          onClick={onNewClick}
+          mr='md'
+        >
+          <IconPlus size={16} />
+        </ActionIcon>
+      </Group>
 
-              <span className='ml-2 w-0 flex-1 truncate'>New link</span>
-            </div>
-          </li>
-        </ul>
-      </dd>
+      <Paper>
+        {items.map((item: Link) => (
+          <ExternalLinkItem
+            id={item.id}
+            key={item.id}
+            title={item.title}
+            url={item.url}
+          />
+        ))}
+      </Paper>
     </>
   )
 }

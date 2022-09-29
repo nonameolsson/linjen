@@ -1,4 +1,4 @@
-import { Box, Grid, Menu, SimpleGrid, Text } from '@mantine/core'
+import { Grid, Menu, Paper, Text, Title } from '@mantine/core'
 import { openConfirmModal, openContextModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
@@ -9,7 +9,6 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 import {
-  ContentModule,
   linkFormSchema,
   LinkList,
   List,
@@ -149,6 +148,7 @@ export default function EventDetailsPage() {
     <Page
       title={data.event.title}
       showBackButton
+      padding={0}
       toolbarButtons={
         <Menu shadow='md' width={200} position='bottom-end'>
           <Menu.Target>
@@ -213,36 +213,33 @@ export default function EventDetailsPage() {
         </>
       }
     >
-      <Box px='xl' py='md'>
-        <Grid>
-          <Grid.Col span={12} lg={12}>
-            <ContentModule title='Event Information'>
-              <SimpleGrid cols={2}>
-                <div>
-                  Start Date
-                  {new Intl.DateTimeFormat('sv-SE').format(
-                    new Date(data.event.startDate)
-                  )}
-                </div>
-                <div>
-                  Content
-                  {data.event.content}
-                </div>
-              </SimpleGrid>
-              <LinkList
-                onNewClick={openNewLinkModal}
-                // onNewClick={() => setOpened(true)}
-                title='Links'
-                items={data.event.externalLinks.map(link => ({
-                  title: link.title,
-                  url: link.url,
-                  id: link.id
-                }))}
-              />
-            </ContentModule>
-          </Grid.Col>
-        </Grid>
-      </Box>
+      <Grid>
+        <Grid.Col span={12} lg={12} p={0}>
+          <Paper p='md'>
+            <Title order={3}>Event Information</Title>
+            <div>
+              Start Date
+              {new Intl.DateTimeFormat('sv-SE').format(
+                new Date(data.event.startDate)
+              )}
+            </div>
+            <div>
+              Content
+              {data.event.content}
+            </div>
+          </Paper>
+
+          <LinkList
+            onNewClick={openNewLinkModal}
+            title='Links'
+            items={data.event.externalLinks.map(link => ({
+              title: link.title,
+              url: link.url,
+              id: link.id
+            }))}
+          />
+        </Grid.Col>
+      </Grid>
     </Page>
   )
 }
