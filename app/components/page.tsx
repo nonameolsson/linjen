@@ -5,12 +5,10 @@ import {
   Box,
   MediaQuery,
   Navbar,
-  Text,
   Transition,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { openConfirmModal } from '@mantine/modals'
 import {
   IconCalendarEvent,
   IconFriends,
@@ -101,20 +99,6 @@ export function Page(props: PageProps): JSX.Element {
   useEffect(() => {
     setMounted(true)
   }, [])
-
-  const openModal = () =>
-    openConfirmModal({
-      title: 'Please confirm your action',
-      children: (
-        <Text size='sm'>
-          This action is so important that you are required to confirm it with a
-          modal. Please click one of these buttons to proceed.
-        </Text>
-      ),
-      labels: { confirm: 'Confirm', cancel: 'Cancel' },
-      onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Confirmed')
-    })
 
   return (
     <AppShell

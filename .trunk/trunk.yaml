@@ -8,7 +8,6 @@ lint:
         - prisma/**
         - .eslintrc.js
         - prettier.config.js
-        - tailwind.config.js
     - linters: ["eslint"]
       paths:
         # Ignore generated files
