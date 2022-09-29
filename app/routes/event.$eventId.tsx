@@ -63,8 +63,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
   const formData = await request.formData()
   let action = formData.get('action')
-  console.log('ACTOIN')
-  console.log(action)
+
   switch (action) {
     case '_add-link': {
       try {
@@ -232,6 +231,7 @@ export default function EventDetailsPage() {
               </SimpleGrid>
               <LinkList
                 onNewClick={openNewLinkModal}
+                // onNewClick={() => setOpened(true)}
                 title='Links'
                 items={data.event.externalLinks.map(link => ({
                   title: link.title,
@@ -243,8 +243,6 @@ export default function EventDetailsPage() {
           </Grid.Col>
         </Grid>
       </Box>
-
-      {/* <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} /> */}
     </Page>
   )
 }

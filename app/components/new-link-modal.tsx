@@ -24,13 +24,13 @@ export function NewLinkDialog({
   innerProps
 }: ContextModalProps<{ eventId: string }>): JSX.Element {
   const transition = useTransition()
-  const fetcher = useFetcher<ActionData>()
+  const fetcher = useFetcher()
   const actionData = useActionData<ActionData>()
   const titleRef = useRef<HTMLInputElement>(null)
   const urlRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (fetcher.type === 'done' && fetcher.data?.ok) {
+    if (fetcher.type === 'done' && fetcher.data.ok) {
       context.closeModal(id)
     }
   }, [fetcher.type, fetcher.data, context, id])
