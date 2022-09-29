@@ -20,6 +20,7 @@ import {
 } from '@remix-run/react'
 import { useState } from 'react'
 
+import { NewLinkDialog } from '~/components'
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
 
@@ -77,7 +78,7 @@ export default function App() {
             <Links />
           </head>
           <body>
-            <ModalsProvider>
+            <ModalsProvider modals={{ newLink: NewLinkDialog }}>
               <Outlet />
               <ScrollRestoration />
             </ModalsProvider>
