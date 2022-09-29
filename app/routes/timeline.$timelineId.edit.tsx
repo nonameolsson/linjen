@@ -78,6 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 const pageTitle = 'Edit Timeline'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditTimelineButton = ({ className }: { className: string }) => (
   <button
     form='edit-timeline'

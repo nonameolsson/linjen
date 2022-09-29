@@ -14,9 +14,7 @@ import {
   NavLink,
   Outlet,
   useCatch,
-  useLoaderData,
-  useNavigate,
-  useParams
+  useLoaderData
 } from '@remix-run/react'
 import { IconEdit, IconTrash } from '@tabler/icons'
 import { useState } from 'react'
@@ -59,8 +57,8 @@ export const action: ActionFunction = async ({ request, params }) => {
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const [isOpen, setIsOpen] = useState<boolean>(false)
-  const navigate = useNavigate()
-  const { tabValue } = useParams()
+  // const navigate = useNavigate()
+  // const { tabValue } = useParams()
 
   function closeDeleteModal() {
     setIsOpen(false)

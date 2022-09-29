@@ -1,3 +1,3 @@
 export interface AsideProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }

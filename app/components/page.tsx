@@ -65,7 +65,9 @@ export function Page(props: PageProps): JSX.Element {
   const {
     aside,
     children,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     actions,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     footer,
     toolbarButtons,
     showBackButton = false,

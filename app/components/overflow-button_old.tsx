@@ -1,13 +1,25 @@
-import { Menu, Transition } from "@headlessui/react";
-import { DotsVerticalIcon, PencilAltIcon, TrashIcon } from "@heroicons/react/solid";
-import { Link } from "@remix-run/react";
-import { Fragment } from "react";
+import { Menu, Transition } from '@headlessui/react'
+import {
+  DotsVerticalIcon,
+  PencilAltIcon,
+  TrashIcon
+} from '@heroicons/react/solid'
+import { Link } from '@remix-run/react'
+import { Fragment } from 'react'
 
-export function OverflowButtonOld({ onDeleteClick }: { onDeleteClick: () => void }) {
+export function OverflowButtonOld({
+  onDeleteClick
+}: {
+  onDeleteClick: () => void
+}) {
   return (
     <Menu as='div' className='flex items-stretch'>
       <div className='dropdown-end dropdown'>
-        <Menu.Button as="label" tabIndex={0} className='btn btn-ghost rounded-btn'>
+        <Menu.Button
+          as='label'
+          tabIndex={0}
+          className='btn btn-ghost rounded-btn'
+        >
           <span className='sr-only'>Open options</span>
           <DotsVerticalIcon className='h-5 w-5' aria-hidden='true' />
         </Menu.Button>

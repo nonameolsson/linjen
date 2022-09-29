@@ -1,10 +1,4 @@
-import {
-  Group,
-  Text,
-  ThemeIcon,
-  UnstyledButton,
-  useMantineTheme
-} from '@mantine/core'
+import { Group, Text, ThemeIcon, UnstyledButton } from '@mantine/core'
 import { Link } from '@remix-run/react'
 import type { NavbarLinkProps } from './navbar-link.types'
 
@@ -14,8 +8,6 @@ export function NavbarLink({
   label,
   href
 }: NavbarLinkProps): JSX.Element {
-  const theme = useMantineTheme()
-
   return (
     <UnstyledButton
       component={Link}

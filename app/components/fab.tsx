@@ -32,6 +32,7 @@ type FabProps = {
 }
 
 export function Fab(props: FabProps) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { link, icon, offset, onClick } = props
   const { classes } = useStyles()
 
