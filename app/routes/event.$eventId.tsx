@@ -257,7 +257,7 @@ export default function EventDetailsPage() {
     setIsOpenLinkDialog(false)
   }
 
-  const referencedEvents: Event[] = [
+  const referencedEvents = [
     ...data.event.referencedBy,
     ...data.event.referencing
   ]

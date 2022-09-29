@@ -44,6 +44,8 @@ export function Header(props: HeaderProps): JSX.Element {
       ) : (
         <Burger
           opened={opened}
+          // FIXME: Use correct types
+          // @ts-ignore
           onClick={() => setOpened(o => !o)}
           size='sm'
           color={theme.colors.gray[6]}

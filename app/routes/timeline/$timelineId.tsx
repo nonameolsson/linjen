@@ -4,7 +4,7 @@ import { ExclamationIcon } from '@heroicons/react/solid'
 
 import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
 
-import { Container, Menu, Tabs } from '@mantine/core'
+import { Container, Menu } from '@mantine/core'
 
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -105,13 +105,13 @@ export default function TimelineDetailsPage() {
           ]}
         /> */}
       <Container>
-        <Tabs value={tabValue} onTabChange={value => navigate(value)}>
+        {/* <Tabs value={tabValue} onTabChange={value => navigate(value)}>
           <Tabs.List>
             <Tabs.Tab value='events'>Events</Tabs.Tab>
             <Tabs.Tab value='places'>Places</Tabs.Tab>
             <Tabs.Tab value='people'>People</Tabs.Tab>
           </Tabs.List>
-        </Tabs>
+        </Tabs> */}
 
         <Outlet />
 
