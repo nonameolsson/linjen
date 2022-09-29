@@ -47,7 +47,7 @@ export function BottomNavigation(props: BottomNavigationProps): JSX.Element {
       // height={os === 'ios' ? 88 : 60}
       className={classes.footer}
     >
-      <Group grow position='center' px='xl' className={classes.icons}>
+      <Group grow className={classes.icons}>
         {children}
       </Group>
     </Footer>

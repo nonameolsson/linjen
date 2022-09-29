@@ -66,7 +66,8 @@ export default function EventsTab() {
             backgroundColor: 'white',
             width: '100%',
             height: 'stretch',
-            overflowY: 'scroll'
+            overflowY: 'scroll',
+            paddingBottom: 'calc(env(safe-area-inset-bottom, 50px) + 1em)'
           }}
         >
           {tableData.map(item => (

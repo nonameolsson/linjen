@@ -22,7 +22,7 @@ export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Linjen',
   viewport:
-    'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'
+    'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover'
 })
 
 type LoaderData = {

@@ -118,7 +118,11 @@ export default function TimelinesPage() {
       title={pageTitle}
       fab={{ icon: <IconPlus />, offset: false, to: '/timeline/new' }}
     >
-      <Center style={{ height: '100%' }}>
+      <Center
+        style={{
+          height: '100%'
+        }}
+      >
         {data.timelineListItems.length === 0 ? (
           <p>It is empty here. Lets create timeline!</p>
         ) : (
