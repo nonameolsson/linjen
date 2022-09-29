@@ -1,3 +1,12 @@
+import {
+  Alert,
+  Anchor,
+  Button,
+  Checkbox,
+  PasswordInput,
+  Text,
+  TextInput
+} from '@mantine/core'
 import type {
   ActionFunction,
   LoaderFunction,
@@ -5,10 +14,9 @@ import type {
 } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, Link, useActionData, useSearchParams } from '@remix-run/react'
-import * as React from 'react'
+import { IconAlertCircle } from '@tabler/icons'
 import { z } from 'zod'
-import { TextField } from '~/components'
-import { Alert } from '~/components/alert'
+import { Authentication } from '~/components/authentication'
 
 import { verifyLogin } from '~/models/user.server'
 import { createUserSession, getUserId } from '~/session.server'
@@ -82,95 +90,68 @@ export default function LoginPage() {
   const redirectTo = searchParams.get('redirectTo') || '/timelines'
   const actionData = useActionData<ActionData>()
 
-  const emailRef = React.useRef<HTMLInputElement>(null)
-  const passwordRef = React.useRef<HTMLInputElement>(null)
-
-  React.useEffect(() => {
-    if (actionData?.error?.email) {
-      emailRef.current?.focus()
-    } else if (actionData?.error?.password) {
-      passwordRef.current?.focus()
-    }
-  }, [actionData])
-
   return (
-    <div className='flex min-h-full'>
-      <div className='flex flex-col flex-1 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24'>
-        <div className='mx-auto w-full max-w-sm lg:w-96'>
-          <div>
-            <h2 className='mt-6 text-3xl font-extrabold text-gray-900'>
-              Log in to your account
-            </h2>
-            <p className='mt-2 text-sm text-gray-600'>
-              Or{' '}
-              <Link
-                className='link link-primary'
-                to={{
-                  pathname: '/join',
-                  search: searchParams.toString()
-                }}
-              >
-                create a new account
-              </Link>
-            </p>
-          </div>
-
-          <div className='mt-8'>
-            <div className='mt-6'>
-              <Form method='post' className='space-y-6'>
-                <TextField
-                  ref={emailRef}
-                  id='email'
-                  label='Email'
-                  required
-                  autoFocus={true}
-                  name='email'
-                  type='email'
-                  autoComplete='email'
-                  errorMessage={actionData?.error?.email?._errors[0]}
-                />
-
-                <TextField
-                  id='password'
-                  ref={passwordRef}
-                  name='password'
-                  type='password'
-                  label='Password'
-                  autoComplete='current-password'
-                  errorMessage={actionData?.error?.password?._errors[0]}
-                />
-
-                <div className='flex justify-between items-center'>
-                  <div className='flex items-center form-control'>
-                    <label htmlFor='remember' className='cursor-pointer label'>
-                      <input
-                        id='remember'
-                        name='remember'
-                        type='checkbox'
-                        className='mr-2 checkbox'
-                      />
-                      <span className='label-text'>Remember me</span>
-                    </label>
-                  </div>
-                </div>
-
-                <input type='hidden' name='redirectTo' value={redirectTo} />
-                <button className='btn btn-block' type='submit'>
-                  Log in
-                </button>
-                {actionData?.formError && <Alert text={actionData.formError} />}
-              </Form>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className='hidden flex-1 items-center bg-white lg:flex'>
-        <img
-          className='relative'
-          src='images/landing.jpg'
-          alt='Timelines and events'
+    <Authentication title='Welcome to Linjen!'>
+      <Form method='post'>
+        <TextInput
+          autoComplete='email'
+          defaultValue={'demo@user.com'}
+          autoFocus={true}
+          error={actionData?.error?.email?._errors[0]}
+          id='email'
+          label='Email address'
+          name='email'
+          placeholder='hello@gmail.com'
+          required
+          size='md'
+          type='email'
         />
-      </div>
-    </div>
+
+        <PasswordInput
+          autoComplete='current-password'
+          error={actionData?.error?.password?._errors[0]}
+          id='password'
+          label='Password'
+          defaultValue='demouser'
+          mt='md'
+          name='password'
+          placeholder='Your password'
+          size='md'
+        />
+
+        <Checkbox label='Keep me logged in' mt='xl' size='md' />
+
+        <input type='hidden' name='redirectTo' value={redirectTo} />
+
+        {actionData?.formError && (
+          <Alert
+            mt='md'
+            icon={<IconAlertCircle size={16} />}
+            title='Bummer!'
+            color='red'
+          >
+            {actionData.formError}
+          </Alert>
+        )}
+
+        <Button fullWidth mt='xl' size='md' type='submit'>
+          Login
+        </Button>
+      </Form>
+
+      <Text align='center' mt='md'>
+        Don&apos;t have an account?{' '}
+        <Anchor
+          component={Link}
+          to={{
+            pathname: '/join',
+            search: searchParams.toString()
+          }}
+          weight={700}
+        >
+          Register
+        </Anchor>
+      </Text>
+    </Authentication>
   )
 }

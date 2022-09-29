@@ -1,26 +1,25 @@
-import { CalendarIcon } from '@heroicons/react/outline'
-
-import { ExclamationIcon } from '@heroicons/react/solid'
-
-import { GlobeIcon, UsersIcon } from '@heroicons/react/solid'
-
+import { Menu, Text } from '@mantine/core'
+import { openConfirmModal } from '@mantine/modals'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import {
-  Form,
   Link,
-  NavLink,
   Outlet,
   useCatch,
-  useLoaderData
+  useLoaderData,
+  useSubmit
 } from '@remix-run/react'
-import { useState } from 'react'
+import {
+  IconCalendarEvent,
+  IconEdit,
+  IconFriends,
+  IconMap,
+  IconTrash
+} from '@tabler/icons'
 import invariant from 'tiny-invariant'
 
-import { DesktopTabs, Modal, PageHeader } from '~/components'
-import { Content } from '~/components/content'
-import { OverflowButton } from '~/components/overflow-button'
-import { Page } from '~/components/page'
+import type { SubLink } from '~/components'
+import { BottomNavigation, OverflowButton, Page, SubNavbar } from '~/components'
 import type { Timeline } from '~/models/timeline.server'
 import { deleteTimeline, getTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -28,6 +27,21 @@ import { requireUserId } from '~/session.server'
 type LoaderData = {
   timeline: Timeline
 }
+
+const SUBNAV_LINKS: SubLink[] = [
+  {
+    label: 'Events',
+    to: 'events'
+  },
+  {
+    label: 'Places',
+    to: 'places'
+  },
+  {
+    label: 'People',
+    to: 'people'
+  }
+]
 
 export const loader: LoaderFunction = async ({ request, params }) => {
   const userId = await requireUserId(request)
@@ -55,108 +69,90 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 export default function TimelineDetailsPage() {
   const data = useLoaderData<LoaderData>()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-
-  function closeDeleteModal() {
-    setIsOpen(false)
-  }
+  const submit = useSubmit()
 
   function openDeleteModal() {
-    setIsOpen(true)
+    openConfirmModal({
+      title: 'Delete timeline',
+      children: (
+        <Text size='sm'>
+          Do you really want to delete this timeline? Events, places and people
+          will not be deleted.
+        </Text>
+      ),
+
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onCancel: () => undefined,
+      onConfirm: () =>
+        submit(null, {
+          method: 'post',
+          action: `timeline/${data.timeline.id}`,
+          replace: true
+        })
+    })
   }
+
+  // const currentTab = pathname.split('/').pop()
+
+  const overflowMenu: JSX.Element = (
+    <Menu shadow='md' width={200} position='bottom-start'>
+      <Menu.Target>
+        <OverflowButton />
+      </Menu.Target>
+
+      <Menu.Dropdown>
+        <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
+          Edit
+        </Menu.Item>
+        <Menu.Item
+          onClick={openDeleteModal}
+          color='red'
+          icon={<IconTrash size={14} />}
+        >
+          Delete
+        </Menu.Item>
+      </Menu.Dropdown>
+    </Menu>
+  )
 
   return (
     <Page
+      padding={0}
       showBackButton
       goBackTo='/timelines'
-      title={data.timeline.title}
-      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
-    >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={data.timeline.title}
-            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
-              new Date()
-            )}
-            actions={
-              <>
-                <button
-                  onClick={openDeleteModal}
-                  className='btn btn-error btn-outline'
-                >
-                  Delete
-                </button>
-                <Link to='edit' className='btn btn-primary'>
-                  Edit
-                </Link>
-              </>
-            }
-          />
-        }
-      >
-        <DesktopTabs
-          tabs={[
-            { name: 'Events', linkTo: 'events' },
-            { name: 'Places', linkTo: 'places' },
-            { name: 'People', linkTo: 'people' }
-          ]}
+      subNavigation={
+        <SubNavbar
+          buttons={overflowMenu}
+          title={data.timeline.title}
+          links={SUBNAV_LINKS}
         />
-
-        <Outlet />
-
-        <div className='btm-nav lg:hidden'>
-          <NavLink to='events'>
-            <CalendarIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>Events</span>
-          </NavLink>
-          <NavLink to='places'>
-            <GlobeIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>Places</span>
-          </NavLink>
-          <NavLink to='people'>
-            <UsersIcon className='h-5 w-5' />
-            <span className='btm-nav-label'>People</span>
-          </NavLink>
-
-          <Modal
-            icon={
-              <ExclamationIcon
-                className='h-6 w-6 text-red-600'
-                aria-hidden='true'
-              />
-            }
-            isOpen={isOpen}
-            closeModal={closeDeleteModal}
-            title='Delete timeline'
-            description='The events, places and people will not be deleted.'
-            buttons={
-              <>
-                <button
-                  type='button'
-                  className='btn-outline btn'
-                  onClick={closeDeleteModal}
-                >
-                  Cancel
-                </button>
-                <Form replace method='post'>
-                  <button type='submit' className='btn btn-error'>
-                    Delete
-                  </button>
-                </Form>
-              </>
-            }
+      }
+      bottomNavigation={
+        <BottomNavigation>
+          <BottomNavigation.Button
+            icon={<IconCalendarEvent />}
+            to='events'
+            title='Events'
           />
-        </div>
-      </Content>
+          <BottomNavigation.Button
+            icon={<IconMap />}
+            to='places'
+            title='Places'
+          />
+          <BottomNavigation.Button
+            icon={<IconFriends />}
+            to='people'
+            title='People'
+          />
+        </BottomNavigation>
+      }
+      title={data.timeline.title}
+      toolbarButtons={overflowMenu}
+    >
+      <Outlet />
     </Page>
   )
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  console.error(error)
-
-  return <div>An unexpected error occurred: {error.message}</div>
 }
 
 export function CatchBoundary() {

@@ -1,51 +1,44 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationIcon } from '@heroicons/react/solid'
+import {
+  Button,
+  Container,
+  Grid,
+  Menu,
+  SimpleGrid,
+  Skeleton,
+  Stack,
+  Text,
+  Title,
+  useMantineTheme
+} from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
+import { openConfirmModal, openContextModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
+import { Link, useCatch, useLoaderData, useSubmit } from '@remix-run/react'
 import {
-  Form,
-  Link,
-  useActionData,
-  useCatch,
-  useFetcher,
-  useLoaderData,
-  useTransition
-} from '@remix-run/react'
-import { Fragment, useEffect, useRef, useState } from 'react'
+  IconCalendarEvent,
+  IconEdit,
+  IconMap,
+  IconTimeline,
+  IconTrash
+} from '@tabler/icons'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 import {
-  ContentModule,
+  AsideWidget,
+  ContentPaper,
+  linkFormSchema,
   LinkList,
-  List,
-  Modal,
   OverflowButton,
-  Page,
-  PageHeader,
-  TextField
+  Page
 } from '~/components'
-import { Content } from '~/components/content'
-import { SidebarWidget } from '~/components/sidebar-widget'
 import type { Event } from '~/models/event.server'
 import { deleteEvent, getEvent } from '~/models/event.server'
 import { createLink } from '~/models/externalLink'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
-
-const linkFormSchema = z.object({
-  title: z
-    .string()
-    .min(5, { message: 'Title must be at least 5 characters long' }), // TODO: Add translation
-  url: z.string().url()
-})
-type LinkFormSchema = z.infer<typeof linkFormSchema> // Infer the schema from Zod
-
-type ActionData = {
-  formPayload?: LinkFormSchema
-  error?: any
-}
 
 type LoaderData = {
   redirectTo?: string
@@ -61,7 +54,7 @@ type LoaderData = {
   }
 }
 
-const DEFAULT_REDIRECT = 'timelines'
+const DEFAULT_REDIRECT = 'timelines' // FIXME: Redirect back in history after deleting a newly created event.
 
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
@@ -88,7 +81,7 @@ export const action: ActionFunction = async ({ request, params }) => {
   let action = formData.get('action')
 
   switch (action) {
-    case 'add-link': {
+    case '_add-link': {
       try {
         const result = linkFormSchema.parse(Object.fromEntries(formData))
         const { title, url } = result
@@ -107,7 +100,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
     }
 
-    case 'delete-event': {
+    case '_delete-event': {
       try {
         await deleteEvent(params.eventId)
 
@@ -134,291 +127,192 @@ export const action: ActionFunction = async ({ request, params }) => {
   }
 }
 
-function NewLinkDialog({
-  isOpen,
-  onClose
-}: {
-  isOpen: boolean
-  onClose: () => void
+const PRIMARY_COL_HEIGHT = 300
+
+function EventAside(props: {
+  timelines: { title: string; id: string }[]
+  events: { title: string; id: string }[]
+  locations: { title: string; id: string }[]
+  people: { title: string; id: string }[]
 }): JSX.Element {
-  const transition = useTransition()
-  const fetcher = useFetcher()
-  const actionData = useActionData<ActionData>()
-  const titleRef = useRef<HTMLInputElement>(null)
-  const urlRef = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    if (fetcher.type === 'done' && fetcher.data.ok) {
-      onClose()
-    }
-  }, [fetcher, onClose])
-
-  useEffect(() => {
-    if (actionData?.error?.title) {
-      titleRef.current?.focus()
-    } else if (actionData?.error?.content) {
-      urlRef.current?.focus()
-    }
-  }, [actionData])
+  const { timelines, events, locations, people } = props
 
   return (
     <>
-      <Transition appear show={isOpen} as={Fragment}>
-        <Dialog
-          as='div'
-          className='fixed inset-0 z-10 overflow-y-auto'
-          onClose={onClose}
-        >
-          <div className='modal-open modal modal-bottom sm:modal-middle'>
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0'
-              enterTo='opacity-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100'
-              leaveTo='opacity-0'
-            >
-              <Dialog.Overlay className='fixed inset-0' />
-            </Transition.Child>
+      <AsideWidget
+        icon={<IconTimeline />}
+        emptyDataTitle='No timelines'
+        title='Timelines'
+        data={timelines}
+        path={{
+          prefix: 'timeline',
+          suffix: 'events'
+        }}
+      />
 
-            <Transition.Child
-              as={Fragment}
-              enter='ease-out duration-300'
-              enterFrom='opacity-0 scale-95'
-              enterTo='opacity-100 scale-100'
-              leave='ease-in duration-200'
-              leaveFrom='opacity-100 scale-100'
-              leaveTo='opacity-0 scale-95'
-            >
-              <Dialog.Panel className='modal-box'>
-                <fetcher.Form id='new-link' method='post'>
-                  <div className='sm:flex sm:items-start'>
-                    <div className='mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left'>
-                      <Dialog.Title as='h3' className='text-lg font-bold'>
-                        Add link
-                      </Dialog.Title>
-                      <div className='mt-2'>
-                        <TextField
-                          name='title'
-                          label='Title'
-                          ref={titleRef}
-                          errorMessage={actionData?.error?.title?._errors[0]}
-                        />
-                        <TextField
-                          name='url'
-                          type='url'
-                          label='URL'
-                          ref={urlRef}
-                          errorMessage={actionData?.error?.url?._errors[0]}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <div className='modal-action'>
-                    <button
-                      disabled={transition.state === 'submitting'}
-                      name='action'
-                      value='add-link'
-                      type='submit'
-                      className='btn primary'
-                    >
-                      Save
-                    </button>
-                  </div>
-                </fetcher.Form>
-              </Dialog.Panel>
-            </Transition.Child>
-          </div>
-        </Dialog>
-      </Transition>
+      <AsideWidget
+        icon={<IconCalendarEvent />}
+        emptyDataTitle='No events'
+        title='Events'
+        data={events}
+        path={{
+          prefix: '/event'
+        }}
+      />
+
+      <AsideWidget
+        icon={<IconMap />}
+        emptyDataTitle='No locations'
+        title='Locations'
+        data={locations}
+        path={{
+          prefix: '/location'
+        }}
+      />
     </>
   )
 }
 
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
-  const [isOpen, setIsOpen] = useState<boolean>(false)
-  const [isOpenLinkDialog, setIsOpenLinkDialog] = useState<boolean>(false)
+  const theme = useMantineTheme()
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+  const submit = useSubmit()
 
-  function closeDeleteModal(): void {
-    setIsOpen(false)
+  function openNewLinkModal() {
+    openContextModal({
+      modal: 'newLink',
+      title: 'New Link',
+      innerProps: {
+        eventId: data.event.id
+      }
+    })
   }
 
-  function openDeleteModal(): void {
-    setIsOpen(true)
+  function openDeleteModal() {
+    openConfirmModal({
+      title: 'Delete event',
+      children: <Text size='sm'>Do you really want to delete this event?</Text>,
+      labels: { confirm: 'Delete', cancel: 'Cancel' },
+      confirmProps: { color: 'red' },
+      onCancel: () => undefined,
+      onConfirm: () =>
+        submit(
+          { redirectTo: data.redirectTo || '', action: '_delete-event' },
+          { method: 'post', action: `event/${data.event.id}`, replace: true }
+        )
+    })
   }
 
-  function openLinkDialog(): void {
-    setIsOpenLinkDialog(true)
-  }
-
-  function closeLinkDialog(): void {
-    setIsOpenLinkDialog(false)
-  }
-
-  const referencedEvents: Event[] = [
+  const referencedEvents = [
     ...data.event.referencedBy,
     ...data.event.referencing
   ]
 
+  const SECONDARY_COL_HEIGHT = PRIMARY_COL_HEIGHT / 2 - theme.spacing.md / 2
+
   return (
     <Page
-      title={data.event.title}
       showBackButton
-      toolbarButtons={<OverflowButton onDeleteClick={openDeleteModal} />}
-    >
-      <NewLinkDialog isOpen={isOpenLinkDialog} onClose={closeLinkDialog} />
-      <Content
-        aside={
-          <div className='sticky top-4 space-y-4'>
-            <SidebarWidget>
-              <List
-                title='Timelines'
-                items={data.event.timelines.map(timeline => {
-                  return {
-                    linkTo: timeline.id,
-                    title: timeline.title,
-                    id: timeline.id
-                  }
-                })}
-              />
-            </SidebarWidget>
+      padding={0}
+      title={data.event.title}
+      toolbarButtons={
+        <Menu shadow='md' width={200} position='bottom-end'>
+          <Menu.Target>
+            <OverflowButton />
+          </Menu.Target>
 
-            <SidebarWidget>
-              <List
-                title='Events'
-                items={referencedEvents.map(event => {
-                  return {
-                    title: event.title,
-                    linkTo: event.id,
-                    description: event.content || undefined,
-                    id: event.id
-                  }
-                })}
-              />
-            </SidebarWidget>
-
-            <SidebarWidget>
-              <List
-                title='Locations'
-                items={data.event.location.map(location => {
-                  return {
-                    linkTo: `location/${location.id}`,
-                    title: location.title,
-                    id: location.id
-                  }
-                })}
-              />
-            </SidebarWidget>
-          </div>
-        }
-        desktopNavbar={
-          <PageHeader
-            title={data.event.title}
-            description='Last updated'
-            descriptionExtra={new Intl.DateTimeFormat('sv-SE').format(
-              new Date()
-            )}
-            actions={
-              <>
-                <button
-                  onClick={openDeleteModal}
-                  className='btn btn-error btn-outline'
-                >
-                  Delete
-                </button>
-                <Link to='edit' className='btn btn-primary'>
-                  Edit
-                </Link>
-              </>
-            }
+          <Menu.Dropdown>
+            <Menu.Item icon={<IconEdit size={14} />} component={Link} to='edit'>
+              Edit
+            </Menu.Item>
+            <Menu.Item
+              onClick={openDeleteModal}
+              color='red'
+              icon={<IconTrash size={14} />}
+            >
+              Delete
+            </Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      }
+      aside={{
+        title: 'Related Info',
+        component: (
+          <EventAside
+            events={referencedEvents}
+            timelines={data.event.timelines}
+            people={[]}
+            locations={data.event.location}
           />
-        }
-      >
-        <ContentModule title='Event Information'>
-          <dl className='grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2'>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>Start Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>
-                {new Intl.DateTimeFormat('sv-SE').format(
-                  new Date(data.event.startDate)
-                )}
-              </dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>
-                Salary expectation
-              </dt>
-              <dd className='mt-1 text-sm text-gray-900'>$120,000</dd>
-            </div>
-            <div className='sm:col-span-1'>
-              <dt className='text-sm font-medium text-gray-500'>End Date</dt>
-              <dd className='mt-1 text-sm text-gray-900'>END DATE HERE</dd>
-            </div>
-            <div className='sm:col-span-2'>
-              <dt className='text-sm font-medium text-gray-500'>Description</dt>
-              <dd className='mt-1 text-sm text-gray-900'>
-                {data.event.content}
-              </dd>
-            </div>
-            <div className='sm:col-span-2'>
+        )
+      }}
+    >
+      <Container my='md'>
+        <SimpleGrid
+          cols={2}
+          spacing='md'
+          breakpoints={[{ maxWidth: 'sm', cols: 1 }]}
+        >
+          <Stack>
+            <ContentPaper
+              title={!isMobile ? data.event.title : undefined}
+              description={new Intl.DateTimeFormat('sv-SE').format(
+                new Date(data.event.startDate)
+              )}
+            >
+              <Text>{data.event.content}</Text>
+            </ContentPaper>
+          </Stack>
+
+          <Stack>
+            <ContentPaper
+              p={0}
+              title='Links'
+              styles={{
+                content: { paddingTop: 0 },
+                container: { padding: 0 }
+              }}
+              button={
+                <Button
+                  onClick={openNewLinkModal}
+                  variant='filled'
+                  size='md'
+                  compact
+                >
+                  New
+                </Button>
+              }
+            >
               <LinkList
-                onNewClick={openLinkDialog}
-                title='Links'
                 items={data.event.externalLinks.map(link => ({
                   title: link.title,
                   url: link.url,
                   id: link.id
                 }))}
               />
-            </div>
-          </dl>
-        </ContentModule>
+            </ContentPaper>
 
-        <Modal
-          icon={
-            <ExclamationIcon
-              className='h-6 w-6 text-red-600'
-              aria-hidden='true'
-            />
-          }
-          isOpen={isOpen}
-          description='Do you really want to delete this event?'
-          closeModal={closeDeleteModal}
-          title='Delete event'
-          buttons={
-            <>
-              <button
-                type='button'
-                className='btn btn-outline'
-                onClick={closeDeleteModal}
-              >
-                Cancel
-              </button>
-              <Form replace method='post'>
-                <input
-                  type='hidden'
-                  defaultValue={data.redirectTo}
-                  name='redirectTo'
+            <Title order={3}>Gallery</Title>
+            <Grid gutter='md'>
+              <Grid.Col span={6}>
+                <Skeleton
+                  height={SECONDARY_COL_HEIGHT}
+                  radius='md'
+                  animate={false}
                 />
-                <button
-                  name='action'
-                  value='delete-event'
-                  type='submit'
-                  className='btn btn-error'
-                >
-                  Delete
-                </button>
-              </Form>
-            </>
-          }
-        />
-      </Content>
+              </Grid.Col>
+              <Grid.Col span={6}>
+                <Skeleton
+                  height={SECONDARY_COL_HEIGHT}
+                  radius='md'
+                  animate={false}
+                />
+              </Grid.Col>
+            </Grid>
+          </Stack>
+        </SimpleGrid>
+      </Container>
     </Page>
   )
 }

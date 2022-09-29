@@ -1,3 +1,4 @@
+import { Textarea, TextInput, UnstyledButton } from '@mantine/core'
 import type { Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
@@ -6,8 +7,7 @@ import { useEffect, useRef } from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
-import { Page, PageHeader, TextArea, TextField } from '~/components'
-import { Content } from '~/components/content'
+import { Page } from '~/components'
 import { getTimeline, updateTimeline } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -78,6 +78,7 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 const pageTitle = 'Edit Timeline'
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const EditTimelineButton = ({ className }: { className: string }) => (
   <button
     form='edit-timeline'
@@ -112,60 +113,59 @@ export default function EditTimelinePage() {
     <Page
       title={pageTitle}
       showBackButton
-      toolbarButtons={<EditTimelineButton className='btn btn-ghost' />}
-    >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={<EditTimelineButton className='btn btn-primary' />}
-          />
-        }
-      >
-        <Form
-          id='edit-timeline'
-          replace
-          method='post'
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            width: '100%'
-          }}
+      toolbarButtons={
+        <UnstyledButton
+          form='edit-timeline'
+          type='submit'
+          name='action'
+          value='update'
         >
-          <TextField
-            name='title'
-            id='title'
-            label='Title'
-            ref={titleRef}
-            errorMessage={actionData?.error?.title?._errors[0]}
-            defaultValue={loaderData.timeline.title}
-          />
+          Save
+        </UnstyledButton>
+      }
+    >
+      <Form
+        id='edit-timeline'
+        replace
+        method='post'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          width: '100%'
+        }}
+      >
+        <TextInput
+          name='title'
+          id='title'
+          label='Title'
+          ref={titleRef}
+          error={actionData?.error?.title?._errors[0]}
+          defaultValue={loaderData.timeline.title}
+        />
 
-          <TextArea
-            name='description'
-            ref={descriptionRef}
-            rows={4}
-            className='mt-2'
-            label='Description'
-            defaultValue={loaderData.timeline.description || ''}
-            errorMessage={actionData?.error?.description?._errors[0]}
-            required={false}
-          />
+        <Textarea
+          name='description'
+          ref={descriptionRef}
+          rows={4}
+          label='Description'
+          defaultValue={loaderData.timeline.description || ''}
+          error={actionData?.error?.description?._errors[0]}
+          required={false}
+        />
 
-          <TextField
-            name='imageUrl'
-            ref={imageUrlRef}
-            id='imageUrl'
-            type='url'
-            label='Cover image (Optional)'
-            errorMessage={actionData?.error?.imageUrl?._errors[0]}
-            placeholder='https://myurl.com/image.png'
-            defaultValue={loaderData.timeline.imageUrl || ''}
-            required={false}
-          />
-        </Form>
-      </Content>
+        <TextInput
+          name='imageUrl'
+          ref={imageUrlRef}
+          id='imageUrl'
+          type='url'
+          label='Cover image (Optional)'
+          error={actionData?.error?.imageUrl?._errors[0]}
+          placeholder='https://myurl.com/image.png'
+          defaultValue={loaderData.timeline.imageUrl || ''}
+          required={false}
+        />
+      </Form>
     </Page>
   )
 }

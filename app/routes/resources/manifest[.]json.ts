@@ -6,13 +6,13 @@ export let loader: LoaderFunction = () => {
     {
       short_name: 'Linjen',
       name: 'Linjen',
-      start_url: '/',
+      start_url: '/timelines',
       display: 'standalone',
-      background_color: '#a991f7',
-      theme_color: '#a991f7',
+      background_color: '#e9ecef',
+      theme_color: '#fafafa',
       shortcuts: [
         {
-          name: 'Homepage',
+          name: 'Linjen',
           url: '/',
           icons: [
             {

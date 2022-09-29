@@ -1,13 +1,25 @@
+import {
+  Box,
+  Button,
+  createStyles,
+  Grid,
+  Textarea,
+  TextInput,
+  UnstyledButton,
+  useMantineTheme
+} from '@mantine/core'
+import { DatePicker } from '@mantine/dates'
+import { useMediaQuery } from '@mantine/hooks'
 import type { Event } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData, useLoaderData } from '@remix-run/react'
+import { IconCalendar } from '@tabler/icons'
 import * as React from 'react'
 import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
-import { Page, PageHeader, TextArea, TextField } from '~/components'
-import { Content } from '~/components/content'
+import { Page } from '~/components'
 import {
   getEvent,
   getEventListForTimeline,
@@ -84,8 +96,18 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 const pageTitle = 'Edit Event'
 
+const useStyles = createStyles(theme => ({
+  button: {
+    float: 'right'
+  }
+}))
+
 export default function EditEvent() {
   const loaderData = useLoaderData<LoaderData>()
+
+  const { classes } = useStyles()
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
   const actionData = useActionData() as ActionData
   const titleRef = React.useRef<HTMLInputElement>(null)
@@ -107,79 +129,60 @@ export default function EditEvent() {
       title={pageTitle}
       showBackButton
       toolbarButtons={
-        <button
-          form='edit-event'
-          className='btn btn-ghost'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </button>
+        mobile ? (
+          <UnstyledButton
+            form='edit-event'
+            type='submit'
+            name='action'
+            value='update'
+          >
+            Save
+          </UnstyledButton>
+        ) : undefined
       }
     >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={
-              <>
-                <button
-                  form='edit-event'
-                  className='btn btn-primary'
-                  type='submit'
-                  name='action'
-                  value='update'
-                >
+      <Box px='md'>
+        <Grid justify='center'>
+          <Grid.Col span={12} md={6}>
+            <Form replace method='post' id='edit-event'>
+              <TextInput
+                defaultValue={loaderData.event.title}
+                error={actionData?.error?.title?._errors[0]}
+                label='Title'
+                name='title'
+                ref={titleRef}
+              />
+
+              <Textarea
+                defaultValue={loaderData.event.content || ''}
+                error={actionData?.error?.content?._errors[0]}
+                label='Content'
+                mt='md'
+                name='content'
+                ref={contentRef}
+                rows={4}
+              />
+
+              <DatePicker
+                dropdownType='modal'
+                error={actionData?.error?.startDate?._errors[0]}
+                icon={<IconCalendar size={16} />}
+                label='Start Date'
+                mt='md'
+                name='startDate'
+                ref={startDateRef}
+                defaultValue={new Date(loaderData.event.startDate)}
+              />
+
+              {!mobile && (
+                <Button mt='md' className={classes.button} type='submit'>
                   Save
-                </button>
-              </>
-            }
-          />
-        }
-      >
-        <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-          <Form
-            replace
-            method='post'
-            id='edit-event'
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 8,
-              width: '100%'
-            }}
-          >
-            <TextField
-              defaultValue={loaderData.event.title}
-              label='Title'
-              ref={titleRef}
-              name='title'
-              errorMessage={actionData?.error?.title?._errors[0]}
-            />
-
-            <TextArea
-              label='Content'
-              defaultValue={loaderData.event.content || ''}
-              ref={contentRef}
-              name='content'
-              rows={4}
-              errorMessage={actionData?.error?.content?._errors[0]}
-            />
-
-            <TextField
-              label='Start Date'
-              ref={startDateRef}
-              type='date'
-              defaultValue={new Intl.DateTimeFormat('sv-SV').format(
-                new Date(loaderData.event.startDate)
+                </Button>
               )}
-              name='startDate'
-              errorMessage={actionData?.error?.startDate?._errors[0]}
-            />
-          </Form>
-        </section>
-      </Content>
+            </Form>
+          </Grid.Col>
+        </Grid>
+      </Box>
     </Page>
   )
 }

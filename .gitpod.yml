@@ -52,13 +52,13 @@ tasks:
 github:
   prebuilds:
     addBadge: true
+    addComment: true
 
 vscode:
   extensions:
     - ms-azuretools.vscode-docker
     - esbenp.prettier-vscode
     - dbaeumer.vscode-eslint
-    - bradlc.vscode-tailwindcss
     - Trunk.io
     - donjayamanne.git-extension-pack
     - afzalsayed96.heroicons
@@ -67,5 +67,4 @@ vscode:
     - GitHub.copilot
     - ZixuanChen.vitest-explorer
     - Prisma.prisma
-    - austenc.tailwind-docs
     - hbenl.vscode-test-explorer

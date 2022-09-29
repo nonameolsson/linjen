@@ -1,10 +1,19 @@
-import { PlusIcon } from '@heroicons/react/outline'
-import type { LoaderFunction } from '@remix-run/node'
+import { Carousel } from '@mantine/carousel'
+import {
+  Box,
+  Button,
+  createStyles,
+  Paper,
+  Text,
+  Title,
+  useMantineTheme
+} from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
+import type { LoaderArgs } from '@remix-run/node'
 import { json } from '@remix-run/node'
-import { Link, useCatch, useLoaderData } from '@remix-run/react'
-import { PageHeader } from '~/components'
-import { Alert } from '~/components/alert'
-import { Content } from '~/components/content'
+import { Link, useLoaderData } from '@remix-run/react'
+import { IconPlus } from '@tabler/icons'
+
 import { Page } from '~/components/page'
 import { getTimelineListItems } from '~/models/timeline.server'
 import { requireUserId } from '~/session.server'
@@ -13,104 +22,129 @@ type LoaderData = {
   timelineListItems: Awaited<ReturnType<typeof getTimelineListItems>>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const userId = await requireUserId(request)
   const timelineListItems = await getTimelineListItems({ userId })
+
   return json<LoaderData>({ timelineListItems })
 }
 
 const pageTitle = 'Your Timelines'
 
+const useStyles = createStyles(theme => ({
+  card: {
+    height: 440,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center'
+  },
+
+  title: {
+    fontFamily: `Greycliff CF, ${theme.fontFamily}`,
+    fontWeight: 900,
+    color: theme.white,
+    lineHeight: 1.2,
+    fontSize: 32,
+    marginTop: theme.spacing.xs
+  },
+
+  category: {
+    color: theme.white,
+    opacity: 0.7,
+    fontWeight: 700,
+    textTransform: 'uppercase'
+  }
+}))
+
+type CardProps = {
+  events: number
+  link: string
+  title: string
+  description: null | string
+  imageUrl: null | string
+}
+
+function Card({ imageUrl, events, title, link }: CardProps) {
+  const { classes } = useStyles()
+  const image =
+    imageUrl ||
+    'https://images.unsplash.com/photo-1508193638397-1c4234db14d8?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=80'
+
+  return (
+    <Paper
+      shadow='md'
+      p='xl'
+      radius='md'
+      sx={{ backgroundImage: `url(${image})` }}
+      className={classes.card}
+    >
+      <div>
+        <Text className={classes.category} size='xs'>
+          Events: {events}
+        </Text>
+        <Title order={3} className={classes.title}>
+          {title}
+        </Title>
+      </div>
+      <Button variant='white' color='dark' component={Link} to={link}>
+        Open Timeline
+      </Button>
+    </Paper>
+  )
+}
+
 export default function TimelinesPage() {
-  const data = useLoaderData<LoaderData>()
-  console.log(data.timelineListItems)
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
+  const data = useLoaderData<typeof loader>()
+
+  const slides = data.timelineListItems.map(item => (
+    <Carousel.Slide key={item.title}>
+      <Card
+        description={item.description}
+        title={item.title}
+        events={item._count.event}
+        imageUrl={item.imageUrl}
+        link={`/timeline/${item.id}/events`}
+      />
+    </Carousel.Slide>
+  ))
 
   return (
     <Page
       title={pageTitle}
-      fab={{
-        to: '/timeline/new',
-        icon: <PlusIcon className='h-5 w-5' aria-hidden='true' />,
-        offset: false
-      }}
+      padding={0}
+      fab={{ icon: <IconPlus />, offset: false, to: '/timeline/new' }}
     >
-      <Content desktopNavbar={<PageHeader hideBackButton title={pageTitle} />}>
-        <section className='col-span-12 lg:col-span-8 lg:col-start-2'>
-          {data.timelineListItems.length === 0 ? (
-            <p className='p-4'>No timelines yet</p>
-          ) : (
-            <div className='flex h-min w-full snap-x snap-mandatory gap-6 overflow-x-auto px-16 pb-16'>
-              {data.timelineListItems.map(timeline => (
-                <Link
-                  to={`/timeline/${timeline.id}/events`}
-                  key={timeline.id}
-                  className='h-min snap-center snap-always'
-                >
-                  <div
-                    key={timeline.id}
-                    className='card w-60 bg-base-100 shadow transition-shadow duration-150 ease-in-out hover:shadow-xl hover:drop-shadow-xl'
-                  >
-                    {timeline.imageUrl ? (
-                      <figure>
-                        <img
-                          src={timeline.imageUrl}
-                          className='aspect-video w-full object-cover'
-                          alt='Shoes'
-                        />
-                      </figure>
-                    ) : (
-                      <span className='flex aspect-video w-full items-center justify-center bg-info object-cover text-center text-4xl text-info-content'>
-                        {timeline.title.slice(0, 2)}
-                      </span>
-                    )}
-                    <div className='card-body'>
-                      <h2 className='card-title'>{timeline.title}</h2>
-                      <p className='line-clamp-3'>{timeline.description}</p>
-                      <div className='card-actions justify-end'>
-                        <div className='badge badge-outline'>
-                          Events: {timeline._count.event}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          )}
-        </section>
-      </Content>
-    </Page>
-  )
-}
-
-export function CatchBoundary() {
-  const caught = useCatch()
-
-  return (
-    <Page title={`${caught.status} ${caught.statusText}`}>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert text={`${caught.status} ${caught.statusText}`} />
-          </section>
-        </main>
-      </div>
-    </Page>
-  )
-}
-
-export function ErrorBoundary({ error }: { error: Error }) {
-  return (
-    <Page title='Uh-oh!'>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert text={error.message} />
-          </section>
-        </main>
-      </div>
+      {data.timelineListItems.length === 0 ? (
+        <p>It is empty here. Lets create timeline!</p>
+      ) : (
+        <Box pt='xl'>
+          <Carousel
+            slideSize='80%'
+            breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}
+            slideGap='md'
+            skipSnaps={true}
+            align='center'
+            slidesToScroll={1}
+            height='100%'
+            withControls={!mobile}
+            styles={{
+              control: {
+                '&[data-inactive]': {
+                  opacity: 0,
+                  cursor: 'default'
+                }
+              }
+            }}
+          >
+            {slides}
+          </Carousel>
+        </Box>
+      )}
     </Page>
   )
 }

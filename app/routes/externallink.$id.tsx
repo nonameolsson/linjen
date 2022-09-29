@@ -1,4 +1,5 @@
 import { json } from '@remix-run/node'
+
 import type { ActionFunction } from '@remix-run/server-runtime'
 import invariant from 'tiny-invariant'
 import { deleteExternalLink } from '~/models/externalLink'

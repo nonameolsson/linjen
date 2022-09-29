@@ -1,11 +1,18 @@
+import {
+  Button,
+  createStyles,
+  Grid,
+  Textarea,
+  TextInput,
+  UnstyledButton,
+  useMantineTheme
+} from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
 import { useEffect, useRef } from 'react'
 import { z } from 'zod'
-
-import { PageHeader, TextArea, TextField } from '~/components'
-import { Content } from '~/components/content'
 
 import { Page } from '~/components/page'
 import { createTimeline } from '~/models/timeline.server'
@@ -54,26 +61,20 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
-const NewTimelineButton = ({
-  className
-}: {
-  className: string
-}): JSX.Element => (
-  <button
-    form='new-timeline'
-    className={className}
-    type='submit'
-    name='action'
-    value='update'
-  >
-    Save
-  </button>
-)
-
 const pageTitle = 'New Timeline'
+
+const useStyles = createStyles(theme => ({
+  button: {
+    float: 'right'
+  }
+}))
 
 export default function NewTimelinePage() {
   const actionData = useActionData<ActionData>()
+
+  const { classes } = useStyles()
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
   const titleRef = useRef<HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
@@ -93,63 +94,67 @@ export default function NewTimelinePage() {
     <Page
       title={pageTitle}
       showBackButton
-      toolbarButtons={<NewTimelineButton className='btn btn-ghost' />}
+      toolbarButtons={
+        mobile ? (
+          <UnstyledButton
+            form='new-timeline'
+            type='submit'
+            name='action'
+            value='update'
+          >
+            Save
+          </UnstyledButton>
+        ) : undefined
+      }
     >
-      <Content
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={<NewTimelineButton className='btn btn-primary' />}
-          />
-        }
-      >
-        <Form
-          id='new-timeline'
-          replace
-          method='post'
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            width: '100%'
-          }}
-        >
-          <TextField
-            ref={titleRef}
-            autoFocus
-            name='title'
-            id='title'
-            label='Title'
-            errorMessage={actionData?.error?.title?._errors[0]}
-            placeholder='My awesome timeline'
-            required
-            defaultValue={actionData?.formPayload?.title}
-            key={actionData?.formPayload?.title}
-          />
+      <Grid justify='center'>
+        <Grid.Col span={12} lg={6}>
+          <Form id='new-timeline' replace method='post'>
+            <TextInput
+              autoFocus
+              defaultValue={actionData?.formPayload?.title}
+              error={actionData?.error?.title?._errors[0]}
+              id='title'
+              key={actionData?.formPayload?.title}
+              label='Title'
+              mt='md'
+              name='title'
+              placeholder='My awesome timeline'
+              ref={titleRef}
+              required
+              withAsterisk
+            />
 
-          <TextArea
-            name='description'
-            className='mt-2'
-            rows={4}
-            ref={descriptionRef}
-            label='Description'
-            defaultValue={actionData?.formPayload?.description}
-            errorMessage={actionData?.error?.description?._errors[0]}
-          />
+            <Textarea
+              defaultValue={actionData?.formPayload?.description}
+              error={actionData?.error?.description?._errors[0]}
+              label='Description'
+              mt='md'
+              name='description'
+              ref={descriptionRef}
+              rows={4}
+            />
 
-          <TextField
-            name='imageUrl'
-            ref={imageUrlRef}
-            className='mt-2'
-            id='imageUrl'
-            label='Cover image (Optional)'
-            type='url'
-            errorMessage={actionData?.error?.imageUrl?._errors[0]}
-            placeholder='https://myurl.com/image.png'
-            defaultValue={actionData?.formPayload?.imageUrl}
-          />
-        </Form>
-      </Content>
+            <TextInput
+              defaultValue={actionData?.formPayload?.imageUrl}
+              error={actionData?.error?.imageUrl?._errors[0]}
+              id='imageUrl'
+              label='Cover image (Optional)'
+              mt='md'
+              name='imageUrl'
+              placeholder='https://myurl.com/image.png'
+              ref={imageUrlRef}
+              type='url'
+            />
+
+            {!mobile && (
+              <Button mt='md' className={classes.button} type='submit'>
+                Save
+              </Button>
+            )}
+          </Form>
+        </Grid.Col>
+      </Grid>
     </Page>
   )
 }

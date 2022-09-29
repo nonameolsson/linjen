@@ -1,8 +1,13 @@
-import type {
-  LinksFunction,
-  LoaderFunction,
-  MetaFunction
-} from '@remix-run/node'
+import type { ColorScheme } from '@mantine/core'
+import {
+  ColorSchemeProvider,
+  createEmotionCache,
+  MantineProvider
+} from '@mantine/core'
+import { useHotkeys, useLocalStorage } from '@mantine/hooks'
+import { ModalsProvider } from '@mantine/modals'
+import { StylesPlaceholder } from '@mantine/remix'
+import type { LoaderArgs, MetaFunction } from '@remix-run/node'
 import { json } from '@remix-run/node'
 import {
   Links,
@@ -14,20 +19,15 @@ import {
   useLoaderData
 } from '@remix-run/react'
 
+import { NewLinkDialog } from '~/components'
 import type { EnvironmentVariables } from './entry.server'
 import { getUser } from './session.server'
-
-import tailwindStylesheetUrl from './styles/tailwind.css'
-
-export const links: LinksFunction = () => {
-  return [{ rel: 'stylesheet', href: tailwindStylesheetUrl }]
-}
 
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Linjen',
   viewport:
-    'width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no'
+    'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'
 })
 
 type LoaderData = {
@@ -35,42 +35,67 @@ type LoaderData = {
   user: Awaited<ReturnType<typeof getUser>>
 }
 
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
+  // Environment Variables
   const ENV: EnvironmentVariables = {
     LOG_ROCKET_APP_ID: process.env.LOG_ROCKET_APP_ID || ''
   }
 
-  return json<LoaderData>({
+  return json({
     ENV,
     user: await getUser(request)
   })
 }
 
+createEmotionCache({ key: 'mantine' })
+
 export default function App() {
   const data = useLoaderData<LoaderData>()
 
+  const [colorScheme, setColorScheme] = useLocalStorage<ColorScheme>({
+    key: 'mantine-color-scheme',
+    defaultValue: 'light',
+    getInitialValueInEffect: true
+  })
+
+  const toggleColorScheme = (value?: ColorScheme) =>
+    setColorScheme(value || (colorScheme === 'dark' ? 'light' : 'dark'))
+
+  useHotkeys([['mod+J', () => toggleColorScheme()]])
+
   return (
-    <html
-      lang='en'
-      className='h-screen scroll-smooth bg-gray-50'
-      data-theme='light'
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
     >
-      <head>
-        <Meta />
-        <link rel='manifest' href='/resources/manifest.json' />
-        <Links />
-      </head>
-      <body className='h-screen overflow-hidden'>
-        <Outlet />
-        <ScrollRestoration />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `window.ENV = ${JSON.stringify(data.ENV)}`
-          }}
-        />
-        <Scripts />
-        <LiveReload />
-      </body>
-    </html>
+      <MantineProvider
+        theme={{ colorScheme }}
+        withGlobalStyles
+        withNormalizeCSS
+        withCSSVariables
+      >
+        <html lang='en'>
+          <head>
+            <StylesPlaceholder />
+            <Meta />
+            <link rel='manifest' href='/resources/manifest.json' />
+            <Links />
+          </head>
+          <body>
+            <ModalsProvider modals={{ newLink: NewLinkDialog }}>
+              <Outlet />
+              <ScrollRestoration />
+            </ModalsProvider>
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `window.ENV = ${JSON.stringify(data.ENV)}`
+              }}
+            />
+            <Scripts />
+            <LiveReload />
+          </body>
+        </html>
+      </MantineProvider>
+    </ColorSchemeProvider>
   )
 }

@@ -4,9 +4,24 @@ import { Form, useActionData, useCatch, useLoaderData } from '@remix-run/react'
 import React from 'react'
 import { z } from 'zod'
 
-import { Page, PageHeader, TextArea, TextField } from '~/components'
-import { Alert } from '~/components/alert'
-import { Content } from '~/components/content'
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  createStyles,
+  Grid,
+  Textarea,
+  TextInput,
+  Title,
+  UnstyledButton,
+  useMantineTheme
+} from '@mantine/core'
+import { DatePicker } from '@mantine/dates'
+import { useMediaQuery } from '@mantine/hooks'
+
+import { IconCalendar } from '@tabler/icons'
+import { Page } from '~/components'
 import { createEvent } from '~/models/event.server'
 import { requireUserId } from '~/session.server'
 import { badRequestWithError } from '~/utils/index'
@@ -71,23 +86,21 @@ export const action: ActionFunction = async ({ request }) => {
   }
 }
 
-const NewEventButton = ({ className }: { className: string }) => (
-  <button
-    form='new-event'
-    className={className}
-    type='submit'
-    name='action'
-    value='update'
-  >
-    Save
-  </button>
-)
-
 const pageTitle = 'New event'
+
+const useStyles = createStyles(theme => ({
+  button: {
+    float: 'right'
+  }
+}))
 
 export default function NewEventPage() {
   const loaderData = useLoaderData<LoaderData>()
   const actionData = useActionData<ActionData>()
+
+  const { classes } = useStyles()
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
 
   const titleRef = React.useRef<HTMLInputElement>(null)
   const contentRef = React.useRef<HTMLTextAreaElement>(null)
@@ -108,70 +121,77 @@ export default function NewEventPage() {
     <Page
       title={pageTitle}
       showBackButton
-      toolbarButtons={<NewEventButton className='btn btn-ghost' />}
+      toolbarButtons={
+        mobile ? (
+          <UnstyledButton
+            form='new-event'
+            type='submit'
+            name='action'
+            value='update'
+          >
+            Save
+          </UnstyledButton>
+        ) : undefined
+      }
     >
-      <Content
-        paddingMobile={true}
-        desktopNavbar={
-          <PageHeader
-            title={pageTitle}
-            actions={<NewEventButton className='btn btn-primary' />}
-          />
-        }
-      >
-        <Form
-          className='col-start-4 col-span-6'
-          replace
-          id='new-event'
-          method='post'
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            width: '100%'
-          }}
-        >
-          <TextField
-            autoFocus
-            ref={titleRef}
-            label='Title'
-            defaultValue={actionData?.formPayload?.title}
-            name='title'
-            errorMessage={actionData?.error?.title?._errors[0]}
-          />
+      <Box px='xl'>
+        <Grid justify='center'>
+          <Grid.Col span={12} md={6}>
+            <Form replace id='new-event' method='post'>
+              <TextInput
+                autoFocus
+                defaultValue={actionData?.formPayload?.title}
+                error={actionData?.error?.title?._errors[0]}
+                label='Title'
+                name='title'
+                placeholder='My awesome event'
+                ref={titleRef}
+                required
+                withAsterisk
+              />
 
-          <TextArea
-            ref={contentRef}
-            label='Content'
-            defaultValue={actionData?.formPayload?.content}
-            name='content'
-            rows={4}
-            errorMessage={actionData?.error?.formPayload?.content._errors[0]}
-          />
+              <Textarea
+                defaultValue={actionData?.formPayload?.content}
+                error={actionData?.error?.formPayload?.content._errors[0]}
+                label='Content'
+                mt='md'
+                name='content'
+                ref={contentRef}
+                rows={4}
+              />
 
-          <TextField
-            type='date'
-            ref={startDateRef}
-            label='Start Date'
-            defaultValue={
-              actionData?.formPayload?.startDate
-                ? new Intl.DateTimeFormat('sv-SE').format(
-                    new Date(actionData?.formPayload?.startDate)
-                  )
-                : new Intl.DateTimeFormat('sv-SE').format(new Date())
-            }
-            name='startDate'
-            errorMessage={actionData?.error?.startDate?._errors[0]}
-          />
+              <DatePicker
+                dropdownType='modal'
+                error={actionData?.error?.startDate?._errors[0]}
+                icon={<IconCalendar size={16} />}
+                label='Start Date'
+                mt='md'
+                name='startDate'
+                placeholder='Pick date'
+                ref={startDateRef}
+                defaultValue={
+                  actionData?.formPayload?.startDate
+                    ? new Date(actionData?.formPayload?.startDate)
+                    : new Date()
+                }
+              />
 
-          <input
-            type='hidden'
-            ref={timelineIdRef}
-            name='timelineId'
-            defaultValue={loaderData.timelineId}
-          />
-        </Form>
-      </Content>
+              <input
+                type='hidden'
+                ref={timelineIdRef}
+                name='timelineId'
+                defaultValue={loaderData.timelineId}
+              />
+
+              {!mobile && (
+                <Button mt='md' className={classes.button} type='submit'>
+                  Save
+                </Button>
+              )}
+            </Form>
+          </Grid.Col>
+        </Grid>
+      </Box>
     </Page>
   )
 }
@@ -181,14 +201,10 @@ export function CatchBoundary() {
 
   return (
     <Page title={`${caught.status} ${caught.statusText}`}>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert text={`${caught.status} ${caught.statusText}`} />
-          </section>
-        </main>
-      </div>
+      <Container fluid>
+        <Title>App Error</Title>
+        <Alert color='red'>{`${caught.status} ${caught.statusText}`}</Alert>
+      </Container>
     </Page>
   )
 }
@@ -196,14 +212,10 @@ export function CatchBoundary() {
 export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <Page title='Uh-oh!'>
-      <div className='flex flex-1 items-stretch overflow-hidden'>
-        <main className='flex-1 overflow-y-auto p-4'>
-          <section className='flex h-full min-w-0 flex-1 flex-col lg:order-last'>
-            <h1>App Error</h1>
-            <Alert text={error.message} />
-          </section>
-        </main>
-      </div>
+      <Container fluid>
+        <Title>App Error</Title>
+        <Alert color='red'>{error.message}</Alert>
+      </Container>
     </Page>
   )
 }
