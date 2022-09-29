@@ -51,7 +51,7 @@ export function ExternalLinkItem(props: ExternalLinkItemProps): JSX.Element {
         </Group>
       </Text>
 
-      <Menu shadow='md'>
+      <Menu shadow='md' position='bottom-end'>
         <Menu.Target>
           <ActionIcon variant='subtle' size='md'>
             <IconDotsVertical size={16} />

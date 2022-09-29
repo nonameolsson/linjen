@@ -34,7 +34,6 @@ export function NewLinkDialog({
       context.closeModal(id)
     }
   }, [fetcher.type, fetcher.data, context, id])
-  console.log(fetcher.data)
 
   useEffect(() => {
     if (actionData?.error?.title) {

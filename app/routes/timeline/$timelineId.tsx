@@ -74,7 +74,7 @@ export default function TimelineDetailsPage() {
 
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
-      onCancel: () => console.log('Cancel'),
+      onCancel: () => undefined,
       onConfirm: () =>
         submit(null, {
           method: 'post',

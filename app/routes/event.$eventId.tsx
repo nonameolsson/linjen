@@ -40,7 +40,6 @@ const DEFAULT_REDIRECT = 'timelines' // FIXME: Redirect back in history after de
 
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
-  console.log('LOADER')
   await requireUserId(request)
 
   invariant(params.eventId, 'eventId not found')
@@ -130,7 +129,7 @@ export default function EventDetailsPage() {
       children: <Text size='sm'>Do you really want to delete this event?</Text>,
       labels: { confirm: 'Delete', cancel: 'Cancel' },
       confirmProps: { color: 'red' },
-      onCancel: () => console.log('Cancel'),
+      onCancel: () => undefined,
       onConfirm: () =>
         submit(
           { redirectTo: data.redirectTo || '', action: '_delete-event' },
