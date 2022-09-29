@@ -152,6 +152,12 @@ function AsideWidget(props: {
       {data.length > 0 ? (
         data.map(item => (
           <NavLink
+            styles={theme => ({
+              root: {
+                paddingLeft: theme.spacing.md,
+                paddingRight: theme.spacing.md
+              }
+            })}
             component={Link}
             to={`/${path.prefix}/${item.id}/${path.suffix}`}
             label={item.title}
@@ -160,7 +166,15 @@ function AsideWidget(props: {
           />
         ))
       ) : (
-        <NavLink label={emptyDataTitle} />
+        <NavLink
+          styles={theme => ({
+            root: {
+              paddingLeft: theme.spacing.md,
+              paddingRight: theme.spacing.md
+            }
+          })}
+          label={emptyDataTitle}
+        />
       )}
     </Box>
   )
