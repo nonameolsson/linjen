@@ -146,9 +146,11 @@ export default function NewTimelinePage() {
               defaultValue={actionData?.formPayload?.imageUrl}
             />
 
-            <Button mt='md' className={classes.button}>
-              Save
-            </Button>
+            {!mobile && (
+              <Button mt='md' className={classes.button} type='submit'>
+                Save
+              </Button>
+            )}
           </Form>
         </Grid.Col>
       </Grid>
