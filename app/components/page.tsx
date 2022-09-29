@@ -1,8 +1,11 @@
+import type { MantineTransition } from '@mantine/core'
 import {
   AppShell,
   Aside,
+  Box,
   MediaQuery,
   Navbar,
+  Transition,
   useMantineTheme
 } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
@@ -12,7 +15,7 @@ import {
   IconMap,
   IconTimeline
 } from '@tabler/icons'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Fab } from './fab'
 import { Header } from './header'
 import type { NavbarLinkProps } from './navbar-link'
@@ -65,6 +68,7 @@ type PageProps = {
   goBackTo?: string
   header?: React.ReactNode
   showBackButton?: boolean
+  transition?: MantineTransition
   title: string
   toolbarButtons?: JSX.Element
 }
@@ -82,11 +86,17 @@ export function Page(props: PageProps): JSX.Element {
     showBackButton = false,
     goBackTo,
     fab,
+    transition = 'fade',
     title
   } = props
   const theme = useMantineTheme()
   const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const [opened, setOpened] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   return (
     <AppShell
@@ -123,19 +133,29 @@ export function Page(props: PageProps): JSX.Element {
         )
       }
       navbar={
-        <Navbar
-          p='md'
-          hiddenBreakpoint='sm'
-          hidden={!opened}
-          width={{ sm: 200, lg: 300 }}
+        <Transition
+          mounted={opened}
+          transition='slide-up'
+          duration={400}
+          timingFunction='ease'
         >
-          <Navbar.Section grow mt='md'>
-            <MainLinks />
-          </Navbar.Section>
-          <Navbar.Section>
-            <NavbarUser />
-          </Navbar.Section>
-        </Navbar>
+          {styles => (
+            <Navbar
+              style={styles}
+              p='md'
+              hiddenBreakpoint='sm'
+              hidden={!opened}
+              width={{ sm: 200, lg: 300 }}
+            >
+              <Navbar.Section grow mt='md'>
+                <MainLinks />
+              </Navbar.Section>
+              <Navbar.Section>
+                <NavbarUser />
+              </Navbar.Section>
+            </Navbar>
+          )}
+        </Transition>
       }
       header={
         <div>
@@ -159,7 +179,14 @@ export function Page(props: PageProps): JSX.Element {
           icon={fab.icon}
         />
       )}
-      {children}
+      <Transition
+        mounted={mounted}
+        transition={transition || 'fade'}
+        duration={400}
+        timingFunction='ease'
+      >
+        {styles => <Box style={styles}>{children}</Box>}
+      </Transition>
     </AppShell>
   )
 }

@@ -53,7 +53,6 @@ export function Header(props: HeaderProps): JSX.Element {
           className={classes.button}
         />
       )}
-
       <Text className={classes.mobileTitle}>{mobileTitle}</Text>
       <Text className={classes.desktopTitle}>
         {desktopTitle || DEFAULT_DESKTOP_TITLE}

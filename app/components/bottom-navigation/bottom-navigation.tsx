@@ -1,5 +1,6 @@
-import { Footer, Group, Stack, Text } from '@mantine/core'
+import { Footer, Group, Stack, Text, Transition } from '@mantine/core'
 import { NavLink } from '@remix-run/react'
+import { useEffect, useState } from 'react'
 
 import { useStyles } from './bottom-navigation.styles'
 
@@ -37,14 +38,28 @@ function NavigationIcon({ icon: Icon, to, title }: IconProps): JSX.Element {
 
 export function BottomNavigation(props: BottomNavigationProps): JSX.Element {
   const { children } = props
+  const [mounted, setMounted] = useState(false)
   const { classes } = useStyles()
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   return (
-    <Footer height={60} className={classes.footer}>
-      <Group grow className={classes.icons}>
-        {children}
-      </Group>
-    </Footer>
+    <Transition
+      mounted={mounted}
+      transition='slide-up'
+      duration={400}
+      timingFunction='ease'
+    >
+      {styles => (
+        <Footer height={60} className={classes.footer} style={styles}>
+          <Group grow className={classes.icons}>
+            {children}
+          </Group>
+        </Footer>
+      )}
+    </Transition>
   )
 }
 
