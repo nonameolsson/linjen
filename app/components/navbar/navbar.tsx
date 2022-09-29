@@ -1,8 +1,10 @@
-import { Navbar as MantineNavbar, Title } from '@mantine/core'
+import { Box, Navbar as MantineNavbar, Title } from '@mantine/core'
+import { Form } from '@remix-run/react'
 import {
   IconCalendarEvent,
   IconFriends,
   IconHome,
+  IconLogout,
   IconMap,
   IconTimeline,
   IconUser
@@ -84,17 +86,9 @@ export function Navbar(props: NavbarProps): JSX.Element {
 
   return (
     <MantineNavbar
-      // width={{
-      //   sm: collapsed ? 80 : 300
-      //   // subNavigation
-      //   //   ? collapsed : 220
-      //   //     ? 100
-      //   //     : 100
-      // }}
       hiddenBreakpoint='sm'
       hidden={!opened}
       width={{
-        // sm: collapsedItems ? 80 : 300
         sm: collapsedItems ? (subNavigation ? 300 : 60) : 300
       }}
       p={isMobile ? 'md' : undefined}
@@ -105,24 +99,36 @@ export function Navbar(props: NavbarProps): JSX.Element {
             <IconHome type='mark' size={30} />
           </div>
 
-          {/* <MantineNavbar.Section
+          <MantineNavbar.Section
             grow
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              alignSelf: 'normal'
+              justifyContent: 'flex-start',
+              width: '100%',
+              alignItems: 'center'
             }}
-          > */}
-          {renderLinks(mainLinks)}
-          {/* </MantineNavbar.Section> */}
-          {/* <MantineNavbar.Section className={classes.footer}>
+          >
+            {renderLinks(mainLinks)}
+          </MantineNavbar.Section>
+          <MantineNavbar.Section
+            grow
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'flex-end',
+              width: '100%',
+              alignItems: 'center'
+            }}
+            pb='sm'
+          >
             {renderLinks(bottomLinks)}
 
             <Box
               component={Form}
               action='/logout'
               method='post'
-              sx={{ display: 'flex ' }}
+              sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}
             >
               <NavbarLink
                 target={undefined}
@@ -134,7 +140,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
                 sx={{ flex: 1 }}
               />
             </Box>
-          </MantineNavbar.Section> */}
+          </MantineNavbar.Section>
         </div>
 
         {!isMobile && subNavigation && (
@@ -146,28 +152,6 @@ export function Navbar(props: NavbarProps): JSX.Element {
             {subNavigation}
           </div>
         )}
-        {/* </MantineNavbar.Section> */}
-
-        {/* <MantineNavbar.Section className={classes.footer}>
-          {renderLinks(bottomLinks)}
-
-          <Box
-            component={Form}
-            action='/logout'
-            method='post'
-            sx={{ display: 'flex ' }}
-          >
-            <NavbarLink
-              target={undefined}
-              color='gray'
-              icon={IconLogout}
-              collapsed={collapsedItems}
-              title='Log out'
-              tooltipLabel='Log out'
-              sx={{ flex: 1 }}
-            />
-          </Box>
-           */}
       </MantineNavbar.Section>
     </MantineNavbar>
   )

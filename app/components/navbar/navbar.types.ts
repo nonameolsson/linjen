@@ -1,6 +1,5 @@
 export type NavbarProps = {
   opened: boolean
-  logo: React.ReactNode
   collapsed?: boolean
   toggleCollapsed: () => void
   isMobile: boolean
