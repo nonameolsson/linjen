@@ -1,4 +1,6 @@
 export * from './aside'
+export * from './aside-drawer'
+export * from './aside-widget'
 export * from './bottom-navigation'
 export * from './button'
 export * from './content-module'

@@ -1,11 +1,8 @@
 import {
-  Box,
   Button,
   Container,
   Grid,
-  Group,
   Menu,
-  NavLink,
   SimpleGrid,
   Skeleton,
   Stack,
@@ -21,7 +18,6 @@ import { json, redirect } from '@remix-run/node'
 import { Link, useCatch, useLoaderData, useSubmit } from '@remix-run/react'
 import {
   IconCalendarEvent,
-  IconChevronRight,
   IconEdit,
   IconMap,
   IconTimeline,
@@ -31,6 +27,7 @@ import invariant from 'tiny-invariant'
 import { z } from 'zod'
 
 import {
+  AsideWidget,
   ContentPaper,
   linkFormSchema,
   LinkList,
@@ -132,57 +129,6 @@ export const action: ActionFunction = async ({ request, params }) => {
 
 const PRIMARY_COL_HEIGHT = 300
 
-function AsideWidget(props: {
-  title: string
-  icon?: JSX.Element
-  emptyDataTitle: string
-  data: { title: string; id: string }[]
-  path: {
-    prefix: string
-    suffix?: string
-  }
-}): JSX.Element {
-  const { data, emptyDataTitle, icon, path, title } = props
-
-  return (
-    <Box mb='xl'>
-      <Group mb='md' mx='md'>
-        {icon}
-        <Title order={4}>{title}</Title>
-      </Group>
-      {data.length > 0 ? (
-        data.map(item => (
-          // eslint-disable-next-line jsx-a11y/anchor-has-content
-          <NavLink
-            styles={theme => ({
-              root: {
-                paddingLeft: theme.spacing.md,
-                paddingRight: theme.spacing.md
-              }
-            })}
-            component={Link}
-            to={`/${path.prefix}/${item.id}/${path.suffix}`}
-            label={item.title}
-            key={item.id}
-            rightSection={<IconChevronRight size={12} stroke={1.5} />}
-          />
-        ))
-      ) : (
-        // eslint-disable-next-line jsx-a11y/anchor-has-content
-        <NavLink
-          styles={theme => ({
-            root: {
-              paddingLeft: theme.spacing.md,
-              paddingRight: theme.spacing.md
-            }
-          })}
-          label={emptyDataTitle}
-        />
-      )}
-    </Box>
-  )
-}
-
 function EventAside(props: {
   timelines: { title: string; id: string }[]
   events: { title: string; id: string }[]
@@ -190,27 +136,9 @@ function EventAside(props: {
   people: { title: string; id: string }[]
 }): JSX.Element {
   const { timelines, events, locations, people } = props
-  const theme = useMantineTheme()
 
   return (
     <>
-      <Box
-        sx={{
-          backgroundColor:
-            theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
-          borderBottom: `1px solid ${
-            theme.colorScheme === 'dark'
-              ? theme.colors.dark[7]
-              : theme.colors.gray[3]
-          }`,
-          marginBottom: theme.spacing.xl,
-          padding: theme.spacing.md,
-          paddingTop: 18,
-          height: 60
-        }}
-      >
-        <Title order={3}>Related info</Title>
-      </Box>
       <AsideWidget
         icon={<IconTimeline />}
         emptyDataTitle='No timelines'

@@ -1,45 +1,10 @@
-import type { MantineNumberSize, MantineTransition } from '@mantine/core'
-import {
-  AppShell,
-  Aside,
-  Box,
-  Drawer,
-  Group,
-  MediaQuery,
-  Transition,
-  useMantineTheme
-} from '@mantine/core'
+import { AppShell, Box, Transition, useMantineTheme } from '@mantine/core'
 import { useMediaQuery } from '@mantine/hooks'
-import { IconArrowBarLeft } from '@tabler/icons'
 import { useEffect, useState } from 'react'
 
-import { Fab } from './fab'
-import { Header } from './header'
-import { Navbar } from './navbar'
+import { Aside, AsideDrawer, Fab, Header, Navbar } from '~/components'
 
-type PageProps = {
-  actions?: JSX.Element
-  aside?: {
-    title: string
-    component: JSX.Element
-  }
-  children: React.ReactNode
-  fab?: {
-    offset: boolean
-    icon: JSX.Element
-    to?: string
-    onClick?: () => void
-  }
-  bottomNavigation?: JSX.Element
-  goBackTo?: string
-  header?: React.ReactNode
-  padding?: MantineNumberSize
-  showBackButton?: boolean
-  subNavigation?: React.ReactNode
-  transition?: MantineTransition
-  title: string
-  toolbarButtons?: JSX.Element
-}
+import type { PageProps } from './page.types'
 
 export function Page(props: PageProps): JSX.Element {
   const {
@@ -47,7 +12,6 @@ export function Page(props: PageProps): JSX.Element {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     actions,
     aside,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     bottomNavigation,
     fab,
     goBackTo,
@@ -64,7 +28,6 @@ export function Page(props: PageProps): JSX.Element {
   const [opened, setOpened] = useState(false)
   const [isCollapsed, setIsCollapsed] = useState(true)
   const [mounted, setMounted] = useState(false)
-  const [isDrawerVisible, setIsDrawerVisible] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -83,15 +46,7 @@ export function Page(props: PageProps): JSX.Element {
           }
         }}
         asideOffsetBreakpoint='sm'
-        aside={
-          aside && (
-            <MediaQuery smallerThan='sm' styles={{ display: 'none' }}>
-              <Aside hiddenBreakpoint='sm' width={{ sm: 200, lg: 300 }}>
-                {aside.component}
-              </Aside>
-            </MediaQuery>
-          )
-        }
+        aside={aside && <Aside title={aside.title}>{aside.component}</Aside>}
         footer={isMobile ? bottomNavigation : undefined}
         header={
           isMobile ? (
@@ -157,31 +112,8 @@ export function Page(props: PageProps): JSX.Element {
         </Transition>
       </AppShell>
 
-      {aside && (
-        <>
-          <Drawer
-            opened={isDrawerVisible}
-            onClose={() => setIsDrawerVisible(false)}
-            title={aside.title}
-            position='right'
-            size='xl'
-            styles={{
-              header: {
-                padding: theme.spacing.md
-              }
-            }}
-          >
-            {aside.component}
-          </Drawer>
-
-          <Group position='center'>
-            <Fab
-              offset={isMobile && !!bottomNavigation}
-              onClick={() => setIsDrawerVisible(true)}
-              icon={<IconArrowBarLeft />}
-            />
-          </Group>
-        </>
+      {isMobile && aside && (
+        <AsideDrawer title={aside.title}>{aside.component}</AsideDrawer>
       )}
     </>
   )
