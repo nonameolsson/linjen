@@ -121,13 +121,21 @@ export default function TimelinesPage() {
         <p>It is empty here. Lets create timeline!</p>
       ) : (
         <Carousel
-          slideSize='70%'
-          breakpoints={[{ maxWidth: 'sm', slideSize: '80%', slideGap: 'md' }]}
-          slideGap='xl'
-          align='center'
+          slideSize='80%'
+          breakpoints={[{ minWidth: 'lg', slideSize: '30%', slideGap: 'xl' }]}
+          slideGap='md'
+          align={mobile ? 'center' : 'start'}
           slidesToScroll={1}
           height='100%'
           withControls={!mobile}
+          styles={{
+            control: {
+              '&[data-inactive]': {
+                opacity: 0,
+                cursor: 'default'
+              }
+            }
+          }}
         >
           {slides}
         </Carousel>

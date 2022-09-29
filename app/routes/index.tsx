@@ -239,32 +239,34 @@ export default function Index() {
             and import data from others.
           </Text>
         </Container>
-        {user ? (
-          <Button component={Link} to='/timelines'>
-            View Timelines for {user.email}
-          </Button>
-        ) : (
-          <div className={classes.controls}>
-            <Button
-              component={Link}
-              to='join'
-              className={classes.control}
-              size='lg'
-              variant='default'
-              color='gray'
-            >
-              Create a free account
+        <div className={classes.controls}>
+          {user ? (
+            <Button component={Link} to='/timelines'>
+              Open account for {user.email}
             </Button>
-            <Button
-              component={Link}
-              to='login'
-              className={classes.control}
-              size='lg'
-            >
-              Log in
-            </Button>
-          </div>
-        )}
+          ) : (
+            <>
+              <Button
+                component={Link}
+                to='join'
+                className={classes.control}
+                size='lg'
+                variant='default'
+                color='gray'
+              >
+                Create a free account
+              </Button>
+              <Button
+                component={Link}
+                to='login'
+                className={classes.control}
+                size='lg'
+              >
+                Log in
+              </Button>
+            </>
+          )}
+        </div>
       </div>
     </Container>
   )

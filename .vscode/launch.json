@@ -1,7 +1,7 @@
 {
   "configurations": [
     {
-      "type": "pwa-msedge",
+      "type": "msedge",
       "name": "Launch Microsoft Edge",
       "request": "launch",
       "runtimeArgs": ["--remote-debugging-port=9222"],
@@ -11,7 +11,7 @@
       }
     },
     {
-      "type": "pwa-msedge",
+      "type": "msedge",
       "name": "Launch Microsoft Edge in headless mode",
       "request": "launch",
       "runtimeArgs": ["--headless", "--remote-debugging-port=9222"],

@@ -1,4 +1,4 @@
-import { Container, Textarea, TextInput, UnstyledButton } from '@mantine/core'
+import { Grid, Stack, Textarea, TextInput, UnstyledButton } from '@mantine/core'
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
@@ -86,54 +86,56 @@ export default function NewTimelinePage() {
         </UnstyledButton>
       }
     >
-      <Container>
-        <Form
-          id='new-timeline'
-          replace
-          method='post'
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            width: '100%'
-          }}
-        >
-          <TextInput
-            ref={titleRef}
-            autoFocus
-            name='title'
-            id='title'
-            label='Title'
-            error={actionData?.error?.title?._errors[0]}
-            placeholder='My awesome timeline'
-            required
-            defaultValue={actionData?.formPayload?.title}
-            key={actionData?.formPayload?.title}
-          />
+      <Grid>
+        <Grid.Col span={6}>
+          <Form id='new-timeline' replace method='post'>
+            <Stack
+              sx={theme => ({
+                backgroundColor:
+                  theme.colorScheme === 'dark'
+                    ? theme.colors.dark[8]
+                    : theme.colors.gray[0],
+                height: 300
+              })}
+            >
+              <TextInput
+                ref={titleRef}
+                autoFocus
+                name='title'
+                id='title'
+                label='Title'
+                error={actionData?.error?.title?._errors[0]}
+                placeholder='My awesome timeline'
+                required
+                defaultValue={actionData?.formPayload?.title}
+                key={actionData?.formPayload?.title}
+              />
 
-          <Textarea
-            name='description'
-            className='mt-2'
-            rows={4}
-            ref={descriptionRef}
-            label='Description'
-            defaultValue={actionData?.formPayload?.description}
-            error={actionData?.error?.description?._errors[0]}
-          />
+              <Textarea
+                name='description'
+                className='mt-2'
+                rows={4}
+                ref={descriptionRef}
+                label='Description'
+                defaultValue={actionData?.formPayload?.description}
+                error={actionData?.error?.description?._errors[0]}
+              />
 
-          <TextInput
-            name='imageUrl'
-            ref={imageUrlRef}
-            className='mt-2'
-            id='imageUrl'
-            label='Cover image (Optional)'
-            type='url'
-            error={actionData?.error?.imageUrl?._errors[0]}
-            placeholder='https://myurl.com/image.png'
-            defaultValue={actionData?.formPayload?.imageUrl}
-          />
-        </Form>
-      </Container>
+              <TextInput
+                name='imageUrl'
+                ref={imageUrlRef}
+                className='mt-2'
+                id='imageUrl'
+                label='Cover image (Optional)'
+                type='url'
+                error={actionData?.error?.imageUrl?._errors[0]}
+                placeholder='https://myurl.com/image.png'
+                defaultValue={actionData?.formPayload?.imageUrl}
+              />
+            </Stack>
+          </Form>
+        </Grid.Col>
+      </Grid>
     </Page>
   )
 }
