@@ -13,6 +13,7 @@ import {
   Title,
   useMantineTheme
 } from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import { openConfirmModal, openContextModal } from '@mantine/modals'
 import type { ExternalLink, Location, Timeline } from '@prisma/client'
 import type { ActionFunction, LoaderFunction } from '@remix-run/node'
@@ -245,6 +246,7 @@ function EventAside(props: {
 export default function EventDetailsPage() {
   const data = useLoaderData<LoaderData>()
   const theme = useMantineTheme()
+  const isMobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const submit = useSubmit()
 
   function openNewLinkModal() {
@@ -321,7 +323,7 @@ export default function EventDetailsPage() {
         >
           <Stack>
             <ContentPaper
-              title={data.event.title}
+              title={!isMobile ? data.event.title : undefined}
               description={new Intl.DateTimeFormat('sv-SE').format(
                 new Date(data.event.startDate)
               )}
