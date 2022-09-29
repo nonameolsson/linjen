@@ -34,7 +34,7 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
       }
     }
 
-    return (
+    return iconOnly ? (
       <UnstyledButton
         className={cx(classes.link, {
           [classes.linkActive]: title === 'Timelines'
@@ -55,6 +55,7 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
           <Text size='sm'>{title}</Text>
         </Group> */}
       </UnstyledButton>
+    ) : (
       // <Box
       //   // define default component, you will be able to override it with `component` prop from ...others
       //   component='button'
@@ -63,6 +64,7 @@ const _NavbarLink = forwardRef<HTMLAnchorElement, NavbarLinkProps>(
       // >
       //   {children}
       // </Box>
+      <p>fjd</p>
     )
   }
 )

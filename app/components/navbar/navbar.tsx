@@ -1,5 +1,5 @@
 import { Box, Code, Group, Navbar as MantineNavbar } from '@mantine/core'
-import { Form, NavLink } from '@remix-run/react'
+import { Form } from '@remix-run/react'
 import {
   IconCalendarEvent,
   IconFriends,
@@ -58,7 +58,7 @@ const linksMockdata = [
   'Open Issues',
   'Wiki pages'
 ]
-const userLinks: NavbarLinkProps[] = [
+const bottomLinks: NavbarLinkProps[] = [
   {
     icon: IconUser,
     color: 'blue',
@@ -71,21 +71,23 @@ const userLinks: NavbarLinkProps[] = [
 export function Navbar(props: NavbarProps): JSX.Element {
   const { opened, logo, collapsed, isMobile, subNavigation, toggleCollapsed } =
     props
-  const { classes, cx } = useStyles()
+  const { classes } = useStyles()
 
-  // const [active, setActive] = useState('Billing')
+  const collapsedItems = isMobile ? true : collapsed
 
-  const links2 = mainLinks.map(item => (
-    <NavbarLink
-      color={item.color}
-      to={item.to}
-      icon={item.icon}
-      iconOnly={false}
-      key={item.title}
-      title={item.title}
-      tooltipLabel={item.tooltipLabel}
-    />
-  ))
+  const renderLinks = (links: NavbarLinkProps[]): React.ReactNode => {
+    return links.map(item => (
+      <NavbarLink
+        color={item.color}
+        to={item.to}
+        icon={item.icon}
+        iconOnly={collapsedItems}
+        key={item.title}
+        title={item.title}
+        tooltipLabel={item.tooltipLabel}
+      />
+    ))
+  }
 
   return (
     <MantineNavbar
@@ -106,22 +108,13 @@ export function Navbar(props: NavbarProps): JSX.Element {
           LOGO
           <Code sx={{ fontWeight: 700 }}>v3.1.2</Code>
         </Group>
-        {links2}
+
+        {renderLinks(mainLinks)}
       </MantineNavbar.Section>
 
       <MantineNavbar.Section className={classes.footer}>
-        {userLinks.map(link => (
-          <NavbarLink
-            component={NavLink}
-            color={link.color}
-            to={link.to}
-            icon={link.icon}
-            iconOnly={collapsed}
-            key={link.title}
-            title={link.title}
-            tooltipLabel={link.tooltipLabel}
-          />
-        ))}
+        {renderLinks(bottomLinks)}
+
         <Box
           component={Form}
           action='/logout'
@@ -133,7 +126,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
             type='submit'
             color='blue'
             icon={IconLogout}
-            iconOnly={false}
+            iconOnly={collapsed}
             title='Log out'
             tooltipLabel='Log out'
             sx={{ flex: 1 }}
