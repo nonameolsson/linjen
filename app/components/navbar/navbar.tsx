@@ -19,28 +19,28 @@ const mainLinks: NavbarLinkProps[] = [
     icon: IconTimeline,
     color: 'blue',
     title: 'Timelines',
-    to: '/timelines',
+    target: '/timelines',
     tooltipLabel: 'All timelines'
   },
   {
     icon: IconCalendarEvent,
     color: 'teal',
     title: 'Events',
-    to: '/events',
+    target: '/events',
     tooltipLabel: 'All events'
   },
   {
     icon: IconFriends,
     color: 'violet',
     title: 'People',
-    to: '/people',
+    target: '/people',
     tooltipLabel: 'All people'
   },
   {
     icon: IconMap,
     color: 'grape',
     title: 'Locations',
-    to: '/locations',
+    target: '/locations',
     tooltipLabel: 'All locations'
   }
 ]
@@ -63,7 +63,7 @@ const bottomLinks: NavbarLinkProps[] = [
     icon: IconUser,
     color: 'blue',
     title: 'Profile',
-    to: '/profile',
+    target: '/profile',
     tooltipLabel: 'Profile'
   }
 ]
@@ -79,7 +79,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
     return links.map(item => (
       <NavbarLink
         color={item.color}
-        to={item.to}
+        target={item.target}
         icon={item.icon}
         collapsed={collapsedItems}
         key={item.title}
@@ -100,7 +100,9 @@ export function Navbar(props: NavbarProps): JSX.Element {
       // }}
       hiddenBreakpoint='sm'
       hidden={!opened}
-      width={{ sm: collapsedItems ? 80 : 300 }}
+      width={{
+        sm: collapsedItems ? 80 : 300
+      }}
       p='md'
     >
       <MantineNavbar.Section grow>
@@ -122,8 +124,7 @@ export function Navbar(props: NavbarProps): JSX.Element {
           sx={{ display: 'flex ' }}
         >
           <NavbarLink
-            component='button'
-            type='submit'
+            target={undefined}
             color='blue'
             icon={IconLogout}
             collapsed={collapsedItems}
