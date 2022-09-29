@@ -1,4 +1,13 @@
-import { Grid, Stack, Textarea, TextInput, UnstyledButton } from '@mantine/core'
+import {
+  Button,
+  createStyles,
+  Grid,
+  Textarea,
+  TextInput,
+  UnstyledButton,
+  useMantineTheme
+} from '@mantine/core'
+import { useMediaQuery } from '@mantine/hooks'
 import type { ActionFunction } from '@remix-run/node'
 import { json, redirect } from '@remix-run/node'
 import { Form, useActionData } from '@remix-run/react'
@@ -54,9 +63,17 @@ export const action: ActionFunction = async ({ request }) => {
 
 const pageTitle = 'New Timeline'
 
+const useStyles = createStyles(theme => ({
+  button: {
+    float: 'right'
+  }
+}))
+
 export default function NewTimelinePage() {
   const actionData = useActionData<ActionData>()
-
+  const { classes } = useStyles()
+  const theme = useMantineTheme()
+  const mobile = useMediaQuery(`(max-width: ${theme.breakpoints.sm}px)`)
   const titleRef = useRef<HTMLInputElement>(null)
   const descriptionRef = useRef<HTMLTextAreaElement>(null)
   const imageUrlRef = useRef<HTMLInputElement>(null)
@@ -76,63 +93,62 @@ export default function NewTimelinePage() {
       title={pageTitle}
       showBackButton
       toolbarButtons={
-        <UnstyledButton
-          form='new-timeline'
-          type='submit'
-          name='action'
-          value='update'
-        >
-          Save
-        </UnstyledButton>
+        mobile ? (
+          <UnstyledButton
+            form='new-timeline'
+            type='submit'
+            name='action'
+            value='update'
+          >
+            Save
+          </UnstyledButton>
+        ) : undefined
       }
     >
-      <Grid>
-        <Grid.Col span={6}>
+      <Grid justify='center'>
+        <Grid.Col span={12} md={6}>
           <Form id='new-timeline' replace method='post'>
-            <Stack
-              sx={theme => ({
-                backgroundColor:
-                  theme.colorScheme === 'dark'
-                    ? theme.colors.dark[8]
-                    : theme.colors.gray[0],
-                height: 300
-              })}
-            >
-              <TextInput
-                ref={titleRef}
-                autoFocus
-                name='title'
-                id='title'
-                label='Title'
-                error={actionData?.error?.title?._errors[0]}
-                placeholder='My awesome timeline'
-                required
-                defaultValue={actionData?.formPayload?.title}
-                key={actionData?.formPayload?.title}
-              />
+            <TextInput
+              ref={titleRef}
+              autoFocus
+              name='title'
+              id='title'
+              label='Title'
+              mt='md'
+              error={actionData?.error?.title?._errors[0]}
+              placeholder='My awesome timeline'
+              required
+              defaultValue={actionData?.formPayload?.title}
+              key={actionData?.formPayload?.title}
+            />
 
-              <Textarea
-                name='description'
-                className='mt-2'
-                rows={4}
-                ref={descriptionRef}
-                label='Description'
-                defaultValue={actionData?.formPayload?.description}
-                error={actionData?.error?.description?._errors[0]}
-              />
+            <Textarea
+              name='description'
+              className='mt-2'
+              rows={4}
+              mt='md'
+              ref={descriptionRef}
+              label='Description'
+              defaultValue={actionData?.formPayload?.description}
+              error={actionData?.error?.description?._errors[0]}
+            />
 
-              <TextInput
-                name='imageUrl'
-                ref={imageUrlRef}
-                className='mt-2'
-                id='imageUrl'
-                label='Cover image (Optional)'
-                type='url'
-                error={actionData?.error?.imageUrl?._errors[0]}
-                placeholder='https://myurl.com/image.png'
-                defaultValue={actionData?.formPayload?.imageUrl}
-              />
-            </Stack>
+            <TextInput
+              name='imageUrl'
+              ref={imageUrlRef}
+              className='mt-2'
+              id='imageUrl'
+              label='Cover image (Optional)'
+              mt='md'
+              type='url'
+              error={actionData?.error?.imageUrl?._errors[0]}
+              placeholder='https://myurl.com/image.png'
+              defaultValue={actionData?.formPayload?.imageUrl}
+            />
+
+            <Button mt='md' className={classes.button}>
+              Save
+            </Button>
           </Form>
         </Grid.Col>
       </Grid>
