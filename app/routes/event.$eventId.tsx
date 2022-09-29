@@ -74,8 +74,6 @@ const DEFAULT_REDIRECT = 'timelines'
 // TODO: Add Zod valiation on params
 export const loader: LoaderFunction = async ({ request, params }) => {
   console.log('LOADER')
-  console.log(request)
-  console.log(params)
   await requireUserId(request)
 
   invariant(params.eventId, 'eventId not found')
@@ -92,15 +90,14 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 }
 
 export const action: ActionFunction = async ({ request, params }) => {
-  console.log('ACTION')
   invariant(params.eventId, 'eventId not found')
   await requireUserId(request)
 
   const formData = await request.formData()
   let action = formData.get('action')
-  console.log(action)
+
   switch (action) {
-    case 'add-link': {
+    case '_add-link': {
       try {
         const result = linkFormSchema.parse(Object.fromEntries(formData))
         const { title, url } = result
@@ -119,7 +116,7 @@ export const action: ActionFunction = async ({ request, params }) => {
       }
     }
 
-    case 'delete-event': {
+    case '_delete-event': {
       try {
         await deleteEvent(params.eventId)
 
@@ -231,7 +228,7 @@ function NewLinkDialog({
                     <button
                       disabled={transition.state === 'submitting'}
                       name='action'
-                      value='add-link'
+                      value='_add-link'
                       type='submit'
                       className='btn primary'
                     >
@@ -288,7 +285,11 @@ export default function EventDetailsPage() {
       ),
       labels: { confirm: 'Confirm', cancel: 'Cancel' },
       onCancel: () => console.log('Cancel'),
-      onConfirm: () => console.log('Cancel')
+      onConfirm: () =>
+        submit(
+          { redirectTo: data.redirectTo || '', action: '_delete-event' },
+          { method: 'post', action: `event/${data.event.id}`, replace: true }
+        )
     })
 
     // openModal({
