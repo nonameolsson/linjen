@@ -39,12 +39,13 @@ export const useStyles = createStyles(theme => {
         theme.colorScheme === 'dark'
           ? theme.colors.dark[0]
           : theme.colors.gray[7],
-      padding: `0 ${theme.spacing.md}px`,
-      fontSize: theme.fontSizes.sm,
+      // padding: `0 ${theme.spacing.md}px`,
+      fontSize: theme.fontSizes.xl,
       marginRight: theme.spacing.md,
       fontWeight: 500,
-      height: 44,
-      lineHeight: '44px',
+      alignSelf: 'normal',
+      // height: 44,
+      // lineHeight: '44px',
 
       '&:hover': {
         backgroundColor:
