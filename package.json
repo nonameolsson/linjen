@@ -36,7 +36,7 @@
     "@mantine/modals": "^5.4.0",
     "@mantine/notifications": "^5.4.0",
     "@mantine/remix": "^5.4.0",
-    "@prisma/client": "3.15.2",
+    "@prisma/client": "4.7.0",
     "@radix-ui/react-dialog": "^1.0.0",
     "@radix-ui/react-dropdown-menu": "^1.0.0",
     "@remix-run/node": "1.7.1",
